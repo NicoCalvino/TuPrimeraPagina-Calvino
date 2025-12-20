@@ -81,7 +81,7 @@ Crear los siguientes productos
 16) Utilizar el Campo "Buscar" de la parte superior para probar las siguientes busquedas (la cadena de texto se busca en el nombre, en la marca y en la categoria)
 
     a) Buscar: choco - Deberían aparecer 3 resultados
-    b) Buscar: Beb - Deberian aparecer 4 resultados
+    b) Buscar: car - Deberian aparecer 1 resultados
     c) Buscar: negr - Deberian aparecer 2 resultados
 
 
