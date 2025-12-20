@@ -23,7 +23,7 @@ Pasos para probar el proyecto.
 
 4) Instalar los requerimientos del archivo requierements.txt corriendo el siguiente comando
 
-    pip install -r requirements.txt
+    pip install -r requierements.txt
 
 5) Levantar el servidor corriendo el siguiente comando 
     
