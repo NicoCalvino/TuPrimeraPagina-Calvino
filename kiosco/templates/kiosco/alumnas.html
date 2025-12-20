@@ -1,0 +1,103 @@
+{% extends 'kiosco/index.html' %}
+
+{% block titulo %}<title>Kiosco Sole - Listado de Alumnas</title> {% endblock %}
+
+{% block Bienvenida %} {% endblock %}
+
+{% block content %} 
+
+<div class="container my-5">
+    
+    <!-- CONTENEDOR CENTRADO PARA HACER LA LISTA MÁS ANGOSTA -->
+    <div class="row justify-content-center">
+        <!-- Ajustamos el ancho aquí: col-lg-8 (66% del ancho) o col-xl-7 -->
+        <div class="col-md-10 col-lg-8">
+
+            <!-- Encabezado de la sección -->
+            <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+                
+                <!-- Título -->
+                <div>
+                    <h2 class="fw-bold mb-0" style="color: #333;">👩‍🎓 Alumnas</h2>
+                    <p class="text-muted mb-0 small">Gestión de estudiantes.</p>
+                </div>
+                
+                <!-- Barra de Herramientas (Búsqueda y Botones) -->
+                <div class="d-flex align-items-center gap-2">
+                    <!-- Formulario de Búsqueda Compacto -->
+                    <form class="d-flex" role="search" method="GET">
+                        <div class="input-group input-group-sm">
+                            <span class="input-group-text bg-white border-end-0 rounded-start-pill ps-3">
+                                <i class="bi bi-search text-muted small"></i>
+                            </span>
+                            <input class="form-control border-start-0 rounded-end-pill form-control-sm" type="search" placeholder="Buscar..." name="nombre" value="{{ request.GET.nombre }}" aria-label="Search" style="max-width: 150px;">
+                        </div>
+                    </form>
+
+                    <!-- Botones Compactos -->
+                    <a href="{% url 'crear_alumna' %}" class="btn btn-primary btn-sm rounded-pill px-3 shadow-sm">
+                        <i class="bi bi-plus-lg"></i> Nueva
+                    </a>
+                    <a href="{% url 'home' %}" class="btn btn-outline-secondary btn-sm rounded-pill px-3">
+                        <i class="bi bi-arrow-left"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- INICIO DE LA LISTA (TABLA) -->
+            <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="bg-light">
+                            <tr>
+                                <th scope="col" class="ps-4 py-3 text-secondary">Estudiante</th>
+                                <th scope="col" class="py-3 text-secondary text-center">Curso</th>
+                                <th scope="col" class="pe-4 py-3 text-end text-secondary">Detalle</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for alumna in alumnas %}
+                            <tr>
+                                <!-- Columna: Nombre -->
+                                <td class="ps-4 py-3">
+                                    <div class="d-flex align-items-center">
+                                        <!-- Avatar más pequeño -->
+                                        <div class="rounded-circle bg-light d-flex justify-content-center align-items-center me-3" style="width: 35px; height: 35px;">
+                                            <i class="bi bi-person text-primary"></i>
+                                        </div>
+                                        <span class="fw-bold text-dark">{{ alumna.apellido }}, {{ alumna.nombre }}</span>
+                                    </div>
+                                </td>
+
+                                <!-- Columna: Curso -->
+                                <td class="text-center">
+                                    <span class="badge bg-primary bg-opacity-10 text-primary rounded-pill px-2">
+                                        {{ alumna.curso }}
+                                    </span>
+                                </td>
+
+                                <!-- Columna: Botón -->
+                                <td class="pe-4 text-end">
+                                    <a href="{% url 'ver_alumna' alumna.pk %}" class="btn btn-sm btn-light text-primary rounded-circle" title="Ver ficha">
+                                        <i class="bi bi-chevron-right"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="3" class="text-center py-5">
+                                    <h6 class="text-muted fw-normal">No hay alumnas registradas.</h6>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- FIN DE LA LISTA -->
+
+        </div> <!-- Fin de la columna centrada -->
+    </div> <!-- Fin del row -->
+</div>
+
+{% endblock %}

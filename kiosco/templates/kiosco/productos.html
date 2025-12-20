@@ -1,0 +1,89 @@
+{% extends 'kiosco/index.html' %}
+
+{% block titulo %}<title>Kiosco Sole - Productos</title> {% endblock %}
+
+{% block Bienvenida %} {% endblock %}
+
+{% block content %} 
+
+<div class="container my-5">
+    
+    <!-- Encabezado de la sección -->
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+        
+        <!-- Título y Subtítulo -->
+        <div>
+            <h2 class="fw-bold mb-0" style="color: #333;">🍭 Listado de Productos</h2>
+            <p class="text-muted mb-0">Gestiona el stock y precios del kiosco.</p>
+        </div>
+        
+        <!-- Barra de Herramientas -->
+        <div class="d-flex align-items-center gap-3">
+            <form class="d-flex" role="search" method="GET">
+                <div class="input-group">
+                    <span class="input-group-text bg-white border-end-0 rounded-start-pill ps-3">
+                        <i class="bi bi-search text-muted"></i>
+                    </span>
+                    <input class="form-control border-start-0 rounded-end-pill" type="search" placeholder="Buscar..." name="nombre" value="{{ request.GET.nombre }}" aria-label="Search" style="max-width: 200px;">
+                </div>
+            </form>
+
+            <div class="d-flex gap-2">
+                <a href="{% url 'crear_producto' %}" class="btn btn-success rounded-pill px-4 shadow-sm">
+                    <i class="bi bi-plus-lg"></i> Nuevo
+                </a>
+                <a href="{% url 'home' %}" class="btn btn-outline-secondary rounded-pill px-4">
+                    <i class="bi bi-arrow-left"></i> Volver
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Grilla de Productos -->
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+        {% for producto in productos %}
+        <div class="col">
+            <!-- 
+               CAMBIO 1: Convertimos el div.card en a.card 
+               Agregamos 'text-decoration-none' para quitar el subrayado azul clásico de los links.
+               Agregamos una clase personalizada 'card-hover' (opcional) para efectos visuales.
+            -->
+            <a href="{% url 'ver_producto' producto.pk %}" class="card h-100 border-0 shadow-sm rounded-4 text-decoration-none" style="background-color: #fff; transition: transform 0.2s;">
+                
+                <div class="card-body d-flex flex-column p-4">
+                    
+                    <!-- Categoría y Marca -->
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <span class="badge bg-warning text-dark rounded-pill">{{ producto.categoria }}</span>
+                        <small class="text-uppercase fw-bold text-muted" style="font-size: 0.75rem;">{{ producto.marca }}</small>
+                    </div>
+
+                    <!-- Nombre del Producto -->
+                    <!-- Centrado verticalmente gracias al margin-top y margin-bottom automáticos si fuera necesario, 
+                         pero aquí usamos márgenes fijos para limpieza -->
+                    <h5 class="card-title fw-bold text-dark text-center my-3">{{ producto.nombre }}</h5>
+                    
+                    <!-- Sección inferior empujada hacia abajo (mt-auto) -->
+                    <div class="mt-auto pt-3 border-top text-center">
+                        <!-- Precio -->
+                         <!-- Usamos texto grande en lugar de botón deshabilitado para que se vea más limpio -->
+                        <span class="fs-4 fw-bold text-dark">$ {{ producto.precio }}</span>
+                    </div>
+
+                </div>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Estilo extra para efecto hover al pasar el mouse -->
+<style>
+    .card:hover {
+        transform: translateY(-5px); /* Levanta un poco la tarjeta */
+        box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important; /* Aumenta la sombra */
+        border: 1px solid #FFC107 !important; /* Borde amarillo sutil al pasar el mouse */
+    }
+</style>
+
+{% endblock %}

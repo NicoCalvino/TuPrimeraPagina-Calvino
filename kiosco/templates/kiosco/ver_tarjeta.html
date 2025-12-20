@@ -1,0 +1,148 @@
+{% extends 'kiosco/index.html' %}
+
+{% block titulo %}<title>Tarjeta {{ tarjeta.codigo }} - Detalle</title> {% endblock %}
+
+{% block Bienvenida %} {% endblock %}
+
+{% block content %} 
+
+<div class="container my-5">
+
+    <!-- Botón Volver -->
+    <div class="mb-4">
+        <!-- Asumo que existe una url 'lista_tarjetas', si no, cámbiala por la que corresponda -->
+        <a href="{% url 'lista_tarjetas' %}" class="text-decoration-none text-muted fw-bold">
+            <i class="bi bi-arrow-left"></i> Volver al listado
+        </a>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            
+            <!-- Tarjeta Principal de Detalle -->
+            <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+                <div class="row g-0">
+                    
+                    <!-- COLUMNA IZQUIERDA: Saldo y Visual -->
+                    <div class="col-md-5 bg-light d-flex flex-column justify-content-center align-items-center p-5 text-center position-relative">
+                        
+                        <!-- Badge Tipo -->
+                        <div class="position-absolute top-0 start-0 m-3">
+                            <span class="badge bg-primary text-white rounded-pill fs-6 shadow-sm">
+                                Tarjeta Prepago
+                            </span>
+                        </div>
+
+                        <!-- Icono Grande -->
+                        <div class="mb-4 text-primary opacity-75">
+                            <i class="bi bi-credit-card-2-front-fill" style="font-size: 8rem;"></i>
+                        </div>
+
+                        <!-- Saldo Grande -->
+                        <div class="bg-white px-4 py-3 rounded-3 shadow-sm border border-1 w-100">
+                            <span class="text-muted small text-uppercase fw-bold">Saldo Disponible</span>
+                            <!-- Lógica de color para el saldo: Rojo si es bajo, Verde si está bien -->
+                            <h2 class="display-5 fw-bold mb-0 {% if tarjeta.saldo <= 0 %}text-danger{% else %}text-success{% endif %}">
+                                $ {{ tarjeta.saldo }}
+                            </h2>
+                        </div>
+                    </div>
+
+                    <!-- COLUMNA DERECHA: Datos de la Tarjeta y Alumna -->
+                    <div class="col-md-7 p-4 p-lg-5 bg-white d-flex flex-column">
+                        
+                        <!-- Encabezado: Alumna Asociada -->
+                        <div class="mb-4">
+                            <small class="text-muted fw-bold text-uppercase tracking-wide">
+                                <!-- El icono siempre se muestra, así que va fuera -->
+                                <i class="bi bi-person-circle me-1"></i> 
+                                
+                                <!-- Aquí solo cambiamos el texto -->
+                                {% if tarjeta.alumna %}
+                                    {{ tarjeta.alumna }}
+                                {% else %}
+                                    Sin Alumna Asociada
+                                {% endif %}
+                            </small>
+                            <h1 class="fw-bold text-dark mt-2 mb-3">{{ tarjeta.alumna_asociada }}</h1>
+                            <!-- Barra separadora -->
+                            <div style="width: 50px; height: 5px; background-color: #0d6efd; border-radius: 10px;"></div>
+                        </div>
+
+                        <!-- Información Técnica -->
+                        <div class="vstack gap-3 mb-5">
+                            
+                            <!-- Código de Tarjeta -->
+                            <div class="d-flex align-items-center">
+                                <div class="icon-square bg-light text-dark rounded-3 p-2 me-3">
+                                    <i class="bi bi-qr-code fs-4"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-0 text-muted">Código de Tarjeta</h6>
+                                    <span class="fw-bold fs-5 text-break">{{ tarjeta.codigo }}</span>
+                                </div>
+                            </div>
+
+                            <!-- Fechas (Activación y Modificación) -->
+                            <div class="row mt-2">
+                                <div class="col-sm-6">
+                                    <div class="d-flex align-items-center mb-3">
+                                        <div class="icon-square bg-light text-dark rounded-3 p-2 me-3">
+                                            <i class="bi bi-calendar-check fs-5"></i>
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-0 text-muted small">Fecha Activación</h6>
+                                            <span class="fw-bold">{{ tarjeta.fecha_activacion|date:"d/m/Y" }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="d-flex align-items-center mb-3">
+                                        <div class="icon-square bg-light text-dark rounded-3 p-2 me-3">
+                                            <i class="bi bi-clock-history fs-5"></i>
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-0 text-muted small">Última Modificación</h6>
+                                            <span class="fw-bold">{{ tarjeta.fecha_ultima_modificacion|date:"d/m/Y H:i" }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- Botonera de Acciones -->
+                        <div class="mt-auto d-flex gap-2 flex-wrap">
+                            <!-- Botón Cargar Saldo (Ejemplo de acción útil para tarjetas) -->
+                            <a href="#" class="btn btn-success btn-lg rounded-pill px-4 flex-grow-1">
+                                <i class="bi bi-cash-coin me-2"></i> Cargar Saldo
+                            </a>
+
+                            <!-- Botón Editar -->
+                            <a href="#" class="btn btn-outline-primary btn-lg rounded-pill px-4">
+                                <i class="bi bi-pencil-square"></i>
+                            </a>
+                            
+                             <!-- Botón Eliminar / Dar de baja -->
+                            <a href="#" class="btn btn-outline-danger btn-lg rounded-pill px-4" onclick="return confirm('¿Dar de baja esta tarjeta?');">
+                                <i class="bi bi-trash"></i>
+                            </a>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Nota al pie -->
+            <div class="mt-4 text-center">
+                <p class="text-muted small">
+                    <i class="bi bi-shield-lock me-1"></i> 
+                    El saldo se actualiza en tiempo real tras cada compra en el kiosco.
+                </p>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}

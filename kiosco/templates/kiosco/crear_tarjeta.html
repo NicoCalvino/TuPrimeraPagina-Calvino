@@ -1,0 +1,64 @@
+{% extends 'kiosco/index.html' %}
+
+{% block titulo %}<title>Kiosco Sole - Nueva Tarjeta</title> {% endblock %}
+
+{% block Bienvenida %} {% endblock %}
+
+{% block content %}
+<div class="container my-5">
+
+<!-- Encabezado -->
+<div class="row justify-content-center mb-4">
+    <div class="col-lg-6 d-flex justify-content-between align-items-center">
+        <div>
+            <!-- Cambié el icono y el título -->
+            <h2 class="fw-bold mb-0" style="color: #333;">💳 Nueva Tarjeta</h2>
+            <p class="text-muted mb-0">Da de alta un nuevo número de tarjeta.</p>
+        </div>
+        <!-- Asumí que la URL para volver se llamaría 'lista_tarjetas', ajústalo si es necesario -->
+        <a href="{% url 'lista_tarjetas' %}" class="btn btn-outline-secondary rounded-pill px-4">
+            <i class="bi bi-arrow-left"></i> Volver
+        </a>
+    </div>
+</div>
+
+<!-- Card del Formulario -->
+<div class="row justify-content-center">
+    <div class="col-lg-3">
+        <div class="card border-0 shadow-sm rounded-4 p-4" style="background-color: #fff;">
+            
+            <form method="post" novalidate>
+                {% csrf_token %}
+
+                <div class="row g-3">
+                    
+                    <!-- ÚNICO CAMPO: NUMERO DE TARJETA -->
+                    <div class="col-12">
+                        <label for="{{ form.codigo.id_for_label }}" class="form-label fw-bold text-dark small">Número de Tarjeta</label>
+                        <div class="input-group">
+                            <!-- Icono de tarjeta de crédito/identificación -->
+                            <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-credit-card-2-front"></i></span>
+                            {{ form.codigo }}
+                        </div>
+                        {% if form.codigo.errors %}
+                            <div class="text-danger small mt-1 ps-1">{{ form.codigo.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                </div>
+
+                <hr class="my-4">
+
+                <!-- Botón de Guardar -->
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary btn-lg rounded-pill fw-bold shadow-sm">
+                        <i class="bi bi-check-lg me-2"></i>Crear Tarjeta
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+{% endblock %}
