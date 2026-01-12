@@ -9,54 +9,77 @@ def home(request):
 
 
 # Productos
-def lista_productos(request):
+# def lista_productos(request):
+#     busqueda = request.GET.get("nombre") 
+#     productos_query = Producto.objects.all()
+#     if busqueda:
+#         productos_query = Producto.objects.filter(
+#             Q(nombre__icontains = busqueda) | Q(marca__icontains=busqueda) | Q(categoria__icontains=busqueda),
+#         )
+#     return render(request, 'kiosco/productos.html',{"productos":productos_query})
+
+# def crear_producto(request):
+#     if request.method == "POST":
+#         form = ProductoForm(request.POST)
+#         if form.is_valid():
+#             form.save()
+#             return redirect("lista_productos")
+#     else:
+#         form = ProductoForm()
+
+#     return render(request, 'kiosco/crear_producto.html', {'form':form})
+
+# def ver_producto(request, pk):
+#     producto = get_object_or_404(Producto, pk=pk)
+#     return render(request, 'kiosco/ver_producto.html', {"producto":producto})
+
+# Clientes
+def lista_clientes(request):
     busqueda = request.GET.get("nombre") 
-    productos_query = Producto.objects.all()
+    clientes_query = Cliente.objects.all()
     if busqueda:
-        productos_query = Producto.objects.filter(
-            Q(nombre__icontains = busqueda) | Q(marca__icontains=busqueda) | Q(categoria__icontains=busqueda),
-        )
-    return render(request, 'kiosco/productos.html',{"productos":productos_query})
-
-def crear_producto(request):
-    if request.method == "POST":
-        form = ProductoForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect("lista_productos")
-    else:
-        form = ProductoForm()
-
-    return render(request, 'kiosco/crear_producto.html', {'form':form})
-
-def ver_producto(request, pk):
-    producto = get_object_or_404(Producto, pk=pk)
-    return render(request, 'kiosco/ver_producto.html', {"producto":producto})
-
-# Alumnas
-def lista_alumnas(request):
-    busqueda = request.GET.get("nombre") 
-    alumnas_query = Alumna.objects.all()
-    if busqueda:
-        alumnas_query = Alumna.objects.filter(
+        clientes_query = Cliente.objects.filter(
             Q(nombre__icontains = busqueda) | Q(apellido__icontains=busqueda),
         )
-    return render(request, 'kiosco/alumnas.html',{"alumnas":alumnas_query})
+    return render(request, 'kiosco/clientes.html',{"clientes":clientes_query})
 
-def crear_alumna(request):
+def crear_cliente(request):
     if request.method == "POST":
-        form = AlumnaForm(request.POST)
+        form = ClienteForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect("lista_alumnas")
+            return redirect("lista_clientes")
     else:
-        form = AlumnaForm()
+        form = ClienteForm()
 
-    return render(request, 'kiosco/crear_alumna.html', {'form':form})
+    return render(request, 'kiosco/crear_cliente.html', {'form':form})
 
-def ver_alumna(request, pk):
-    alumna = get_object_or_404(Alumna, pk=pk)
-    return render(request, 'kiosco/ver_alumna.html', {"alumna":alumna})
+def ver_cliente(request, pk):
+    cliente = get_object_or_404(Cliente, pk=pk)
+    return render(request, 'kiosco/ver_cliente.html', {"cliente":cliente})
+
+def actualizar_cliente(request, pk):
+    cliente = get_object_or_404(Cliente, pk=pk)
+    if request.method == "POST":
+        form = ClienteForm(request.POST, instance=cliente)
+        if form.is_valid():
+            form.save()
+            return redirect("ver_cliente",pk = cliente.pk)
+    else:
+        form = ClienteForm(instance=cliente)
+        return render(request, "kiosco/crear_cliente.html",{
+            "form":form,
+            "cliente":cliente        
+        })
+
+def eliminar_cliente(request, pk):
+    cliente = get_object_or_404(Cliente, pk=pk)
+    if request.method == "POST":
+        cliente.delete()
+        return redirect('lista_clientes')
+    return render(request, "kiosco/eliminar_cliente.html",{
+        "cliente":cliente
+    })
 
 # Tarjetas
 def lista_tarjetas(request):
@@ -85,3 +108,14 @@ def ver_tarjeta(request, pk):
     tarjeta = get_object_or_404(Tarjeta, pk=pk)
     return render(request, 'kiosco/ver_tarjeta.html', {"tarjeta":tarjeta})
 
+def actualizar_tarjeta(request, pk):
+    pass # NO SE CONSIDERA NECESARIO EDITAR LA INFORMACION DE LAS TARJETAS AUN
+
+def eliminar_tarjeta(request, pk):
+    tarjeta = get_object_or_404(Tarjeta, pk=pk)
+    if request.method == "POST":
+        tarjeta.delete()
+        return redirect('lista_tarjetas')
+    return render(request, "kiosco/eliminar_tarjeta.html",{
+        "tarjeta":tarjeta
+    })

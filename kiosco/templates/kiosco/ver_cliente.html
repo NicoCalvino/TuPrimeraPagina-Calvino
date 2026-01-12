@@ -1,6 +1,6 @@
 {% extends 'kiosco/index.html' %}
 
-{% block titulo %}<title>{{ alumna.nombre }} {{ alumna.apellido }} - Detalle</title> {% endblock %}
+{% block titulo %}<title>{{ cliente.nombre }} {{ cliente.apellido }} - Detalle</title> {% endblock %}
 
 {% block Bienvenida %} {% endblock %}
 
@@ -10,7 +10,7 @@
 
     <!-- Botón Volver -->
     <div class="mb-4">
-        <a href="{% url 'lista_alumnas' %}" class="text-decoration-none text-muted fw-bold">
+        <a href="{% url 'lista_clientes' %}" class="text-decoration-none text-muted fw-bold">
             <i class="bi bi-arrow-left"></i> Volver al listado
         </a>
     </div>
@@ -18,7 +18,7 @@
     <div class="row justify-content-center">
         <div class="col-lg-12">
             
-            <!-- 1. TARJETA PRINCIPAL: PERFIL ALUMNA -->
+            <!-- 1. TARJETA PRINCIPAL: PERFIL CLIENTE -->
             <div class="card border-0 shadow-lg rounded-4 overflow-hidden mb-4">
                 <div class="row g-0">
                     
@@ -28,7 +28,7 @@
                         <!-- Badge de Curso -->
                         <div class="position-absolute top-0 start-0 m-3">
                             <span class="badge bg-info text-dark rounded-pill fs-6 shadow-sm">
-                                <i class="bi bi-mortarboard-fill me-1"></i> {{ alumna.curso }}
+                                <i class="bi bi-mortarboard-fill me-1"></i> {{ cliente.curso }}
                             </span>
                         </div>
 
@@ -41,7 +41,7 @@
                         <div class="bg-white px-4 py-2 rounded-3 shadow-sm border border-1">
                             <span class="text-muted small text-uppercase fw-bold">Saldo Actual</span>
                             <h2 class="display-6 fw-bold text-dark mb-0">
-                                $ {{ alumna.saldo|default:"0.00" }}
+                                $ {{ cliente.saldo|default:"0.00" }}
                             </h2>
                         </div>
                     </div>
@@ -54,8 +54,8 @@
                             <small class="text-primary fw-bold text-uppercase tracking-wide">
                                 <i class="bi bi-person-vcard-fill me-1"></i> Perfil de Estudiante
                             </small>
-                            <h1 class="fw-bold text-dark mt-2 mb-1">{{ alumna.nombre }} {{ alumna.apellido }}</h1>
-                            <p class="text-muted mb-3">Legajo/ID: #{{ alumna.id }}</p>
+                            <h1 class="fw-bold text-dark mt-2 mb-1">{{ cliente.nombre }} {{ cliente.apellido }}</h1>
+                            <p class="text-muted mb-3">Legajo/ID: #{{ cliente.id }}</p>
                             <!-- Barra separadora -->
                             <div style="width: 50px; height: 5px; background-color: #0d6efd; border-radius: 10px;"></div>
                         </div>
@@ -69,7 +69,7 @@
                                     </div>
                                     <div>
                                         <h6 class="mb-0 text-muted">Curso/División</h6>
-                                        <span class="fw-bold fs-5">{{ alumna.curso }}</span>
+                                        <span class="fw-bold fs-5">{{ cliente.curso }}</span>
                                     </div>
                                 </div>
                             </div>
@@ -78,12 +78,12 @@
                         <!-- Botonera de Acciones -->
                         <div class="mt-auto d-flex gap-2">
                             <!-- Botón Editar -->
-                            <a href="#" class="btn btn-primary rounded-pill px-4">
-                                <i class="bi bi-pencil-square me-2"></i> Editar Alumna
+                            <a href="{% url 'actualizar_cliente' cliente.pk %}" class="btn btn-primary rounded-pill px-4">
+                                <i class="bi bi-pencil-square me-2"></i> Editar Cliente
                             </a>
 
                             <!-- Botón Eliminar -->
-                            <a href="#" class="btn btn-outline-danger rounded-pill px-4 ms-auto" onclick="return confirm('¿Eliminar alumna?');">
+                            <a href="{% url 'eliminar_cliente' cliente.pk %}" class="btn btn-outline-danger rounded-pill px-4 ms-auto">
                                 <i class="bi bi-trash"></i>
                             </a>
                         </div>

@@ -113,7 +113,7 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link {% if request.resolver_match.url_name == 'lista_alumnas' %}active{% endif %}" 
-                        href="{% url 'lista_alumnas' %}">Alumnas</a>
+                        href="{% url 'lista_clientes' %}">Clientes</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link {% if request.resolver_match.url_name == 'lista_tarjetas' %}active{% endif %}" 
@@ -161,10 +161,10 @@
                     <div class="icon-box text-alumnas">
                         <i class="bi bi-backpack4-fill"></i>
                     </div>
-                    <h4 class="fw-bold">Alumnas</h4>
+                    <h4 class="fw-bold">Clientes</h4>
                     <p class="text-muted small">Gestionar cuentas, perfiles y cursos.</p>
                     
-                    <a href="{% url 'lista_alumnas' %}" class="btn btn-outline-primary w-100 mt-2 mt-auto stretched-link">Gestionar</a>
+                    <a href="{% url 'lista_clientes' %}" class="btn btn-outline-primary w-100 mt-2 mt-auto stretched-link">Gestionar</a>
                 </div>
             </div>
 

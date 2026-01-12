@@ -1,6 +1,6 @@
 {% extends 'kiosco/index.html' %}
 
-{% block titulo %}<title>Kiosco Sole - Listado de Alumnas</title> {% endblock %}
+{% block titulo %}<title>Kiosco Sole - Listado de Clientes</title> {% endblock %}
 
 {% block Bienvenida %} {% endblock %}
 
@@ -16,8 +16,8 @@
                 
                 <!-- Título -->
                 <div>
-                    <h2 class="fw-bold mb-0" style="color: #333;">👩‍🎓 Alumnas</h2>
-                    <p class="text-muted mb-0 small">Gestión de estudiantes.</p>
+                    <h2 class="fw-bold mb-0" style="color: #333;">👩‍🎓 Clientes</h2>
+                    <p class="text-muted mb-0 small">Gestión de Clientes.</p>
                 </div>
                 
                 <!-- Barra de Herramientas (Búsqueda y Botones) -->
@@ -33,7 +33,7 @@
                     </form>
 
                     <!-- Botones Compactos -->
-                    <a href="{% url 'crear_alumna' %}" class="btn btn-primary btn-sm rounded-pill px-3 shadow-sm">
+                    <a href="{% url 'crear_cliente' %}" class="btn btn-primary btn-sm rounded-pill px-3 shadow-sm">
                         <i class="bi bi-plus-lg"></i> Nueva
                     </a>
                     <a href="{% url 'home' %}" class="btn btn-outline-secondary btn-sm rounded-pill px-3">
@@ -50,41 +50,53 @@
                             <tr>
                                 <th scope="col" class="ps-4 py-3 text-secondary">Estudiante</th>
                                 <th scope="col" class="py-3 text-secondary text-center">Curso</th>
-                                <th scope="col" class="pe-4 py-3 text-end text-secondary">Detalle</th>
+                                <th scope="col" class="pe-4 py-3 text-end text-secondary">Acciones</th> <!-- Cambiado de "Detalle" a "Acciones" -->
                             </tr>
                         </thead>
                         <tbody>
-                            {% for alumna in alumnas %}
+                            {% for cliente in clientes %}
                             <tr>
                                 <!-- Columna: Nombre -->
                                 <td class="ps-4 py-3">
                                     <div class="d-flex align-items-center">
-                                        <!-- Avatar más pequeño -->
                                         <div class="rounded-circle bg-light d-flex justify-content-center align-items-center me-3" style="width: 35px; height: 35px;">
                                             <i class="bi bi-person text-primary"></i>
                                         </div>
-                                        <span class="fw-bold text-dark">{{ alumna.apellido }}, {{ alumna.nombre }}</span>
+                                        <span class="fw-bold text-dark">{{ cliente.apellido }}, {{ cliente.nombre }}</span>
                                     </div>
                                 </td>
 
                                 <!-- Columna: Curso -->
                                 <td class="text-center">
                                     <span class="badge bg-primary bg-opacity-10 text-primary rounded-pill px-2">
-                                        {{ alumna.curso }}
+                                        {{ cliente.curso }}
                                     </span>
                                 </td>
 
-                                <!-- Columna: Botón -->
-                                <td class="pe-4 text-end">
-                                    <a href="{% url 'ver_alumna' alumna.pk %}" class="btn btn-sm btn-light text-primary rounded-circle" title="Ver ficha">
-                                        <i class="bi bi-chevron-right"></i>
-                                    </a>
+                                <!-- Columna: Botones de Acción -->
+                                <td class="pe-4">
+                                    <div class="d-flex justify-content-end gap-2">
+                                        <!-- Botón Ver (Azul) -->
+                                        <a href="{% url 'ver_cliente' cliente.pk %}" class="btn btn-sm btn-light text-primary rounded-circle" title="Ver ficha">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+
+                                        <!-- Botón Editar (Amarillo/Naranja) -->
+                                        <a href="{% url 'actualizar_cliente' cliente.pk %}" class="btn btn-sm btn-light text-warning rounded-circle" title="Editar información">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+
+                                        <!-- Botón Eliminar (Rojo) -->
+                                        <a href="{% url 'eliminar_cliente' cliente.pk %}" class="btn btn-sm btn-light text-danger rounded-circle" title="Eliminar cliente">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    </div>
                                 </td>
                             </tr>
                             {% empty %}
                             <tr>
                                 <td colspan="3" class="text-center py-5">
-                                    <h6 class="text-muted fw-normal">No hay alumnas registradas.</h6>
+                                    <h6 class="text-muted fw-normal">No hay clientes registrados.</h6>
                                 </td>
                             </tr>
                             {% endfor %}

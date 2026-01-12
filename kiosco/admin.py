@@ -6,8 +6,8 @@ from kiosco.models import *
 #admin.site.register(Tarjeta)
 #admin.site.register(Producto)
 
-@admin.register(Alumna)
-class AlumnaAdmin(admin.ModelAdmin):
+@admin.register(Cliente)
+class ClienteAdmin(admin.ModelAdmin):
     #Columna visibles en la lista del modelo
     list_display = ("nombre", "apellido", "curso")
     #Columnas con enlaces clickeables para entrar en el detalle
@@ -30,10 +30,10 @@ class TarjetaAdmin(admin.ModelAdmin):
     #Campos de solo lectura
     readonly_fields = ("fecha_activacion",)
 
-@admin.register(Producto)
-class ProductoAdmin(admin.ModelAdmin):
-    list_display = ("nombre","marca", "categoria", "precio","stock", "codigo_de_barras")
-    list_display_links = ("nombre",)
-    search_fields = ("nombre","marca","categoria","codigo_de_barras")
-    ordering = ("categoria", "nombre","marca")
+# @admin.register(Producto)
+# class ProductoAdmin(admin.ModelAdmin):
+#     list_display = ("nombre","marca", "categoria", "precio","stock", "codigo_de_barras")
+#     list_display_links = ("nombre",)
+#     search_fields = ("nombre","marca","categoria","codigo_de_barras")
+#     ordering = ("categoria", "nombre","marca")
     

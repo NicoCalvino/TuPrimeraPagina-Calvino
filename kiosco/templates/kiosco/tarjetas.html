@@ -78,6 +78,13 @@
                                     <a href="{% url 'ver_tarjeta' tarjeta.pk %}" class="btn btn-sm btn-light text-primary rounded-circle" title="Ver detalles">
                                         <i class="bi bi-eye"></i>
                                     </a>
+
+                                    <form action="{% url 'eliminar_tarjeta' tarjeta.pk %}" method="POST" class="d-inline ms-1">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-sm btn-light text-danger rounded-circle" title="Eliminar" onclick="return confirm('¿Eliminar tarjeta?')">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
                                 </td>
                             </tr>
                             {% empty %}
