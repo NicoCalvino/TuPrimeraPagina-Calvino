@@ -1,0 +1,85 @@
+{% extends 'kiosco/index.html' %}
+
+{% block titulo %}<title>Eliminar {{ producto.nombre }} - Kiosco Sole</title> {% endblock %}
+
+{% block Bienvenida %} {% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            
+            <!-- Card de Confirmación -->
+            <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+                <div class="card-header bg-danger text-white text-center py-4">
+                    <i class="bi bi-exclamation-triangle-fill display-4"></i>
+                    <h2 class="fw-bold mt-2 mb-0">¿Estás seguro?</h2>
+                </div>
+                
+                <div class="card-body p-4 p-md-5">
+                    <p class="text-center fs-5 text-muted mb-4">
+                        Estás a punto de eliminar permanentemente el siguiente producto del sistema:
+                    </p>
+
+                    <!-- Mini Detalle del Producto (Resumen) -->
+                    <div class="d-flex align-items-center bg-light p-3 rounded-4 border mb-4">
+                        <div class="flex-shrink-0 bg-white rounded-3 p-3 shadow-sm">
+                            <i class="bi bi-basket3-fill text-danger fs-2"></i>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <small class="text-uppercase fw-bold text-muted" style="letter-spacing: 1px;">{{ producto.marca }}</small>
+                            <h4 class="fw-bold mb-0">{{ producto.nombre }}</h4>
+                            <span class="badge bg-secondary">Código: {{ producto.codigo_de_barras }}</span>
+                        </div>
+                        <div class="text-end">
+                            <span class="h4 fw-bold text-dark">${{ producto.precio }}</span>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-warning border-0 rounded-3 d-flex align-items-center" role="alert">
+                        <i class="bi bi-info-circle-fill me-2 fs-5"></i>
+                        <div>
+                            Esta acción borrará el stock y el historial asociado.
+                        </div>
+                    </div>
+
+                    <!-- Formulario de Acción -->
+                    <form method="post" class="mt-4">
+                        {% csrf_token %}
+                        <div class="d-grid gap-2">
+                            <!-- Botón de Confirmar (POST) -->
+                            <button type="submit" class="btn btn-danger btn-lg rounded-pill fw-bold">
+                                <i class="bi bi-trash-fill me-2"></i> Confirmar Eliminación
+                            </button>
+                            
+                            <!-- Botón de Cancelar -->
+                            <a href="{% url 'detalle_producto' producto.code %}" class="btn btn-outline-secondary btn-lg rounded-pill fw-bold border-2">
+                                No, mantener producto
+                            </a>
+                        </div>
+                    </form>
+                </div>
+                
+                <div class="card-footer bg-light text-center py-3">
+                    <a href="{% url 'lista_productos' %}" class="text-decoration-none text-muted small">
+                        <i class="bi bi-arrow-left"></i> Volver al listado general
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Efecto de sutil movimiento en el icono de advertencia */
+    .bi-exclamation-triangle-fill {
+        animation: shake 0.5s infinite alternate;
+    }
+
+    @keyframes shake {
+        from { transform: rotate(-5deg); }
+        to { transform: rotate(5deg); }
+    }
+</style>
+{% endblock %}
