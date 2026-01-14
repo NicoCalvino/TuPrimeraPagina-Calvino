@@ -1,0 +1,66 @@
+{% extends "kiosco/index.html" %}
+
+{% block titulo %}<title>Registro - Kiosco Sole</title>{% endblock %}
+
+{% block Bienvenida %}
+<header class="hero-section">
+    <div class="container">
+        <h1 class="display-4 fw-bold text-dark">Únete a Kiosco Sole</h1>
+        <p class="lead text-dark">Crea tu cuenta para gestionar tus compras y saldo.</p>
+    </div>
+</header>
+{% endblock %}
+
+{% block content %}
+<div class="container mb-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card card-custom p-4 shadow-sm">
+                <div class="text-center mb-4">
+                    <div class="icon-box text-alumnas">
+                        <i class="bi bi-person-plus-fill"></i>
+                    </div>
+                    <h2 class="fw-bold">Registro de Usuario</h2>
+                </div>
+
+                <form method="POST">
+                    {% csrf_token %}
+                    
+                    {# Renderizado manual para mejor control visual con Bootstrap #}
+                    {% for field in form %}
+                        <div class="mb-3">
+                            <label for="{{ field.id_for_label }}" class="form-label fw-bold">
+                                {{ field.label }}
+                            </label>
+                            {{ field }}
+                            {% if field.help_text %}
+                                <div class="form-text text-muted small">
+                                    {{ field.help_text|safe }}
+                                </div>
+                            {% endif %}
+                            {% for error in field.errors %}
+                                <div class="text-danger small mt-1">
+                                    {{ error }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endfor %}
+
+                    <div class="d-grid gap-2 mt-4">
+                        <button type="submit" class="btn btn-warning fw-bold py-2 shadow-sm">
+                            Registrarse
+                        </button>
+                    </div>
+                </form>
+
+                <hr class="my-4">
+                
+                <div class="text-center">
+                    <p class="mb-0">¿Ya tienes una cuenta?</p>
+                    <a href="{% url 'login' %}" class="text-decoration-none fw-bold text-alumnas">Inicia sesión aquí</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

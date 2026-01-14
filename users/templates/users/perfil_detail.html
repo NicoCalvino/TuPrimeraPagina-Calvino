@@ -1,0 +1,120 @@
+{% extends "kiosco/index.html" %}
+
+{% block titulo %}<title>Mi Perfil - Kiosco Sole</title>{% endblock %}
+
+{% block Bienvenida %}
+<header class="hero-section">
+    <div class="container">
+        <h1 class="display-5 fw-bold text-dark">Mi Perfil</h1>
+    </div>
+</header>
+{% endblock %}
+
+{% block content %}
+<div class="container mb-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card card-custom p-4 shadow">
+                
+                <div class="row">
+                    <!-- Columna del Avatar (Visualización) -->
+                    <div class="col-md-4 text-center mb-4 mb-md-0 border-end">
+                        <label class="fw-bold d-block mb-3">Foto de Perfil</label>
+                        {% if user.avatar %}
+                            <img src="{{ user.avatar.url }}" alt="Avatar" 
+                                 class="img-fluid rounded-circle border border-4 border-warning shadow mb-3" 
+                                 style="width: 150px; height: 150px; object-fit: cover;">
+                        {% else %}
+                            <img src="/media/default/default.png" alt="Avatar por defecto" 
+                                 class="img-fluid rounded-circle border border-4 border-warning shadow mb-3" 
+                                 style="width: 150px; height: 150px; object-fit: cover;">
+                        {% endif %}
+                        <p class="text-muted small">Usuario: <strong>{{ user.username }}</strong></p>
+                    </div>
+
+                    <!-- Columna de Información -->
+                    <div class="col-md-8">
+                        <h4 class="fw-bold mb-4" style="color: #d63384;">Información Personal</h4>
+                        
+                        <div class="row g-3">
+                            <!-- Nombre -->
+                            <div class="col-sm-6">
+                                <label class="form-label text-muted small fw-bold">Nombre</label>
+                                <p class="info-field">{{ user.first_name|default:"No especificado" }}</p>
+                            </div>
+
+                            <!-- Apellido -->
+                            <div class="col-sm-6">
+                                <label class="form-label text-muted small fw-bold">Apellido</label>
+                                <p class="info-field">{{ user.last_name|default:"No especificado" }}</p>
+                            </div>
+
+                            <!-- Email -->
+                            <div class="col-12">
+                                <label class="form-label text-muted small fw-bold">Correo Electrónico</label>
+                                <p class="info-field">{{ user.email }}</p>
+                            </div>
+
+                            <!-- Celular -->
+                            <div class="col-sm-6">
+                                <label class="form-label text-muted small fw-bold">Celular</label>
+                                <p class="info-field">{{ user.celular|default:"No especificado" }}</p>
+                            </div>
+
+                            <!-- Dirección -->
+                            <div class="col-12">
+                                <label class="form-label text-muted small fw-bold">Dirección Completa</label>
+                                <p class="info-field">{{ user.direccion|default:"No especificada" }}</p>
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <!-- Botones de Acción -->
+                        <div class="d-flex gap-2 justify-content-end">
+                            <a href="{% url 'home' %}" class="btn btn-outline-secondary fw-bold px-4">
+                                Volver al Inicio
+                            </a>
+                            <!-- Asegúrate de que 'perfil_edit' sea el nombre de la URL de tu vista de edición -->
+                            <a href="{% url 'perfil_edit' %}" class="btn btn-warning fw-bold px-4 shadow-sm">
+                                <i class="bi bi-pencil-square me-1"></i> Editar Perfil
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card-custom {
+        border: none;
+        border-radius: 20px;
+        background: #ffffff;
+    }
+
+    /* Estilo para que los datos parezcan un campo pero no sean editables */
+    .info-field {
+        background-color: #f8f9fa;
+        padding: 0.7rem 1rem;
+        border-radius: 10px;
+        border: 1px solid #e9ecef;
+        margin-bottom: 0;
+        color: #333;
+        min-height: 45px;
+    }
+
+    label {
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 4px;
+        display: block;
+    }
+
+    .card-custom:hover {
+        transform: none !important; /* Evita que suba */
+        box-shadow: 0 10px 20px rgba(0,0,0,0.05) !important; /* Mantiene la sombra normal */
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,166 @@
+{% extends "kiosco/index.html" %}
+
+{% block titulo %}<title>Editar Perfil - Kiosco Sole</title>{% endblock %}
+
+{% block Bienvenida %}
+<header class="hero-section">
+    <div class="container">
+        <h1 class="display-4 fw-bold text-dark">Editar Información</h1>
+        <p class="lead text-dark">Actualiza tus datos personales para mantener tu cuenta al día.</p>
+    </div>
+</header>
+{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-9 col-lg-7">
+            <div class="card card-custom shadow-lg border-0">
+                <div class="card-body p-4 p-md-5">
+                    
+                    <h2 class="text-center fw-bold mb-4" style="color: #d63384;">Editar Mi Perfil</h2>
+
+                    <form method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+
+                        <!-- SECCIÓN DEL AVATAR (PRIMERO) -->
+                        <div class="text-center mb-5">
+                            <div class="position-relative d-inline-block">
+                                {% if user.avatar %}
+                                    <img src="{{ user.avatar.url }}" id="avatar-preview" 
+                                         class="rounded-circle border border-4 border-warning shadow" 
+                                         style="width: 150px; height: 150px; object-fit: cover;">
+                                {% else %}
+                                    <img src="/media/default/default.png" id="avatar-preview" 
+                                         class="rounded-circle border border-4 border-warning shadow" 
+                                         style="width: 150px; height: 150px; object-fit: cover;">
+                                {% endif %}
+                                
+                                <!-- Botón flotante para cambiar imagen -->
+                                <label for="{{ form.avatar.id_for_label }}" class="btn btn-warning btn-sm position-absolute bottom-0 end-0 rounded-circle shadow">
+                                    <i class="bi bi-camera-fill"></i>
+                                </label>
+                                <div class="mt-3">
+                                    <label class="fw-bold d-block small text-uppercase text-muted">Foto de Perfil</label>
+                                    <div class="custom-file-upload mt-2">
+                                        {{ form.avatar }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- SECCIÓN DE INFORMACIÓN -->
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold small text-muted text-uppercase">Nombre</label>
+                                {{ form.first_name }}
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold small text-muted text-uppercase">Apellido</label>
+                                {{ form.last_name }}
+                            </div>
+                            
+                            <div class="col-12">
+                                <label class="form-label fw-bold small text-muted text-uppercase">Correo Electrónico</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-white"><i class="bi bi-envelope text-primary"></i></span>
+                                    {{ form.email }}
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold small text-muted text-uppercase">Celular</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-white"><i class="bi bi-telephone text-success"></i></span>
+                                    {{ form.celular }}
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold small text-muted text-uppercase">Dirección</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-white"><i class="bi bi-geo-alt text-danger"></i></span>
+                                    {{ form.direccion }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <!-- BOTONES -->
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{% url 'perfil_detail' %}" class="btn btn-light fw-bold px-4 border">Cancelar</a>
+                            <button type="submit" class="btn btn-warning fw-bold px-5 shadow-sm">
+                                Guardar Cambios
+                            </button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card-custom {
+        border-radius: 25px;
+        background: #ffffff;
+    }
+
+    /* Estilo para los inputs de texto */
+    input[type="text"], 
+    input[type="email"], 
+    input[type="tel"],
+    .form-control {
+        border-radius: 10px;
+        border: 1px solid #dee2e6;
+        padding: 10px 15px;
+        background-color: #f8f9fa;
+    }
+
+    input:focus {
+        border-color: #ffc107;
+        box-shadow: 0 0 0 0.25rem rgba(255, 193, 7, 0.1);
+        background-color: #fff;
+    }
+
+    /* Input group icons */
+    .input-group-text {
+        border-radius: 10px 0 0 10px;
+        border-right: none;
+    }
+    .input-group .form-control {
+        border-radius: 0 10px 10px 0;
+    }
+
+    /* Ocultar el input de archivo feo de Django pero mantenerlo funcional */
+    input[type="file"] {
+        font-size: 0.8rem;
+        color: #6c757d;
+    }
+
+    /* Estilo para iconos de Bootstrap */
+    .bi-camera-fill {
+        font-size: 1.1rem;
+    }
+
+    .card-custom:hover {
+        transform: none !important; /* Evita que suba */
+        box-shadow: 0 10px 20px rgba(0,0,0,0.05) !important; /* Mantiene la sombra normal */
+    }
+</style>
+
+<!-- Script opcional para ver la imagen antes de subirla -->
+<script>
+    const avatarInput = document.querySelector('input[type="file"]');
+    const preview = document.getElementById('avatar-preview');
+
+    avatarInput.onchange = evt => {
+        const [file] = avatarInput.files;
+        if (file) {
+            preview.src = URL.createObjectURL(file);
+        }
+    }
+</script>
+{% endblock %}

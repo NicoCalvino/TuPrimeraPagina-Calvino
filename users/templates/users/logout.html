@@ -1,0 +1,56 @@
+{% extends "kiosco/index.html" %}
+
+{% block titulo %}<title>Cerrar Sesión - Kiosco Sole</title>{% endblock %}
+
+{% block Bienvenida %}
+<header class="hero-section">
+    <div class="container">
+        <h1 class="display-4 fw-bold text-dark">Cerrar Sesión</h1>
+        <p class="lead text-dark">¿Ya terminaste por hoy?</p>
+    </div>
+</header>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-4">
+            <div class="card card-custom p-5 text-center shadow">
+                <div class="icon-box text-danger">
+                    <i class="bi bi-box-arrow-right"></i>
+                </div>
+                <h3 class="fw-bold mb-4">¿Estás seguro?</h3>
+                <p class="text-muted mb-4">Si cierras sesión, tendrás que volver a ingresar tus credenciales para gestionar los clientes y tarjetas.</p>
+                
+                <div class="d-grid gap-3">
+                    <!-- Formulario para procesar el Logout (Debe ser POST por seguridad en Django) -->
+                    <form action="{% url 'logout' %}" method="POST">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger btn-lg w-100 fw-bold shadow-sm">
+                            Sí, cerrar sesión
+                        </button>
+                    </form>
+                    
+                    <!-- Botón para arrepentirse y volver al inicio -->
+                    <a href="{% url 'home' %}" class="btn btn-outline-secondary btn-lg w-100">
+                        No, quiero quedarme
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Estilo adicional específico para esta página */
+    .btn-danger {
+        background-color: #dc3545;
+        border: none;
+        transition: all 0.3s;
+    }
+    .btn-danger:hover {
+        background-color: #bb2d3b;
+        transform: scale(1.02);
+    }
+</style>
+{% endblock %}

@@ -91,6 +91,7 @@
 </head>
 <body>
 
+    {% block Navbar %}
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-kiosco sticky-top">
         <div class="container">
@@ -107,32 +108,50 @@
                         aria-current="page" 
                         href="{% url 'home' %}">Home</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.resolver_match.url_name == 'lista_productos' %}active{% endif %}" 
-                        href="{% url 'lista_productos' %}">Productos</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.resolver_match.url_name == 'lista_alumnas' %}active{% endif %}" 
-                        href="{% url 'lista_clientes' %}">Clientes</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.resolver_match.url_name == 'lista_tarjetas' %}active{% endif %}" 
-                        href="{% url 'lista_tarjetas' %}">Tarjetas</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/admin">Admin</a>
-                    </li>
+                    {% if user.is_superuser %}
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.resolver_match.url_name == 'lista_alumnas' %}active{% endif %}" 
+                            href="{% url 'lista_clientes' %}">Clientes</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.resolver_match.url_name == 'lista_tarjetas' %}active{% endif %}" 
+                            href="{% url 'lista_tarjetas' %}">Tarjetas</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/admin">Admin</a>
+                        </li>
+                    {% endif %}    
+                    {% if user.is_authenticated %}
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.resolver_match.url_name == 'lista_productos' %}active{% endif %}" 
+                            href="{% url 'lista_productos' %}">Productos</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.resolver_match.url_name == 'perfil_detail' %}active{% endif %}" href="{% url 'perfil_detail' %}">Perfil</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.resolver_match.url_name == 'confirmar_logout' %}active{% endif %}" href="{% url 'confirmar_logout' %}">Cerrar Sesion</a>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.resolver_match.url_name == 'login' %}active{% endif %}" href="{% url 'login' %}">Iniciar Sesion</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.resolver_match.url_name == 'register' %}active{% endif %}" href="{% url 'register' %}">Registrarse</a>
+                        </li>
+                    {% endif %}
                 </ul>
             </div>
         </div>
     </nav>
+    {% endblock %}
 
     <!-- Hero Header -->
     {% block Bienvenida %}
     <header class="hero-section">
         <div class="container">
             <h1 class="display-4 fw-bold text-dark">¡Hola! ¿Qué vamos a comer hoy?</h1>
-            <p class="lead text-dark">Bienvenido al sistema de gestión del kiosco escolar.</p>
+            <p class="lead text-dark">Bienvenido al portal de tu Kiosco</p>
         </div>
     </header>
     {% endblock %}
@@ -142,49 +161,80 @@
     <div class="container">
         <div class="row g-4 justify-content-center">
             
-            <!-- Opción Productos -->
-            <div class="col-md-4 col-lg-3">
-                <div class="card card-custom p-4 text-center h-100 d-flex flex-column position-relative">
-                    <div class="icon-box text-productos">
-                        <i class="bi bi-basket3-fill"></i>
+            {% if user.is_authenticated %}
+                <!-- Opción Productos (Visible para cualquier usuario logueado) -->
+                <div class="col-md-4 col-lg-3">
+                    <div class="card card-custom p-4 text-center h-100 d-flex flex-column position-relative">
+                        <div class="icon-box text-productos">
+                            <i class="bi bi-basket3-fill"></i>
+                        </div>
+                        <h4 class="fw-bold">Productos</h4>
+                        <p class="text-muted small">Ver stock, precios y golosinas disponibles.</p>
+                        
+                        <a href="{% url 'lista_productos' %}" class="btn btn-outline-warning w-100 mt-2 mt-auto stretched-link">Ver Catálogo</a>
                     </div>
-                    <h4 class="fw-bold">Productos</h4>
-                    <p class="text-muted small">Ver stock, precios y golosinas disponibles.</p>
-                    
-                    <a href="{% url 'lista_productos' %}" class="btn btn-outline-warning w-100 mt-2 mt-auto stretched-link">Ver Catálogo</a>
                 </div>
-            </div>
 
-            <!-- Opción Alumnas -->
-            <div class="col-md-4 col-lg-3">
-                <div class="card card-custom p-4 text-center h-100 d-flex flex-column position-relative">
-                    <div class="icon-box text-alumnas">
-                        <i class="bi bi-backpack4-fill"></i>
+                {% if user.is_superuser %}
+                    <!-- Opción Clientes (Solo Admin) -->
+                    <div class="col-md-4 col-lg-3">
+                        <div class="card card-custom p-4 text-center h-100 d-flex flex-column position-relative">
+                            <div class="icon-box text-alumnas">
+                                <i class="bi bi-backpack4-fill"></i>
+                            </div>
+                            <h4 class="fw-bold">Clientes</h4>
+                            <p class="text-muted small">Gestionar cuentas, perfiles y cursos.</p>
+                            
+                            <a href="{% url 'lista_clientes' %}" class="btn btn-outline-primary w-100 mt-2 mt-auto stretched-link">Gestionar</a>
+                        </div>
                     </div>
-                    <h4 class="fw-bold">Clientes</h4>
-                    <p class="text-muted small">Gestionar cuentas, perfiles y cursos.</p>
-                    
-                    <a href="{% url 'lista_clientes' %}" class="btn btn-outline-primary w-100 mt-2 mt-auto stretched-link">Gestionar</a>
-                </div>
-            </div>
 
-            <!-- Opción Tarjetas -->
-            <div class="col-md-4 col-lg-3">
-                <div class="card card-custom p-4 text-center h-100 d-flex flex-column position-relative">
-                    <div class="icon-box text-tarjetas">
-                        <i class="bi bi-credit-card-2-front-fill"></i>
+                    <!-- Opción Tarjetas (Solo Admin) -->
+                    <div class="col-md-4 col-lg-3">
+                        <div class="card card-custom p-4 text-center h-100 d-flex flex-column position-relative">
+                            <div class="icon-box text-tarjetas">
+                                <i class="bi bi-credit-card-2-front-fill"></i>
+                            </div>
+                            <h4 class="fw-bold">Tarjetas</h4>
+                            <p class="text-muted small">Cargar saldo, ver movimientos y NFC.</p>
+                            
+                            <a href="{% url 'lista_tarjetas' %}" class="btn btn-outline-success w-100 mt-2 mt-auto stretched-link">Ir a Saldo</a>
+                        </div>
                     </div>
-                    <h4 class="fw-bold">Tarjetas</h4>
-                    <p class="text-muted small">Cargar saldo, ver movimientos y NFC.</p>
-                    
-                    <a href="{% url 'lista_tarjetas' %}" class="btn btn-outline-success w-100 mt-2 mt-auto stretched-link">Ir a Saldo</a>
+                {% endif %}
+
+            {% else %}
+                <!-- Mensaje amistoso para usuarios NO logueados -->
+                <div class="col-md-8 col-lg-6">
+                    <div class="card card-custom p-5 text-center shadow-lg border-0">
+                        <div class="mb-4">
+                            <i class="bi bi-stars" style="font-size: 3rem; color: #FFC107;"></i>
+                        </div>
+                        <h2 class="fw-bold mb-3">¡Nos encanta verte por aquí!</h2>
+                        <p class="lead text-muted mb-4">
+                            Para ver nuestros productos, consultar precios o gestionar tu saldo, 
+                            necesitamos que ingreses a tu cuenta.
+                        </p>
+                        <div class="p-3 mb-4 rounded-3" style="background-color: #fff9e6; border: 1px dashed #FFC107;">
+                            <p class="mb-0 text-dark">
+                                <strong>¿Aún no eres parte?</strong> Sumate hoy mismo para disfrutar de todos los beneficios del Kiosco.
+                            </p>
+                        </div>
+                        <div class="d-grid gap-3 d-sm-flex justify-content-sm-center">
+                            <a href="{% url 'login' %}" class="btn btn-warning btn-lg px-4 fw-bold">
+                                <i class="bi bi-box-arrow-in-right me-2"></i>Iniciar Sesión
+                            </a>
+                            <a href="{% url 'register' %}" class="btn btn-outline-dark btn-lg px-4">
+                                <i class="bi bi-person-plus me-2"></i>¡Quiero registrarme!
+                            </a>
+                        </div>
+                    </div>
                 </div>
-            </div>
+            {% endif %}
 
         </div>
     </div>
     {% endblock %}
-
     <!-- Footer -->
     <footer>
         <p>&copy; 2025 Kiosco Sole | Abriba</p>

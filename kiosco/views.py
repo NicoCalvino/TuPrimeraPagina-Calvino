@@ -3,37 +3,14 @@ from django.db.models import Q
 from django.db.models.functions import Right 
 from kiosco.models import *
 from kiosco.forms import *
+from django.contrib.auth.decorators import login_required
 
 def home(request):
     return render(request, "kiosco/index.html")
 
 
-# Productos
-# def lista_productos(request):
-#     busqueda = request.GET.get("nombre") 
-#     productos_query = Producto.objects.all()
-#     if busqueda:
-#         productos_query = Producto.objects.filter(
-#             Q(nombre__icontains = busqueda) | Q(marca__icontains=busqueda) | Q(categoria__icontains=busqueda),
-#         )
-#     return render(request, 'kiosco/productos.html',{"productos":productos_query})
-
-# def crear_producto(request):
-#     if request.method == "POST":
-#         form = ProductoForm(request.POST)
-#         if form.is_valid():
-#             form.save()
-#             return redirect("lista_productos")
-#     else:
-#         form = ProductoForm()
-
-#     return render(request, 'kiosco/crear_producto.html', {'form':form})
-
-# def ver_producto(request, pk):
-#     producto = get_object_or_404(Producto, pk=pk)
-#     return render(request, 'kiosco/ver_producto.html', {"producto":producto})
-
 # Clientes
+@login_required
 def lista_clientes(request):
     busqueda = request.GET.get("nombre") 
     clientes_query = Cliente.objects.all()
@@ -43,6 +20,7 @@ def lista_clientes(request):
         )
     return render(request, 'kiosco/clientes.html',{"clientes":clientes_query})
 
+@login_required
 def crear_cliente(request):
     if request.method == "POST":
         form = ClienteForm(request.POST)
@@ -54,10 +32,12 @@ def crear_cliente(request):
 
     return render(request, 'kiosco/crear_cliente.html', {'form':form})
 
+@login_required
 def ver_cliente(request, pk):
     cliente = get_object_or_404(Cliente, pk=pk)
     return render(request, 'kiosco/ver_cliente.html', {"cliente":cliente})
 
+@login_required
 def actualizar_cliente(request, pk):
     cliente = get_object_or_404(Cliente, pk=pk)
     if request.method == "POST":
@@ -72,6 +52,7 @@ def actualizar_cliente(request, pk):
             "cliente":cliente        
         })
 
+@login_required
 def eliminar_cliente(request, pk):
     cliente = get_object_or_404(Cliente, pk=pk)
     if request.method == "POST":
@@ -82,6 +63,7 @@ def eliminar_cliente(request, pk):
     })
 
 # Tarjetas
+@login_required
 def lista_tarjetas(request):
     codigo = request.GET.get("codigo") 
     tarjetas_query = Tarjeta.objects.all()
@@ -93,6 +75,7 @@ def lista_tarjetas(request):
         )
     return render(request, 'kiosco/tarjetas.html',{"tarjetas":tarjetas_query})
 
+@login_required
 def crear_tarjeta(request):
     if request.method == "POST":
         form = TarjetaForm(request.POST)
@@ -104,13 +87,16 @@ def crear_tarjeta(request):
 
     return render(request, 'kiosco/crear_tarjeta.html', {'form':form})
 
+@login_required
 def ver_tarjeta(request, pk):
     tarjeta = get_object_or_404(Tarjeta, pk=pk)
     return render(request, 'kiosco/ver_tarjeta.html', {"tarjeta":tarjeta})
 
+@login_required
 def actualizar_tarjeta(request, pk):
     pass # NO SE CONSIDERA NECESARIO EDITAR LA INFORMACION DE LAS TARJETAS AUN
 
+@login_required
 def eliminar_tarjeta(request, pk):
     tarjeta = get_object_or_404(Tarjeta, pk=pk)
     if request.method == "POST":

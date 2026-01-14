@@ -4,10 +4,6 @@ from kiosco.views import *
 urlpatterns = [
     path("",home, name="home"),
 
-    # path("lista_productos", lista_productos, name="lista_productos"),
-    # path("crear_producto", crear_producto, name="crear_producto"),
-    # path("ver_producto/<int:pk>",ver_producto, name="ver_producto"),
-   
     path("lista_clientes",lista_clientes, name="lista_clientes"),
     path("crear_cliente", crear_cliente, name="crear_cliente"),
     path("ver_cliente/<int:pk>",ver_cliente, name="ver_cliente"),

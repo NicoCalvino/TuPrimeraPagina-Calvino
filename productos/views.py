@@ -4,6 +4,7 @@ from django.db.models import Q
 from django.urls import reverse_lazy
 from productos.models import Producto
 from productos.forms import *
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 class ProductoListView(ListView):
     model = Producto
@@ -19,14 +20,14 @@ class ProductoListView(ListView):
             )
         return queryset
 
-class ProductoDetailView(DetailView):
+class ProductoDetailView(LoginRequiredMixin, DetailView):
     model = Producto
     template_name = "productos/ver_producto.html"
     context_object_name = "producto"
     slug_field ="code"
     slug_url_kwarg = "code"
 
-class ProductoCreateView(CreateView):
+class ProductoCreateView(LoginRequiredMixin, CreateView):
     model = Producto
     template_name = "productos/crear_producto.html"
     form_class = ProductoForm
@@ -37,7 +38,7 @@ class ProductoCreateView(CreateView):
             kwargs={"code":self.object.code}
             )
 
-class ProductoUpdateView(UpdateView):
+class ProductoUpdateView(LoginRequiredMixin, UpdateView):
     model = Producto
     template_name = "productos/crear_producto.html"
     form_class = ProductoForm
@@ -50,7 +51,7 @@ class ProductoUpdateView(UpdateView):
             kwargs={"code":self.object.code}
             )
 
-class ProductoDeleteView(DeleteView):
+class ProductoDeleteView(LoginRequiredMixin, DeleteView):
     model = Producto
     template_name = "productos/confirm_delete.html"
     success_url = reverse_lazy("lista_productos")
