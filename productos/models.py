@@ -5,6 +5,9 @@ import uuid
 def generate_code():
     return uuid.uuid4().hex
 
+def picture_upload_to(instance, filename):
+    return f"productos/{instance.marca}-{instance.nombre}/{filename}"
+
 class Producto(models.Model):
     CATEGORIAS = (
         ("ALFAJORES", "Alfajores"),
@@ -12,6 +15,10 @@ class Producto(models.Model):
         ("GALLETITAS", "Galletitas"),
         ("CHOCOLATES", "Chocolates"),
         ("CARAMELOS", "Caramelos"),
+    )
+    picture = models.ImageField(
+        upload_to=picture_upload_to,
+        verbose_name="Picture"
     )
     nombre = models.CharField(max_length=50, null=False)
     marca = models.CharField(max_length=30, null=False)

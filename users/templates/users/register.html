@@ -63,4 +63,35 @@
         </div>
     </div>
 </div>
+
+<style>
+    /* Estilos específicos para mejorar el formulario */
+    .form-control:focus {
+        border-color: #FFC107;
+        box-shadow: 0 0 0 0.25rem rgba(255, 193, 7, 0.25);
+    }
+    
+    .input-group-text {
+        color: #6c757d;
+    }
+
+    /* Centrar verticalmente en pantallas grandes */
+    @media (min-width: 768px) {
+        .container {
+            margin-top: 5vh;
+        }
+    }
+
+    /* Estilo para el botón de registro para que no compita visualmente con el principal */
+    .btn-outline-primary {
+        border-radius: 10px;
+        transition: all 0.3s;
+    }
+
+    .card-custom:hover {
+        transform: none !important; /* Evita que suba */
+        box-shadow: 0 10px 20px rgba(0,0,0,0.05) !important; /* Mantiene la sombra normal */
+    }
+</style>
+
 {% endblock %}

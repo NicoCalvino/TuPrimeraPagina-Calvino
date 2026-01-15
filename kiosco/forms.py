@@ -1,26 +1,6 @@
 from django import forms
 from kiosco.models import *
 
-# class ProductoForm(forms.ModelForm):
-#     class Meta:
-#         model = Producto
-#         fields = [
-#             "nombre",
-#             "marca",
-#             "categoria",
-#             "precio",
-#             "stock",
-#             "codigo_de_barras"
-#         ]
-#         widgets = {
-#             'nombre':forms.TextInput(attrs={'class':'form-control'}),
-#             'marca':forms.TextInput(attrs={'class':'form-control'}),
-#             'categoria':forms.TextInput(attrs={'class':'form-control'}),
-#             'precio':forms.NumberInput(attrs={'class':'form-control'}),
-#             'stock':forms.NumberInput(attrs={'class':'form-control'}),
-#             'codigo_de_barras':forms.TextInput(attrs={'class':'form-control'}),
-#         }
-
 class ClienteForm(forms.ModelForm):
     class Meta:
         model = Cliente
@@ -43,4 +23,12 @@ class TarjetaForm(forms.ModelForm):
         ]
         widgets = {
             'codigo':forms.TextInput(attrs={'class':'form-control'}),
+        }
+
+class TarjetaSaldoForm(forms.ModelForm):
+    class Meta:
+        model = Tarjeta
+        fields = ["saldo"]
+        widgets = {
+            'saldo':forms.NumberInput(attrs={'class':'form-control'}),
         }

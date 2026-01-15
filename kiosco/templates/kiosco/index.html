@@ -49,7 +49,7 @@
         /* Hero Section */
         .hero-section {
             background: linear-gradient(135deg, #FFC107 0%, #ffdb73 100%);
-            padding: 3rem 1rem;
+            padding: 1rem 1rem;
             border-radius: 0 0 50% 50% / 20px;
             margin-bottom: 3rem;
             text-align: center;
@@ -81,11 +81,45 @@
         .text-tarjetas { color: #198754; }
 
         footer {
-            margin-top: 3rem;
-            padding: 1.5rem;
-            text-align: center;
-            color: #6c757d;
-            font-size: 0.9rem;
+            background-color: #212529; /* Fondo oscuro para contraste */
+            color: #f8f9fa;
+            padding-top: 3rem;
+            margin-top: 20rem;
+        }
+
+        footer h5 {
+            color: #FFC107; /* Amarillo para resaltar títulos */
+            font-weight: 900;
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+            font-size: 1.1rem;
+        }
+
+        footer p, footer li {
+            color: #ced4da;
+            font-size: 0.95rem;
+        }
+
+        footer .social-icons a {
+            font-size: 1.5rem;
+            color: #FFC107;
+            margin-right: 15px;
+            transition: color 0.3s ease;
+        }
+
+        footer .social-icons a:hover {
+            color: #ffffff;
+        }
+
+        footer .footer-bottom {
+            background-color: #1a1d20;
+            padding: 1.5rem 0;
+            margin-top: 2rem;
+            font-size: 0.85rem;
+        }
+
+        footer hr {
+            border-top: 1px solid #495057;
         }
     </style>
 </head>
@@ -118,7 +152,8 @@
                             href="{% url 'lista_tarjetas' %}">Tarjetas</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/admin">Admin</a>
+                            <a class="nav-link {% if request.resolver_match.url_name == 'lista_usuarios' %}active{% endif %}" 
+                            href="{% url 'lista_usuarios' %}">Usuarios</a>
                         </li>
                     {% endif %}    
                     {% if user.is_authenticated %}
@@ -132,6 +167,11 @@
                         <li class="nav-item">
                             <a class="nav-link {% if request.resolver_match.url_name == 'confirmar_logout' %}active{% endif %}" href="{% url 'confirmar_logout' %}">Cerrar Sesion</a>
                         </li>
+                        {% if user.avatar %}
+                            <img src="{{ user.avatar.url }}" alt="Avatar" class="rounded-circle border border-white" style="width: 40px; height: 40px; object-fit: cover;">    
+                        {% else %}
+                            <img src="/media/default/default.png" alt="Avatar" class="rounded-circle border border-white" style="width: 40px; height: 40px; object-fit: cover;">  
+                        {% endif %}
                     {% else %}
                         <li class="nav-item">
                             <a class="nav-link {% if request.resolver_match.url_name == 'login' %}active{% endif %}" href="{% url 'login' %}">Iniciar Sesion</a>
@@ -161,7 +201,7 @@
     <div class="container">
         <div class="row g-4 justify-content-center">
             
-            {% if user.is_authenticated %}
+            {% if user.is_superuser %}
                 <!-- Opción Productos (Visible para cualquier usuario logueado) -->
                 <div class="col-md-4 col-lg-3">
                     <div class="card card-custom p-4 text-center h-100 d-flex flex-column position-relative">
@@ -175,34 +215,76 @@
                     </div>
                 </div>
 
-                {% if user.is_superuser %}
-                    <!-- Opción Clientes (Solo Admin) -->
+                <!-- Opción Clientes (Solo Admin) -->
+                <div class="col-md-4 col-lg-3">
+                    <div class="card card-custom p-4 text-center h-100 d-flex flex-column position-relative">
+                        <div class="icon-box text-alumnas">
+                            <i class="bi bi-backpack4-fill"></i>
+                        </div>
+                        <h4 class="fw-bold">Clientes</h4>
+                        <p class="text-muted small">Gestionar cuentas, perfiles y cursos.</p>
+                        
+                        <a href="{% url 'lista_clientes' %}" class="btn btn-outline-primary w-100 mt-2 mt-auto stretched-link">Gestionar</a>
+                    </div>
+                </div>
+
+                <!-- Opción Tarjetas (Solo Admin) -->
+                <div class="col-md-4 col-lg-3">
+                    <div class="card card-custom p-4 text-center h-100 d-flex flex-column position-relative">
+                        <div class="icon-box text-tarjetas">
+                            <i class="bi bi-credit-card-2-front-fill"></i>
+                        </div>
+                        <h4 class="fw-bold">Tarjetas</h4>
+                        <p class="text-muted small">Cargar saldo, ver movimientos y NFC.</p>
+                        
+                        <a href="{% url 'lista_tarjetas' %}" class="btn btn-outline-success w-100 mt-2 mt-auto stretched-link">Ir a Saldo</a>
+                    </div>
+                </div>
+            {%elif user.is_authenticated %}
+                {% for cliente in clientes %}
                     <div class="col-md-4 col-lg-3">
                         <div class="card card-custom p-4 text-center h-100 d-flex flex-column position-relative">
                             <div class="icon-box text-alumnas">
-                                <i class="bi bi-backpack4-fill"></i>
+                                <i class="bi bi-person-badge-fill"></i>
                             </div>
-                            <h4 class="fw-bold">Clientes</h4>
-                            <p class="text-muted small">Gestionar cuentas, perfiles y cursos.</p>
+                            <h4 class="fw-bold">{{ cliente.nombre }} {{ cliente.apellido }}</h4>
+                            <p class="text-muted small mb-3"><strong>Curso:</strong> {{ cliente.curso }}</p>
                             
-                            <a href="{% url 'lista_clientes' %}" class="btn btn-outline-primary w-100 mt-2 mt-auto stretched-link">Gestionar</a>
+                            <!-- Botón para ver detalles o editar si lo necesitas -->
+                            <div class="mt-auto">
+                                <a href="{% url 'ver_cliente' cliente.pk %}" class="btn btn-outline-primary w-100">Ver Detalles</a>
+                            </div>
                         </div>
                     </div>
+                {% empty %}
+                    <!-- Caso cuando el usuario no tiene clientes registrados -->
+                    <div class="col-md-8 col-lg-6 text-center">
+                        <div class="card card-custom p-5 border-0">
+                            <div class="mb-4">
+                                <i class="bi bi-people text-muted" style="font-size: 3rem;"></i>
+                            </div>
+                            <h3 class="fw-bold">Aún no tienes clientes</h3>
+                            <p class="text-muted">Parece que todavía no has registrado a nadie. ¡Comienza ahora mismo!</p>
+                            <a href="{% url 'crear_cliente' %}" class="btn btn-warning fw-bold px-4">
+                                <i class="bi bi-plus-lg me-2"></i>Registrar mi primer cliente
+                            </a>
+                        </div>
+                    </div>
+                {% endfor %}
 
-                    <!-- Opción Tarjetas (Solo Admin) -->
-                    <div class="col-md-4 col-lg-3">
-                        <div class="card card-custom p-4 text-center h-100 d-flex flex-column position-relative">
-                            <div class="icon-box text-tarjetas">
-                                <i class="bi bi-credit-card-2-front-fill"></i>
+                <!-- Botón flotante o tarjeta extra para agregar más clientes si ya existen algunos -->
+                {% if clientes %}
+                <div class="col-md-4 col-lg-3">
+                    <a href="{% url 'crear_cliente' %}" class="text-decoration-none h-100">
+                        <div class="card card-custom p-4 text-center h-100 d-flex flex-column justify-content-center border-dashed" style="border: 2px dashed #dee2e6; background: transparent;">
+                            <div class="icon-box text-muted">
+                                <i class="bi bi-plus-circle-dotted"></i>
                             </div>
-                            <h4 class="fw-bold">Tarjetas</h4>
-                            <p class="text-muted small">Cargar saldo, ver movimientos y NFC.</p>
-                            
-                            <a href="{% url 'lista_tarjetas' %}" class="btn btn-outline-success w-100 mt-2 mt-auto stretched-link">Ir a Saldo</a>
+                            <h5 class="fw-bold text-muted">Agregar otro</h5>
                         </div>
-                    </div>
+                    </a>
+                </div>
                 {% endif %}
-
             {% else %}
                 <!-- Mensaje amistoso para usuarios NO logueados -->
                 <div class="col-md-8 col-lg-6">
@@ -237,7 +319,54 @@
     {% endblock %}
     <!-- Footer -->
     <footer>
-        <p>&copy; 2025 Kiosco Sole | Abriba</p>
+        <div class="container">
+            <div class="row">
+                <!-- Columna: Nosotros -->
+                <div class="col-lg-4 col-md-6 mb-4 mb-lg-0">
+                    <h5><i class="bi bi-shop-window me-2"></i>Kiosco Sole</h5>
+                    <p>
+                        Somos el corazón del barrio, brindando los mejores snacks, bebidas y la atención más cálida desde 2015. 
+                        Tu parada obligatoria para endulzar el día.
+                    </p>
+                </div>
+
+                <!-- Columna: Contacto -->
+                <div class="col-lg-4 col-md-6 mb-4 mb-lg-0">
+                    <h5>Contacto</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2">
+                            <i class="bi bi-geo-alt-fill text-warning me-2"></i> Av. Principal 1234, Ciudad
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-telephone-fill text-warning me-2"></i> +54 9 11 1234-5678
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-envelope-fill text-warning me-2"></i> contacto@kioscosole.com
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-clock-fill text-warning me-2"></i> Lun - Sáb: 08:00 a 22:00
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Columna: Redes Sociales -->
+                <div class="col-lg-4 col-md-12 text-center text-lg-start">
+                    <h5>Seguinos</h5>
+                    <p>Enterate de nuestras ofertas y nuevos ingresos.</p>
+                    <div class="social-icons">
+                        <a href="https://facebook.com" target="_blank"><i class="bi bi-facebook"></i></a>
+                        <a href="https://instagram.com" target="_blank"><i class="bi bi-instagram"></i></a>
+                        <a href="#" target="_blank"><i class="bi bi-whatsapp"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Copyright -->
+        <div class="footer-bottom text-center">
+            <div class="container">
+                <p class="mb-0">&copy; 2025 <strong>Kiosco Sole</strong>. Todos los derechos reservados. Desarrollado por <span class="text-warning">Abriba</span></p>
+            </div>
+        </div>
     </footer>
 
     <!-- Bootstrap JS (Versión estable) -->

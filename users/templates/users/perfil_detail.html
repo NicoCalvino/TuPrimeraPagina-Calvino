@@ -20,8 +20,8 @@
                     <!-- Columna del Avatar (Visualización) -->
                     <div class="col-md-4 text-center mb-4 mb-md-0 border-end">
                         <label class="fw-bold d-block mb-3">Foto de Perfil</label>
-                        {% if user.avatar %}
-                            <img src="{{ user.avatar.url }}" alt="Avatar" 
+                        {% if user_profile.avatar %}
+                            <img src="{{ user_profile.avatar.url }}" alt="Avatar" 
                                  class="img-fluid rounded-circle border border-4 border-warning shadow mb-3" 
                                  style="width: 150px; height: 150px; object-fit: cover;">
                         {% else %}
@@ -29,7 +29,7 @@
                                  class="img-fluid rounded-circle border border-4 border-warning shadow mb-3" 
                                  style="width: 150px; height: 150px; object-fit: cover;">
                         {% endif %}
-                        <p class="text-muted small">Usuario: <strong>{{ user.username }}</strong></p>
+                        <p class="text-muted small">Usuario: <strong>{{ user_profile.username }}</strong></p>
                     </div>
 
                     <!-- Columna de Información -->
@@ -40,31 +40,31 @@
                             <!-- Nombre -->
                             <div class="col-sm-6">
                                 <label class="form-label text-muted small fw-bold">Nombre</label>
-                                <p class="info-field">{{ user.first_name|default:"No especificado" }}</p>
+                                <p class="info-field">{{ user_profile.first_name|default:"No especificado" }}</p>
                             </div>
 
                             <!-- Apellido -->
                             <div class="col-sm-6">
                                 <label class="form-label text-muted small fw-bold">Apellido</label>
-                                <p class="info-field">{{ user.last_name|default:"No especificado" }}</p>
+                                <p class="info-field">{{ user_profile.last_name|default:"No especificado" }}</p>
                             </div>
 
                             <!-- Email -->
                             <div class="col-12">
                                 <label class="form-label text-muted small fw-bold">Correo Electrónico</label>
-                                <p class="info-field">{{ user.email }}</p>
+                                <p class="info-field">{{ user_profile.email }}</p>
                             </div>
 
                             <!-- Celular -->
                             <div class="col-sm-6">
                                 <label class="form-label text-muted small fw-bold">Celular</label>
-                                <p class="info-field">{{ user.celular|default:"No especificado" }}</p>
+                                <p class="info-field">{{ user_profile.celular|default:"No especificado" }}</p>
                             </div>
 
                             <!-- Dirección -->
                             <div class="col-12">
                                 <label class="form-label text-muted small fw-bold">Dirección Completa</label>
-                                <p class="info-field">{{ user.direccion|default:"No especificada" }}</p>
+                                <p class="info-field">{{ user_profile.direccion|default:"No especificada" }}</p>
                             </div>
                         </div>
 
@@ -75,10 +75,11 @@
                             <a href="{% url 'home' %}" class="btn btn-outline-secondary fw-bold px-4">
                                 Volver al Inicio
                             </a>
-                            <!-- Asegúrate de que 'perfil_edit' sea el nombre de la URL de tu vista de edición -->
-                            <a href="{% url 'perfil_edit' %}" class="btn btn-warning fw-bold px-4 shadow-sm">
-                                <i class="bi bi-pencil-square me-1"></i> Editar Perfil
-                            </a>
+                            {% if request.user == user_profile %}
+                                <a href="{% url 'perfil_edit' %}" class="btn btn-warning fw-bold px-4 shadow-sm">
+                                    <i class="bi bi-pencil-square me-1"></i> Editar Perfil
+                                </a>
+                            {% endif %}
                         </div>
                     </div>
                 </div>

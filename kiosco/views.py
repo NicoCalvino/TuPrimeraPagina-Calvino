@@ -3,14 +3,19 @@ from django.db.models import Q
 from django.db.models.functions import Right 
 from kiosco.models import *
 from kiosco.forms import *
-from django.contrib.auth.decorators import login_required
+from decimal import Decimal
+from django.contrib.auth.decorators import login_required, user_passes_test
 
 def home(request):
-    return render(request, "kiosco/index.html")
+    clientes =  Cliente.objects.none()
+    if request.user.is_authenticated:
+        clientes = Cliente.objects.filter(usuario=request.user)
+    
+    return render(request, "kiosco/index.html", {'clientes': clientes})
 
 
 # Clientes
-@login_required
+@user_passes_test(lambda u: u.is_superuser)
 def lista_clientes(request):
     busqueda = request.GET.get("nombre") 
     clientes_query = Cliente.objects.all()
@@ -25,8 +30,10 @@ def crear_cliente(request):
     if request.method == "POST":
         form = ClienteForm(request.POST)
         if form.is_valid():
-            form.save()
-            return redirect("lista_clientes")
+            cliente = form.save(commit=False)
+            cliente.usuario = request.user
+            cliente.save()
+            return redirect("home")
     else:
         form = ClienteForm()
 
@@ -47,23 +54,24 @@ def actualizar_cliente(request, pk):
             return redirect("ver_cliente",pk = cliente.pk)
     else:
         form = ClienteForm(instance=cliente)
-        return render(request, "kiosco/crear_cliente.html",{
-            "form":form,
-            "cliente":cliente        
-        })
+
+    return render(request, "kiosco/crear_cliente.html",{
+        "form":form,
+        "cliente":cliente        
+    })
 
 @login_required
 def eliminar_cliente(request, pk):
     cliente = get_object_or_404(Cliente, pk=pk)
     if request.method == "POST":
         cliente.delete()
-        return redirect('lista_clientes')
+        return redirect('home')
     return render(request, "kiosco/eliminar_cliente.html",{
         "cliente":cliente
     })
 
 # Tarjetas
-@login_required
+@user_passes_test(lambda u: u.is_superuser)
 def lista_tarjetas(request):
     codigo = request.GET.get("codigo") 
     tarjetas_query = Tarjeta.objects.all()
@@ -75,7 +83,7 @@ def lista_tarjetas(request):
         )
     return render(request, 'kiosco/tarjetas.html',{"tarjetas":tarjetas_query})
 
-@login_required
+@user_passes_test(lambda u: u.is_superuser)
 def crear_tarjeta(request):
     if request.method == "POST":
         form = TarjetaForm(request.POST)
@@ -87,16 +95,34 @@ def crear_tarjeta(request):
 
     return render(request, 'kiosco/crear_tarjeta.html', {'form':form})
 
-@login_required
+@user_passes_test(lambda u: u.is_superuser)
 def ver_tarjeta(request, pk):
     tarjeta = get_object_or_404(Tarjeta, pk=pk)
-    return render(request, 'kiosco/ver_tarjeta.html', {"tarjeta":tarjeta})
+    return render(request, 'kiosco/ver_tarjeta.html', {'tarjeta':tarjeta})
 
-@login_required
+@user_passes_test(lambda u: u.is_superuser)
 def actualizar_tarjeta(request, pk):
-    pass # NO SE CONSIDERA NECESARIO EDITAR LA INFORMACION DE LAS TARJETAS AUN
+    tarjeta = get_object_or_404(Tarjeta, pk=pk)
+    if request.method == "POST":
+        monto_str = request.POST.get("monto")
+        if monto_str:
+            try:
+                monto_a_sumar = Decimal(monto_str)
+                tarjeta.saldo += monto_a_sumar
+                tarjeta.save()
 
-@login_required
+                return redirect("ver_tarjeta",pk = tarjeta.pk)
+            except ValueError:
+                form = TarjetaSaldoForm(instance=tarjeta)
+    else:
+        form = TarjetaSaldoForm(instance=tarjeta)
+
+    return render(request, "kiosco/saldo_tarjeta.html",{
+        "form":form,
+        "tarjeta":tarjeta        
+    })
+
+@user_passes_test(lambda u: u.is_superuser)
 def eliminar_tarjeta(request, pk):
     tarjeta = get_object_or_404(Tarjeta, pk=pk)
     if request.method == "POST":

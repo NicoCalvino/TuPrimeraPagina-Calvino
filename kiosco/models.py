@@ -1,7 +1,9 @@
 from django.db import models
 from django.core.validators import MinValueValidator
+from django.conf import settings
 
 class Cliente(models.Model):
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='clientes', null=False)
     nombre = models.CharField(max_length=50, null=False)
     apellido = models.CharField(max_length=50, null=False)
     curso = models.CharField(max_length=10, null=False)
@@ -18,15 +20,3 @@ class Tarjeta(models.Model):
 
     def __str__(self):
         return f"Tarjeta: {self.codigo} / Saldo: $ {self.saldo}"
-
-# class Producto(models.Model):
-#     nombre = models.CharField(max_length=50, null=False)
-#     marca = models.CharField(max_length=30, null=False)
-#     categoria = models.CharField(max_length=30, null=False)
-#     precio = models.DecimalField(max_digits=8, decimal_places=2)
-#     stock = models.IntegerField(default=0, validators=[MinValueValidator(0)])
-#     codigo_de_barras = models.CharField(max_length=13, null=False)
-
-#     def __str__(self):
-#         return f"{self.nombre} {self.marca}/ Precio: $ {self.precio}/ Stock: {self.stock}"
-

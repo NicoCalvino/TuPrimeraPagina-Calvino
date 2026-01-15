@@ -40,7 +40,6 @@
                         <!-- Saldo Grande -->
                         <div class="bg-white px-4 py-3 rounded-3 shadow-sm border border-1 w-100">
                             <span class="text-muted small text-uppercase fw-bold">Saldo Disponible</span>
-                            <!-- Lógica de color para el saldo: Rojo si es bajo, Verde si está bien -->
                             <h2 class="display-5 fw-bold mb-0 {% if tarjeta.saldo <= 0 %}text-danger{% else %}text-success{% endif %}">
                                 $ {{ tarjeta.saldo }}
                             </h2>
@@ -52,17 +51,24 @@
                         
                         <!-- Encabezado: Alumna Asociada -->
                         <div class="mb-4">
-                            <small class="text-muted fw-bold text-uppercase tracking-wide">
-                                <!-- El icono siempre se muestra, así que va fuera -->
-                                <i class="bi bi-person-circle me-1"></i> 
-                                
-                                <!-- Aquí solo cambiamos el texto -->
-                                {% if tarjeta.alumna %}
-                                    {{ tarjeta.alumna }}
-                                {% else %}
-                                    Sin Alumna Asociada
+                            <div class="d-flex align-items-center flex-wrap">
+                                <small class="text-muted fw-bold text-uppercase tracking-wide">
+                                    <i class="bi bi-person-circle me-1"></i> 
+                                    {% if tarjeta.alumna %}
+                                        {{ tarjeta.alumna }}
+                                    {% else %}
+                                        Sin Alumna Asociada
+                                    {% endif %}
+                                </small>
+
+                                <!-- Botón para asociar alumna (solo si no tiene una) -->
+                                {% if not tarjeta.alumna %}
+                                    <a href="#" class="btn btn-sm btn-outline-primary rounded-pill ms-3">
+                                        <i class="bi bi-person-plus-fill me-1"></i> Asociar Alumna
+                                    </a>
                                 {% endif %}
-                            </small>
+                            </div>
+
                             <h1 class="fw-bold text-dark mt-2 mb-3">{{ tarjeta.alumna_asociada }}</h1>
                             <!-- Barra separadora -->
                             <div style="width: 50px; height: 5px; background-color: #0d6efd; border-radius: 10px;"></div>
@@ -112,14 +118,9 @@
 
                         <!-- Botonera de Acciones -->
                         <div class="mt-auto d-flex gap-2 flex-wrap">
-                            <!-- Botón Cargar Saldo (Ejemplo de acción útil para tarjetas) -->
-                            <a href="#" class="btn btn-success btn-lg rounded-pill px-4 flex-grow-1">
+                            <!-- Botón Cargar Saldo -->
+                            <a href="{% url 'actualizar_tarjeta' tarjeta.pk %}" class="btn btn-success btn-lg rounded-pill px-4 flex-grow-1">
                                 <i class="bi bi-cash-coin me-2"></i> Cargar Saldo
-                            </a>
-
-                            <!-- Botón Editar -->
-                            <a href="#" class="btn btn-outline-primary btn-lg rounded-pill px-4">
-                                <i class="bi bi-pencil-square"></i>
                             </a>
                             
                              <!-- Botón Eliminar / Dar de baja -->
