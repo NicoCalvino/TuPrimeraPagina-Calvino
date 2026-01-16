@@ -69,10 +69,10 @@
 
                                 <!-- NUEVA Columna: Alumna -->
                                 <td>
-                                    {% if tarjeta.alumna %}
-                                        <span class="text-dark"><i class="bi bi-person me-1"></i>{{ tarjeta.alumna }}</span>
+                                    {% if tarjeta.cliente %}
+                                        <span class="text-dark"><i class="bi bi-person me-1"></i>{{ tarjeta.cliente }}</span>
                                     {% else %}
-                                        <a href="#" class="btn btn-sm btn-outline-primary rounded-pill py-0 px-2" style="font-size: 0.75rem;">
+                                        <a href="{% url 'asociar_tarjeta' tarjeta.pk %}" class="btn btn-sm btn-outline-primary rounded-pill py-0 px-2" style="font-size: 0.75rem;">
                                             <i class="bi bi-person-plus-fill"></i> Asociar
                                         </a>
                                     {% endif %}
@@ -88,7 +88,7 @@
                                 <!-- Columna: Botones de Acción -->
                                 <td class="pe-4 text-end">
                                     <!-- Botón Cargar Saldo -->
-                                    <a href="{% url 'actualizar_tarjeta' tarjeta.pk %}" class="btn btn-sm btn-light text-success rounded-circle" title="Cargar Saldo">
+                                    <a href="#" class="btn btn-sm btn-light text-success rounded-circle" title="Cargar Saldo">
                                         <i class="bi bi-cash-coin"></i>
                                     </a>
 

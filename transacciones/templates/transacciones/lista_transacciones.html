@@ -1,0 +1,75 @@
+{% extends 'kiosco/index.html' %} 
+
+{% block titulo %}
+<title>Kiosco Sole - Transacciones</title>
+{% endblock %} 
+
+{% block content %}
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold text-dark">Historial de Transacciones</h2>
+        <div class="d-flex align-items-center">
+            <div class="btn-group me-3" role="group" aria-label="Filtro de Transacciones">
+                <a href="{% url 'lista_transacciones' %}?concepto=todo" class="btn {% if not request.GET.concepto or request.GET.concepto == 'todo' %}btn-warning{% else %}btn-outline-warning{% endif %} fw-bold">TODO</a>
+                <a href="{% url 'lista_transacciones' %}?concepto=carga" class="btn {% if request.GET.concepto == 'carga' %}btn-warning{% else %}btn-outline-warning{% endif %} fw-bold">CARGAS</a>
+                <a href="{% url 'lista_transacciones' %}?concepto=compra" class="btn {% if request.GET.concepto == 'compra' %}btn-warning{% else %}btn-outline-warning{% endif %} fw-bold">COMPRAS</a>
+            </div>
+                <a href="{% url 'nueva_compra' %}" class="btn btn-primary fw-bold me-2">
+                    <i class="bi bi-cart-plus-fill me-2"></i>Nueva Compra
+                </a>
+                <a href="{% url 'cargar_saldo' %}" class="btn btn-success fw-bold">
+                    <i class="bi bi-wallet-fill me-2"></i>Cargar Saldo
+                </a>
+        </div>
+    </div>
+
+    <div class="card card-custom p-4">
+        {% if transacciones %}
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead>
+                    <tr>
+                        <th scope="col">Fecha</th>
+                        <th scope="col">Tarjeta</th>
+                        <th scope="col">Concepto</th>
+                        <th scope="col">Monto</th>
+                        <th scope="col">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for transaccion in transacciones %}
+                    <tr>
+                        <td>{{ transaccion.fecha|date:"d/m/Y H:i" }}</td>
+                        <td>{{ transaccion.tarjeta.codigo }}</td>
+                        <td>{{ transaccion.concepto }}</td>
+                        <td>${{ transaccion.monto|floatformat:2 }}</td>
+                        <td>
+                            <a href="#"
+                                class="btn btn-outline-info btn-sm">
+                                <i class="bi bi-eye"></i> Ver Detalles
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="alert alert-info text-center" role="alert">
+            <h4 class="alert-heading">¡No hay transacciones aún!</h4>
+            <p>Parece que todavía no se ha registrado ninguna transacción. ¡Comienza a operar ahora!</p>
+            <hr>
+            <a href="#" class="btn btn-warning fw-bold">
+                <i class="bi bi-plus-lg me-2"></i>Registrar primera transacción
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+<style>
+    .card-custom:hover {
+        transform: none !important;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.05) !important;
+    }
+</style>
+{% endblock %}

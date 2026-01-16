@@ -1,0 +1,80 @@
+{% extends 'kiosco/index.html' %} 
+
+{% block titulo %}
+<title>Kiosco Sole - Cargar Compra</title>
+{% endblock %} 
+
+{% block Bienvenida %}
+    <header class="hero-section">
+        <div class="container">
+            <h1 class="display-4 fw-bold text-dark">Registrar Nueva Compra</h1>
+            <p class="lead text-dark">Ingresa el monto, número de tarjeta y un detalle si es necesario.</p>
+        </div>
+    </header>
+    {% endblock %}
+
+    <!-- Contenido Principal -->
+    {% block content %}
+    <div class="container my-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 col-md-10">
+                <div class="card card-custom p-4 shadow-sm">
+                    <h3 class="mb-4 text-center fw-bold text-products">
+                        <i class="bi bi-cart-plus me-2"></i>Carga de Compra
+                    </h3>
+                    <form method="post" action="#">
+                        {% csrf_token %}
+
+                        <div class="mb-3">
+                            <label for="{{ form.monto.id_for_label }}" class="form-label fw-bold">Monto de la Compra</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-currency-dollar"></i></span>
+                                {{ form.monto }} {# Aquí Django renderiza el input con sus atributos del widget #}
+                            </div>
+                            {% if form.monto.errors %}
+                                <div class="alert alert-danger mt-1">{{ form.monto.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.numero_tarjeta.id_for_label }}" class="form-label fw-bold">Número de Tarjeta</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-credit-card"></i></span>
+                                {{ form.numero_tarjeta }} {# Django renderiza el input #}
+                            </div>
+                             {% if form.numero_tarjeta.errors %}
+                                <div class="alert alert-danger mt-1">{{ form.numero_tarjeta.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.detalle.id_for_label }}" class="form-label fw-bold">Detalle Extra</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-pencil-square"></i></span>
+                                {{ form.detalle }} {# Django renderiza el textarea #}
+                            </div>
+                             {% if form.detalle.errors %}
+                                <div class="alert alert-danger mt-1">{{ form.detalle.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="d-grid gap-2 mt-4">
+                            <button type="submit" class="btn btn-warning btn-lg fw-bold">
+                                <i class="bi bi-check-circle-fill me-2"></i>Guardar Compra
+                            </button>
+                            <a href="{% url 'home' %}" class="btn btn-outline-secondary btn-lg">
+                                <i class="bi bi-x-circle me-2"></i>Cancelar
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <style>
+        .card-custom:hover {
+            transform: none !important;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05) !important;
+        }
+    </style>
+    {% endblock %}

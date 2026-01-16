@@ -20,9 +20,9 @@ class ClienteAdmin(admin.ModelAdmin):
     
 @admin.register(Tarjeta)
 class TarjetaAdmin(admin.ModelAdmin):
-    list_display = ("codigo","saldo","fecha_activacion","alumna")
+    list_display = ("codigo","saldo","fecha_activacion","cliente")
     list_display_links = ("codigo",)
-    search_fields = ("codigo","id_alumna")
+    search_fields = ("codigo","id_cliente")
     #Filtros laterales
     list_filter = ("fecha_activacion",)
     #Orden por defecto

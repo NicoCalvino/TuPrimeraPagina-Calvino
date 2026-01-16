@@ -20,7 +20,7 @@ class ProductoListView(ListView):
         query = self.request.GET.get("nombre")
         if query:
             queryset = queryset.filter(
-                Q(nombre__icontains = queryset) | Q(marca__icontains=queryset) | Q(categoria__icontains=queryset)
+                Q(nombre__icontains = query) | Q(marca__icontains=query) | Q(categoria__icontains=query)
             )
         return queryset
 

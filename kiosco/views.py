@@ -101,26 +101,59 @@ def ver_tarjeta(request, pk):
     return render(request, 'kiosco/ver_tarjeta.html', {'tarjeta':tarjeta})
 
 @user_passes_test(lambda u: u.is_superuser)
-def actualizar_tarjeta(request, pk):
+def asociar_tarjeta(request, pk):
     tarjeta = get_object_or_404(Tarjeta, pk=pk)
-    if request.method == "POST":
-        monto_str = request.POST.get("monto")
-        if monto_str:
-            try:
-                monto_a_sumar = Decimal(monto_str)
-                tarjeta.saldo += monto_a_sumar
-                tarjeta.save()
+    busqueda_cliente = request.GET.get("nombre") 
+    clientes_query = Cliente.objects.all()
+    if busqueda_cliente:
+        clientes_query = Cliente.objects.filter(
+            Q(nombre__icontains = busqueda_cliente) | Q(apellido__icontains=busqueda_cliente),
+        )
 
-                return redirect("ver_tarjeta",pk = tarjeta.pk)
-            except ValueError:
-                form = TarjetaSaldoForm(instance=tarjeta)
-    else:
-        form = TarjetaSaldoForm(instance=tarjeta)
-
-    return render(request, "kiosco/saldo_tarjeta.html",{
-        "form":form,
-        "tarjeta":tarjeta        
+    return render(request, 'kiosco/asociar_cliente_lista.html', {
+        'tarjeta': tarjeta,
+        'clientes': clientes_query,
+        'query': busqueda_cliente
     })
+
+def asociar_tarjeta_confirmar(request, pk, cliente_pk):
+    tarjeta = get_object_or_404(Tarjeta, pk=pk)
+    cliente = get_object_or_404(Cliente, pk=cliente_pk)
+
+    if request.method == 'POST':
+        tarjeta.cliente = cliente
+        tarjeta.save()
+
+        return redirect('ver_tarjeta', pk=tarjeta.pk)
+    
+    return render(request, 'kiosco/asociar_cliente_confirmar.html', {
+        'tarjeta': tarjeta,
+        'cliente': cliente
+    })
+
+
+
+# @user_passes_test(lambda u: u.is_superuser)
+# def actualizar_tarjeta(request, pk):
+#     tarjeta = get_object_or_404(Tarjeta, pk=pk)
+#     if request.method == "POST":
+#         monto_str = request.POST.get("monto")
+#         if monto_str:
+#             try:
+#                 monto_a_sumar = Decimal(monto_str)
+#                 tarjeta.saldo += monto_a_sumar
+#                 tarjeta.save()
+
+#                 return redirect("ver_tarjeta",pk = tarjeta.pk)
+#             except ValueError:
+#                 form = TarjetaSaldoForm(instance=tarjeta)
+#     else:
+#         form = TarjetaSaldoForm(instance=tarjeta)
+
+#     return render(request, "kiosco/saldo_tarjeta.html",{
+#         "form":form,
+#         "tarjeta":tarjeta        
+#     })
 
 @user_passes_test(lambda u: u.is_superuser)
 def eliminar_tarjeta(request, pk):

@@ -13,6 +13,8 @@ urlpatterns = [
     path("lista_tarjetas",lista_tarjetas, name="lista_tarjetas"),
     path("crear_tarjeta", crear_tarjeta, name="crear_tarjeta"),
     path("ver_tarjeta/<int:pk>",ver_tarjeta, name="ver_tarjeta"),
-    path("saldo_tarjeta/<int:pk>",actualizar_tarjeta, name="actualizar_tarjeta"),
+    path("ver_tarjeta/<int:pk>/asociar/", asociar_tarjeta, name="asociar_tarjeta"),
+    path("ver_tarjeta/<int:pk>/asociar/<int:cliente_pk>/", asociar_tarjeta_confirmar, name="asociar_tarjeta_confirmar"),
+    #path("saldo_tarjeta/<int:pk>",actualizar_tarjeta, name="actualizar_tarjeta"),
     path("eliminar_tarjeta/<int:pk>",eliminar_tarjeta, name="eliminar_tarjeta"),
 ]

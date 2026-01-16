@@ -9,12 +9,12 @@ class Cliente(models.Model):
     curso = models.CharField(max_length=10, null=False)
 
     def __str__(self):
-        return f"Cliente: {self.nombre} {self.apellido}"
+        return f"{self.nombre} {self.apellido} - {self.curso}"
 
 class Tarjeta(models.Model):
     codigo = models.CharField(max_length=15, null=False)
     saldo = models.DecimalField(max_digits=10, decimal_places=2, default=0, validators=[MinValueValidator(-2000)])
-    alumna = models.ForeignKey(Cliente, on_delete=models.CASCADE, null=True)
+    cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE, null=True)
     fecha_activacion = models.DateTimeField(auto_now_add=True)
     fecha_ultima_modificacion = models.DateTimeField(auto_now=True)
 

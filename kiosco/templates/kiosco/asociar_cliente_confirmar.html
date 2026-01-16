@@ -1,0 +1,90 @@
+{% extends 'kiosco/index.html' %}
+
+{% block titulo %}<title>Confirmar Asociación - Kiosco Sole</title> {% endblock %}
+
+{% block Bienvenida %} {% endblock %}
+
+{% block content %} 
+
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            
+            <!-- Encabezado -->
+            <div class="text-center mb-4">
+                <h2 class="fw-bold" style="color: #333;">🤝 Confirmar Asociación</h2>
+                <p class="text-muted">Por favor, verifica los datos antes de continuar.</p>
+            </div>
+
+            <!-- Card de Confirmación -->
+            <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
+                <div class="card-body p-4">
+                    
+                    <div class="row align-items-center text-center">
+                        <!-- Lado de la Tarjeta -->
+                        <div class="col-5">
+                            <div class="rounded-4 bg-light p-3 mb-2">
+                                <i class="bi bi-credit-card-2-back text-primary fs-1"></i>
+                            </div>
+                            <h6 class="mb-0 fw-bold">Tarjeta</h6>
+                            <p class="text-primary mb-0 small">#{{ tarjeta.id }}</p>
+                            <span class="badge bg-secondary rounded-pill">{{ tarjeta.codigo }}</span>
+                        </div>
+
+                        <!-- Flecha de unión -->
+                        <div class="col-2">
+                            <i class="bi bi-arrow-right-circle-fill text-muted fs-3"></i>
+                        </div>
+
+                        <!-- Lado del Cliente -->
+                        <div class="col-5">
+                            <div class="rounded-4 bg-light p-3 mb-2">
+                                <i class="bi bi-person-check text-success fs-1"></i>
+                            </div>
+                            <h6 class="mb-0 fw-bold">Cliente</h6>
+                            <p class="text-dark mb-0 small">{{ cliente.apellido }}, {{ cliente.nombre }}</p>
+                            <span class="badge bg-primary bg-opacity-10 text-primary rounded-pill px-2 small">
+                                {{ cliente.curso }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <hr class="my-4 text-muted opacity-25">
+
+                    <!-- Mensaje de advertencia si la tarjeta ya tenía dueño -->
+                    {% if tarjeta.cliente %}
+                    <div class="alert alert-warning border-0 rounded-3 small mb-4" role="alert">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        Esta tarjeta ya pertenece a <strong>{{ tarjeta.cliente.nombre }}</strong>. Se reasignará al nuevo cliente.
+                    </div>
+                    {% endif %}
+
+                    <!-- Formulario de Acción -->
+                    <form method="POST">
+                        {% csrf_token %}
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success btn-lg rounded-pill shadow-sm">
+                                <i class="bi bi-check-lg"></i> Confirmar y Asociar
+                            </button>
+                            <a href="{% url 'asociar_tarjeta' tarjeta.id %}" class="btn btn-link text-muted text-decoration-none small">
+                                Cancelar y volver a la lista
+                            </a>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+
+            <!-- Información Adicional -->
+            <div class="text-center mt-4">
+                <p class="text-muted small">
+                    <i class="bi bi-info-circle me-1"></i>
+                    Al confirmar, el cliente podrá empezar a operar con esta tarjeta de forma inmediata.
+                </p>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,102 @@
+{% extends 'kiosco/index.html' %}
+
+{% block titulo %}<title>Asociar Cliente - Kiosco Sole</title> {% endblock %}
+
+{% block Bienvenida %} {% endblock %}
+
+{% block content %} 
+
+<div class="container my-5">
+    
+    <div class="row justify-content-center">
+        <div class="col-md-10 col-lg-8">
+
+            <!-- Encabezado de la sección -->
+            <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+                
+                <!-- Título -->
+                <div>
+                    <h2 class="fw-bold mb-0" style="color: #333;">💳 Asociar Cliente</h2>
+                    <p class="text-muted mb-0 small">Selecciona un cliente para la tarjeta: <strong>#{{ tarjeta.id }}</strong></p>
+                </div>
+                
+                <!-- Barra de Herramientas (Búsqueda y Botones) -->
+                <div class="d-flex align-items-center gap-2">
+                    <!-- Formulario de Búsqueda -->
+                    <form class="d-flex" role="search" method="GET">
+                        <div class="input-group input-group-sm">
+                            <span class="input-group-text bg-white border-end-0 rounded-start-pill ps-3">
+                                <i class="bi bi-search text-muted small"></i>
+                            </span>
+                            <!-- Mantener el nombre del campo como 'nombre' para que coincida con tu vista -->
+                            <input class="form-control border-start-0 rounded-end-pill form-control-sm" type="search" placeholder="Buscar cliente..." name="nombre" value="{{ request.GET.nombre }}" aria-label="Search" style="max-width: 150px;">
+                        </div>
+                    </form>
+
+                    <!-- Botón Volver al detalle de la tarjeta -->
+                    <a href="{% url 'ver_tarjeta' tarjeta.id %}" class="btn btn-outline-secondary btn-sm rounded-pill px-3" title="Cancelar y volver">
+                        <i class="bi bi-arrow-left"></i> Volver
+                    </a>
+                </div>
+            </div>
+
+            <!-- INICIO DE LA LISTA (TABLA) -->
+            <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="bg-light">
+                            <tr>
+                                <th scope="col" class="ps-4 py-3 text-secondary">Estudiante</th>
+                                <th scope="col" class="py-3 text-secondary text-center">Curso</th>
+                                <th scope="col" class="pe-4 py-3 text-end text-secondary">Acción</th> 
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for cliente in clientes %}
+                            <tr>
+                                <!-- Columna: Nombre -->
+                                <td class="ps-4 py-3">
+                                    <div class="d-flex align-items-center">
+                                        <div class="rounded-circle bg-light d-flex justify-content-center align-items-center me-3" style="width: 35px; height: 35px;">
+                                            <i class="bi bi-person text-primary"></i>
+                                        </div>
+                                        <span class="fw-bold text-dark">{{ cliente.apellido }}, {{ cliente.nombre }}</span>
+                                    </div>
+                                </td>
+
+                                <!-- Columna: Curso -->
+                                <td class="text-center">
+                                    <span class="badge bg-primary bg-opacity-10 text-primary rounded-pill px-2">
+                                        {{ cliente.curso }}
+                                    </span>
+                                </td>
+
+                                <!-- Columna: Botón de Acción -->
+                                <td class="pe-4">
+                                    <div class="d-flex justify-content-end">
+                                        <!-- Botón Seleccionar (Verde) -->
+                                        <!-- Importante: Esta URL debe coincidir con la de confirmación que creamos antes -->
+                                        <a href="{% url 'asociar_tarjeta_confirmar' tarjeta.pk cliente.pk %}" class="btn btn-success btn-sm rounded-pill px-3 shadow-sm">
+                                            <i class="bi bi-check2-circle"></i> Asociar
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="3" class="text-center py-5">
+                                    <h6 class="text-muted fw-normal">No se encontraron clientes con ese nombre.</h6>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- FIN DE LA LISTA -->
+
+        </div> 
+    </div>
+</div>
+
+{% endblock %}
