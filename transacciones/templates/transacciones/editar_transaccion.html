@@ -1,0 +1,140 @@
+{% extends 'kiosco/index.html' %} 
+
+{% block titulo %}
+<title>Kiosco Sole - Editar Monto</title>
+{% endblock %} 
+
+{% block Bienvenida %}
+    <header class="hero-section">
+        <div class="container">
+            <h1 class="display-4 fw-bold text-dark">Editar Monto de Transacción</h1>
+            <p class="lead text-dark">Modifica el importe de la operación seleccionada.</p>
+        </div>
+    </header>
+{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
+            <div class="card card-custom p-4 shadow-sm">
+                
+                <!-- Encabezado -->
+                <div class="text-center mb-4">
+                    <h3 class="fw-bold text-products">
+                        <i class="bi bi-pencil-square me-2"></i>Edición de Saldo
+                    </h3>
+                    <p class="text-muted">Editando transacción #{{ form.instance.id }}</p>
+                </div>
+                
+                <form method="post" action="">
+                    {% csrf_token %}
+                    
+                    <div class="card-body p-0">
+                        <!-- Lista de detalles (Solo Lectura) -->
+                        <div class="row g-3">
+                            
+                            <!-- 1. Fecha (Solo Lectura) -->
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold text-secondary">Fecha y Hora</label>
+                                <div class="p-3 bg-light border rounded d-flex align-items-center opacity-75">
+                                    <i class="bi bi-calendar-check text-muted me-3 fs-5"></i>
+                                    <div>
+                                        <h5 class="mb-0 fw-normal text-muted">{{ form.instance.fecha|date:"d/m/Y H:i" }}</h5>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 2. Concepto (Solo Lectura) -->
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold text-secondary">Concepto</label>
+                                <div class="p-3 bg-light border rounded d-flex align-items-center opacity-75">
+                                    <i class="bi bi-tag text-muted me-3 fs-5"></i>
+                                    <div>
+                                        <h5 class="mb-0 fw-normal text-muted">{{ form.instance.concepto }}</h5>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 3. Número de Tarjeta (Solo Lectura) -->
+                            <div class="col-12">
+                                <label class="form-label fw-bold text-secondary">Número de Tarjeta</label>
+                                <div class="p-3 bg-light border rounded d-flex align-items-center opacity-75">
+                                    <i class="bi bi-credit-card-2-front text-muted me-3 fs-4"></i>
+                                    <div>
+                                        <h4 class="mb-0 text-muted letter-spacing-1">{{ form.instance.tarjeta }}</h4>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 4. Monto (EDITABLE) -->
+                            <div class="col-12 mt-4">
+                                <label for="{{ form.monto.id_for_label }}" class="form-label fw-bold text-success">
+                                    <i class="bi bi-pencil me-1"></i>Nuevo Monto
+                                </label>
+                                
+                                <div class="input-group input-group-lg">
+                                    <span class="input-group-text bg-success text-white border-success">
+                                        <i class="bi bi-currency-dollar fs-4"></i>
+                                    </span>
+                                    
+                                    <!-- Renderizado del campo form.monto -->
+                                    {{ form.monto }} 
+                                    
+                                    <!-- Truco: Si no tienes configurado el widget en forms.py para que tenga la clase 'form-control', 
+                                         Django lo renderizará básico. Si usas django-widget-tweaks o similar, genial. 
+                                         Si no, se verá como un input normal, pero funcional. -->
+                                </div>
+                                <div class="form-text text-muted">Ingresa el nuevo valor para corregir la transacción.</div>
+                                
+                                {% if form.monto.errors %}
+                                    <div class="alert alert-danger mt-2">
+                                        {{ form.monto.errors }}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- Botones de Acción (Guardar / Cancelar) -->
+                    <div class="d-flex justify-content-end gap-2 mt-5 pt-3 border-top">
+                        <!-- Botón Cancelar (Borde Rojo) -->
+                        <a href="{% url 'ver_transaccion' form.instance.id %}" class="btn btn-outline-danger px-4 btn-lg fw-bold">
+                            <i class="bi bi-x-circle me-2"></i>Cancelar
+                        </a>
+
+                        <!-- Botón Guardar -->
+                        <button type="submit" class="btn btn-success px-5 fw-bold btn-lg">
+                            <i class="bi bi-check-lg me-2"></i>Confirmar Cambios
+                        </button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card-custom:hover {
+        transform: none !important;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.05) !important;
+    }
+    .letter-spacing-1 {
+        letter-spacing: 1px;
+    }
+    /* Estilo opcional para asegurar que el input se vea grande si Django no agrega clases */
+    input[name="monto"] {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #198754; /* Verde bootstrap */
+        width: 1%;
+        flex: 1 1 auto;
+        border: 1px solid #198754;
+        padding: 0.5rem 1rem;
+        border-radius: 0 0.375rem 0.375rem 0;
+        outline: none;
+    }
+</style>
+{% endblock %}

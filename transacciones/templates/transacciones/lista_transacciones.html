@@ -44,7 +44,7 @@
                         <td>{{ transaccion.concepto }}</td>
                         <td>${{ transaccion.monto|floatformat:2 }}</td>
                         <td>
-                            <a href="#"
+                            <a href="{% url 'ver_transaccion' transaccion.id %}"
                                 class="btn btn-outline-info btn-sm">
                                 <i class="bi bi-eye"></i> Ver Detalles
                             </a>

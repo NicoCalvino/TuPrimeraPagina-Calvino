@@ -1,0 +1,124 @@
+{% extends 'kiosco/index.html' %} 
+
+{% block titulo %}
+<title>Kiosco Sole - Eliminar Transacción</title>
+{% endblock %} 
+
+{% block Bienvenida %}
+    <header class="hero-section">
+        <div class="container">
+            <!-- Cambiamos el color a rojo para alertar -->
+            <h1 class="display-4 fw-bold text-danger">Eliminar Transacción</h1>
+            <p class="lead text-dark">¿Estás seguro de que deseas eliminar este registro permanentemente?</p>
+        </div>
+    </header>
+{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
+            <div class="card card-custom p-4 shadow-sm border-danger">
+                
+                <!-- Encabezado de la tarjeta con icono de advertencia -->
+                <div class="text-center mb-4">
+                    <h3 class="fw-bold text-danger">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>Confirmar Eliminación
+                    </h3>
+                    <p class="text-muted">ID de referencia: #{{ transaccion.id }}</p>
+                    <div class="alert alert-warning d-inline-block mt-2 py-2 px-3">
+                        <small><i class="bi bi-info-circle me-1"></i> Esta acción no se puede deshacer.</small>
+                    </div>
+                </div>
+                
+                <div class="card-body p-0">
+                    <!-- Lista de detalles (Misma información que antes) -->
+                    <div class="row g-3">
+                        
+                        <!-- 1. Fecha -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold text-secondary">Fecha y Hora</label>
+                            <div class="p-3 bg-light border rounded d-flex align-items-center">
+                                <i class="bi bi-calendar-event text-secondary me-3 fs-5"></i>
+                                <div>
+                                    <h5 class="mb-0 fw-normal text-dark">{{ transaccion.fecha|date:"d/m/Y H:i" }}</h5>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 2. Concepto -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold text-secondary">Concepto</label>
+                            <div class="p-3 bg-light border rounded d-flex align-items-center">
+                                <i class="bi bi-tag text-secondary me-3 fs-5"></i>
+                                <div>
+                                    <h5 class="mb-0 fw-normal text-dark">{{ transaccion.concepto }}</h5>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 3. Número de Tarjeta -->
+                        <div class="col-12">
+                            <label class="form-label fw-bold text-secondary">Número de Tarjeta</label>
+                            <div class="p-3 bg-light border rounded d-flex align-items-center">
+                                <i class="bi bi-credit-card-2-front text-secondary me-3 fs-4"></i>
+                                <div>
+                                    <h4 class="mb-0 text-dark letter-spacing-1">{{ transaccion.tarjeta }}</h4>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 4. Monto -->
+                        <div class="col-12">
+                            <label class="form-label fw-bold text-secondary">Monto Total</label>
+                            <div class="p-4 bg-light border rounded d-flex align-items-center justify-content-between">
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-cash-coin text-secondary me-3 fs-2"></i>
+                                    <span class="fs-5 text-muted">Importe:</span>
+                                </div>
+                                <!-- Mantenemos el monto visible pero en gris oscuro o negro, ya no verde para no denotar "éxito" -->
+                                <h2 class="mb-0 fw-bold text-dark display-6">${{ transaccion.monto }}</h2>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- FORMULARIO DE CONFIRMACIÓN -->
+                <!-- Necesario para que Django procese la eliminación segura -->
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="d-flex justify-content-end gap-2 mt-5 pt-3 border-top">
+                        
+                        <!-- Botón Cancelar (Vuelve a la lista o al detalle) -->
+                        <a href="{% url 'lista_transacciones' %}" class="btn btn-secondary px-4 btn-lg">
+                            Cancelar
+                        </a>
+
+                        <!-- Botón Confirmar Eliminación (Submit) -->
+                        <button type="submit" class="btn btn-danger px-5 fw-bold btn-lg">
+                            <i class="bi bi-trash-fill me-2"></i>Confirmar Eliminación
+                        </button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card-custom:hover {
+        transform: none !important;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.05) !important;
+    }
+    .letter-spacing-1 {
+        letter-spacing: 1px;
+    }
+    /* Borde rojo sutil para la tarjeta */
+    .border-danger {
+        border-color: #dc3545 !important;
+    }
+</style>
+{% endblock %}

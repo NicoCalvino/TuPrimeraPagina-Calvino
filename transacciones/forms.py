@@ -17,10 +17,9 @@ class TransaccionCompraForm(forms.ModelForm):
 
     class Meta:
         model = Transaccion
-        fields = ["monto", "detalle"]
+        fields = ["monto"]
         widgets = {
             'monto': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Ej: 1500.50', 'min': '0'}),
-            'detalle': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Ej: Pago de mercadería a proveedor X', 'rows': '3'}),
         }
     
     def clean(self):
@@ -46,6 +45,43 @@ class TransaccionCompraForm(forms.ModelForm):
 
         if nuevo_saldo < Decimal('-2000'):
             self.add_error('numero_tarjeta', "Saldo insuficiente")
+
+        cleaned_data['tarjeta_objeto'] = tarjeta_obj
+        cleaned_data['nuevo_saldo_tarjeta'] = nuevo_saldo
+
+        return cleaned_data
+    
+class TransaccionUpdateForm(forms.ModelForm):
+    class Meta:
+        model = Transaccion
+        fields = ["monto"]
+        widgets = {
+            'monto': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Ej: 1500.50', 'min': '0'}),
+        }
+    
+    def clean(self):
+        cleaned_data = super().clean()
+        monto_nuevo = cleaned_data.get('monto')
+                
+        if not monto_nuevo:
+            return cleaned_data
+        
+        transaccion_original = self.instance
+        concepto_original = transaccion_original.concepto
+        monto_original = transaccion_original.monto
+        numero_tarjeta = transaccion_original.tarjeta.codigo
+
+        tarjeta_obj = Tarjeta.objects.get(codigo=numero_tarjeta)
+        
+        monto_decimal = Decimal(str(monto_nuevo))
+
+        if concepto_original == "COMPRA":
+            nuevo_saldo = tarjeta_obj.saldo + monto_original - monto_decimal
+        else:
+            nuevo_saldo = tarjeta_obj.saldo - monto_original + monto_decimal
+
+        if nuevo_saldo < Decimal('-2000'):
+            self.add_error('monto', "Saldo insuficiente")
 
         cleaned_data['tarjeta_objeto'] = tarjeta_obj
         cleaned_data['nuevo_saldo_tarjeta'] = nuevo_saldo

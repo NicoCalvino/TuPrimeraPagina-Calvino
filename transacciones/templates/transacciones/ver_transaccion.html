@@ -1,0 +1,119 @@
+{% extends 'kiosco/index.html' %} 
+
+{% block titulo %}
+<title>Kiosco Sole - Detalle de Transacción</title>
+{% endblock %} 
+
+{% block Bienvenida %}
+    <header class="hero-section">
+        <div class="container">
+            <h1 class="display-4 fw-bold text-dark">Detalle de la Transacción</h1>
+            <p class="lead text-dark">Información completa del movimiento registrado.</p>
+        </div>
+    </header>
+{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
+            <div class="card card-custom p-4 shadow-sm">
+                
+                <!-- Encabezado de la tarjeta -->
+                <div class="text-center mb-4">
+                    <h3 class="fw-bold text-products">
+                        <i class="bi bi-file-text me-2"></i>Resumen de Operación
+                    </h3>
+                    <p class="text-muted">ID de referencia: #{{ transaccion.id }}</p>
+                </div>
+                
+                <div class="card-body p-0">
+                    <!-- Lista de detalles -->
+                    <div class="row g-3">
+                        
+                        <!-- 1. Fecha -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold text-secondary">Fecha y Hora</label>
+                            <div class="p-3 bg-light border rounded d-flex align-items-center">
+                                <i class="bi bi-calendar-event text-primary me-3 fs-5"></i>
+                                <div>
+                                    <!-- Ajusta el formato de fecha según necesites -->
+                                    <h5 class="mb-0 fw-normal text-dark">{{ transaccion.fecha|date:"d/m/Y H:i" }}</h5>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 2. Concepto -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold text-secondary">Concepto</label>
+                            <div class="p-3 bg-light border rounded d-flex align-items-center">
+                                <i class="bi bi-tag text-primary me-3 fs-5"></i>
+                                <div>
+                                    <h5 class="mb-0 fw-normal text-dark">{{ transaccion.concepto }}</h5>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 3. Número de Tarjeta -->
+                        <div class="col-12">
+                            <label class="form-label fw-bold text-secondary">Número de Tarjeta</label>
+                            <div class="p-3 bg-light border rounded d-flex align-items-center">
+                                <i class="bi bi-credit-card-2-front text-primary me-3 fs-4"></i>
+                                <div>
+                                    <h4 class="mb-0 text-dark letter-spacing-1">{{ transaccion.tarjeta }}</h4>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 4. Monto -->
+                        <div class="col-12">
+                            <label class="form-label fw-bold text-secondary">Monto Total</label>
+                            <div class="p-4 bg-light border rounded d-flex align-items-center justify-content-between">
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-cash-coin text-success me-3 fs-2"></i>
+                                    <span class="fs-5 text-muted">Importe:</span>
+                                </div>
+                                <h2 class="mb-0 fw-bold text-success display-6">${{ transaccion.monto }}</h2>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Botones de Acción -->
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-5 pt-3 border-top">
+                    
+                    <!-- Botón Volver -->
+                    <a href="{% url 'lista_transacciones' %}" class="btn btn-outline-secondary px-4 me-md-auto">
+                        <i class="bi bi-arrow-left me-2"></i>Volver
+                    </a>
+
+                    <!-- Botón Editar -->
+                    <!-- Reemplaza 'editar_transaccion' con tu URL real -->
+                    <a href="{% url 'editar_transaccion' transaccion.id %}" class="btn btn-warning px-4 fw-bold">
+                        <i class="bi bi-pencil-square me-2"></i>Editar
+                    </a>
+
+                    <!-- Botón Eliminar -->
+                    <!-- Reemplaza 'eliminar_transaccion' con tu URL real -->
+                    <a href="{%url 'eliminar_transaccion' transaccion.pk %}" 
+                       class="btn btn-danger px-4 fw-bold">
+                        <i class="bi bi-trash-fill me-2"></i>Eliminar
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card-custom:hover {
+        transform: none !important;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.05) !important;
+    }
+    .letter-spacing-1 {
+        letter-spacing: 1px;
+    }
+</style>
+{% endblock %}

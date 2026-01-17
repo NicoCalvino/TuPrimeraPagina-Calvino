@@ -7,7 +7,7 @@
 {% block Bienvenida %}
     <header class="hero-section">
         <div class="container">
-            <h1 class="display-4 fw-bold text-dark">Registrar Nueva Carga de Saldo</h1>
+            <h1 class="display-4 fw-bold text-dark">{{ titulo_pagina }}</h1>
             <p class="lead text-dark">Ingresa el monto y el número de tarjeta.</p>
         </div>
     </header>
@@ -20,13 +20,13 @@
             <div class="col-lg-8 col-md-10">
                 <div class="card card-custom p-4 shadow-sm">
                     <h3 class="mb-4 text-center fw-bold text-products">
-                        <i class="bi bi-wallet2 me-2"></i>Carga de Saldo
+                        <i class="bi bi-wallet2 me-2"></i>{{ subtitulo }}
                     </h3>
                     <form method="post" action="#">
                         {% csrf_token %}
 
                         <div class="mb-3">
-                            <label for="{{ form.monto.id_for_label }}" class="form-label fw-bold">Monto de la Carga</label>
+                            <label for="{{ form.monto.id_for_label }}" class="form-label fw-bold">Monto de la {{ tipo }}</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="bi bi-currency-dollar"></i></span>
                                 {{ form.monto }} {# Aquí Django renderiza el input con sus atributos del widget #}
@@ -48,8 +48,8 @@
                         </div>
                         
                         <div class="d-grid gap-2 mt-4">
-                            <button type="submit" class="btn btn-warning btn-lg fw-bold">
-                                <i class="bi bi-check-circle-fill me-2"></i>Cargar Saldo
+                            <button type="submit" class="btn btn-lg fw-bold {{ color_boton }}">
+                                <i class="bi bi-check-circle-fill me-2"></i>{{ texto_boton }}
                             </button>
                             <a href="{% url 'home' %}" class="btn btn-outline-secondary btn-lg">
                                 <i class="bi bi-x-circle me-2"></i>Cancelar

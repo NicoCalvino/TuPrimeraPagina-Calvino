@@ -19,4 +19,4 @@ class Tarjeta(models.Model):
     fecha_ultima_modificacion = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"Tarjeta: {self.codigo} / Saldo: $ {self.saldo}"
+        return f"{self.codigo}"
