@@ -55,7 +55,7 @@ def actualizar_cliente(request, pk):
     else:
         form = ClienteForm(instance=cliente)
 
-    return render(request, "kiosco/crear_cliente.html",{
+    return render(request, "kiosco/editar_cliente.html",{
         "form":form,
         "cliente":cliente        
     })

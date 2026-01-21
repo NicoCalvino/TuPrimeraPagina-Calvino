@@ -12,7 +12,7 @@ class ClienteForm(forms.ModelForm):
         widgets = {
             'nombre':forms.TextInput(attrs={'class':'form-control'}),
             'apellido':forms.TextInput(attrs={'class':'form-control'}),
-            'curso':forms.TextInput(attrs={'class':'form-control'}),
+            'curso':forms.Select(attrs={'class':'form-control'}),
         }
 
 class TarjetaForm(forms.ModelForm):

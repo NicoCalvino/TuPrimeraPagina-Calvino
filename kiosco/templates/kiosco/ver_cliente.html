@@ -10,7 +10,11 @@
 
     <!-- Botón Volver -->
     <div class="mb-4">
-        <a href="{% url 'lista_clientes' %}" class="text-decoration-none text-muted fw-bold">
+        {% if user.is_superuser %}
+            <a href="{% url 'lista_clientes' %}" class="text-decoration-none text-muted fw-bold">
+        {% else %}
+            <a href="/" class="text-decoration-none text-muted fw-bold">
+        {% endif %}  
             <i class="bi bi-arrow-left"></i> Volver al listado
         </a>
     </div>

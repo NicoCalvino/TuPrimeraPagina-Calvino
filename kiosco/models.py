@@ -3,10 +3,25 @@ from django.core.validators import MinValueValidator
 from django.conf import settings
 
 class Cliente(models.Model):
+    CURSOS = (
+        ("SALA DE 5","Sala de 5"),
+        ("1° GRADO","1° Grado"),
+        ("2° GRADO","2° Grado"),
+        ("3° GRADO","3° Grado"),
+        ("4° GRADO","4° Grado"),
+        ("5° GRADO","5° Grado"),
+        ("6° GRADO","6° Grado"),
+        ("1 AÑO","1 Año"),
+        ("2 AÑO","2 Año"),
+        ("3 AÑO","3 Año"),
+        ("4 AÑO","4 Año"),
+        ("5 AÑO","5 Año"),
+        ("6 AÑO","6 Año"),
+    )
     usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='clientes', null=False)
     nombre = models.CharField(max_length=50, null=False)
     apellido = models.CharField(max_length=50, null=False)
-    curso = models.CharField(max_length=10, null=False)
+    curso = models.CharField(choices=CURSOS, max_length=10, null=False)
 
     def __str__(self):
         return f"{self.nombre} {self.apellido} - {self.curso}"

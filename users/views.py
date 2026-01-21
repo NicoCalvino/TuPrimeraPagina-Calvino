@@ -32,13 +32,15 @@ def register(request):
 def perfil_detail(request, pk=None):
     if pk is None:
         user_profile= request.user
+        origen = "home"
     else:
         user_profile = get_object_or_404(Perfil, pk=pk)
+        origen = "lista"
 
         if not request.user.is_superuser and user_profile != request.user:
             raise PermissionDenied
 
-    return render(request, "users/perfil_detail.html", {"user_profile": user_profile})
+    return render(request, "users/perfil_detail.html", {"user_profile": user_profile, "origen": origen})
 
 @login_required
 def perfil_change(request):

@@ -166,6 +166,10 @@
                     <li class="nav-item">
                         <a class="nav-link {% if request.resolver_match.url_name == 'lista_transacciones' %}active{% endif %}" href="{% url 'lista_transacciones' %}">Transacciones</a>
                     </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'crear_cliente' %}active{% endif %}" href="{% url 'crear_cliente' %}">Crear Cliente</a>
+                    </li>
                 {% endif %}
                 {% if user.is_authenticated %}
                     <li class="nav-item">
@@ -178,10 +182,10 @@
             <ul class="navbar-nav align-items-center">
                 {% if user.is_authenticated %}
                     <li class="nav-item">
-                        <a class="nav-link {% if request.resolver_match.url_name == 'perfil_detail' %}active{% endif %}" href="{% url 'perfil_detail' %}">Perfil</a>
+                        <a class="nav-link {% if request.resolver_match.url_name == 'confirmar_logout' %}active{% endif %}" href="{% url 'confirmar_logout' %}">Cerrar Sesion</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {% if request.resolver_match.url_name == 'confirmar_logout' %}active{% endif %}" href="{% url 'confirmar_logout' %}">Cerrar Sesion</a>
+                        <a class="nav-link {% if request.resolver_match.url_name == 'perfil_detail' %}active{% endif %}" href="{% url 'perfil_detail' %}">Perfil</a>
                     </li>
                     <li class="nav-item ms-lg-2">
                         {% if user.avatar %}
