@@ -34,7 +34,7 @@
 
                     <!-- Botones Compactos -->
                     <a href="{% url 'crear_cliente' %}" class="btn btn-primary btn-sm rounded-pill px-3 shadow-sm">
-                        <i class="bi bi-plus-lg"></i> Nueva
+                        <i class="bi bi-plus-lg"></i> Nuevo
                     </a>
                     <a href="{% url 'home' %}" class="btn btn-outline-secondary btn-sm rounded-pill px-3">
                         <i class="bi bi-arrow-left"></i>
@@ -48,9 +48,29 @@
                     <table class="table table-hover align-middle mb-0">
                         <thead class="bg-light">
                             <tr>
-                                <th scope="col" class="ps-4 py-3 text-secondary">Estudiante</th>
-                                <th scope="col" class="py-3 text-secondary text-center">Curso</th>
-                                <th scope="col" class="pe-4 py-3 text-end text-secondary">Acciones</th> <!-- Cambiado de "Detalle" a "Acciones" -->
+                                <!-- Columna Estudiante (Ordenable) -->
+                                <th scope="col" class="ps-4 py-3">
+                                    <a href="?orden=apellido&nombre={{ request.GET.nombre }}" class="text-decoration-none text-secondary d-flex align-items-center gap-1">
+                                        Estudiante <i class="bi bi-sort-alpha-down small"></i>
+                                    </a>
+                                </th>
+
+                                <!-- Columna Curso (Ordenable) -->
+                                <th scope="col" class="py-3 text-center">
+                                    <a href="?orden=curso&nombre={{ request.GET.nombre }}" class="text-decoration-none text-secondary d-flex align-items-center justify-content-center gap-1">
+                                        Curso <i class="bi bi-sort-numeric-down small"></i>
+                                    </a>
+                                </th>
+
+                                <!-- NUEVA COLUMNA: Padre/Madre (Ordenable) -->
+                                <th scope="col" class="py-3">
+                                    <a href="?orden=tutor&nombre={{ request.GET.nombre }}" class="text-decoration-none text-secondary d-flex align-items-center gap-1">
+                                        Padre/Madre <i class="bi bi-sort-alpha-down small"></i>
+                                    </a>
+                                </th>
+
+                                <!-- Columna Acciones (No ordenable) -->
+                                <th scope="col" class="pe-4 py-3 text-end text-secondary">Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -71,6 +91,23 @@
                                     <span class="badge bg-primary bg-opacity-10 text-primary rounded-pill px-2">
                                         {{ cliente.curso }}
                                     </span>
+                                </td>
+
+                                <!-- NUEVA COLUMNA: Padre/Madre -->
+                                <td>
+                                    {% if cliente.usuario %}
+                                        <a href="{% url 'perfil_usuarios' cliente.usuario.pk %}" 
+                                        class="text-decoration-none d-inline-flex align-items-center gap-2 bg-light border rounded-pill px-3 py-1 text-dark shadow-sm"
+                                        style="font-size: 0.85rem; transition: 0.3s;"
+                                        onmouseover="this.classList.add('bg-white')" 
+                                        onmouseout="this.classList.remove('bg-white')">
+                                            
+                                            <i class="bi bi-person-badge text-secondary"></i>
+                                            <span class="fw-medium">{{ cliente.usuario }}</span>
+                                        </a>
+                                    {% else %}
+                                        <span class="text-muted small">-</span>
+                                    {% endif %}
                                 </td>
 
                                 <!-- Columna: Botones de Acción -->
@@ -95,7 +132,8 @@
                             </tr>
                             {% empty %}
                             <tr>
-                                <td colspan="3" class="text-center py-5">
+                                <!-- Colspan aumentado a 4 por la nueva columna -->
+                                <td colspan="4" class="text-center py-5">
                                     <h6 class="text-muted fw-normal">No hay clientes registrados.</h6>
                                 </td>
                             </tr>

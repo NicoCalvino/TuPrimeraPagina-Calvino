@@ -30,7 +30,7 @@ class TransaccionCompraForm(forms.ModelForm):
         if not numero_tarjeta:
             self.add_error('numero_tarjeta', "El número de tarjeta es obligatorio para realizar una compra.")
             return cleaned_data
-        
+
         if not monto:
             return cleaned_data
         
@@ -39,6 +39,9 @@ class TransaccionCompraForm(forms.ModelForm):
         except Tarjeta.DoesNotExist:
             self.add_error('numero_tarjeta', "El número de tarjeta ingresado no existe.")
         
+        if not tarjeta_obj.habilitada:
+            self.add_error('numero_tarjeta', "Esta tarjeta se encuentra deshabilitada.")
+
         monto_decimal = Decimal(str(monto))
 
         nuevo_saldo = tarjeta_obj.saldo - monto_decimal
@@ -65,7 +68,7 @@ class TransaccionUpdateForm(forms.ModelForm):
                 
         if not monto_nuevo:
             return cleaned_data
-        
+                
         transaccion_original = self.instance
         concepto_original = transaccion_original.concepto
         monto_original = transaccion_original.monto
@@ -125,6 +128,9 @@ class TransaccionCargaForm(forms.ModelForm):
         except Tarjeta.DoesNotExist:
             self.add_error('numero_tarjeta', "El número de tarjeta ingresado no existe.")
         
+        if not tarjeta_obj.habilitada:
+            self.add_error('numero_tarjeta', "Esta tarjeta se encuentra deshabilitada.")
+
         monto_decimal = Decimal(str(monto))
 
         nuevo_saldo = tarjeta_obj.saldo + monto_decimal
@@ -133,3 +139,11 @@ class TransaccionCargaForm(forms.ModelForm):
         cleaned_data['nuevo_saldo_tarjeta'] = nuevo_saldo
 
         return cleaned_data
+    
+class SolicitudCargaForm(forms.ModelForm):
+    class Meta:
+        model = SolicitudCarga
+        fields = ['comprobante']
+        labels = {
+            'comprobante': 'Subir comprobante de pago (Imagen/PDF)'
+        }

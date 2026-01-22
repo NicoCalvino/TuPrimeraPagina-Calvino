@@ -60,4 +60,16 @@
     </div>
 </div>
 </div>
+
+<!-- AGREGA ESTO AL FINAL -->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Busca el elemento por su ID y le pone el foco
+        var inputTarjeta = document.getElementById("{{ form.codigo.id_for_label }}");
+        if (inputTarjeta) {
+            inputTarjeta.focus();
+        }
+    });
+</script>
+
 {% endblock %}

@@ -47,9 +47,13 @@
                             <button type="submit" class="btn btn-danger btn-lg rounded-pill fw-bold shadow-sm">
                                 <i class="bi bi-trash me-2"></i>Sí, eliminar cliente
                             </button>
-                            <a href="{% url 'lista_clientes' %}" class="btn btn-outline-secondary btn-lg rounded-pill border-0">
-                                Cancelar y volver
-                            </a>
+                            {% if user.is_superuser %}
+                                <a href="{% url 'lista_clientes' %}" class="btn btn-outline-secondary btn-lg rounded-pill border-0">
+                                    Cancelar y volver
+                            {% else %}
+                                <a href="{% url 'ver_cliente' cliente.pk %}" class="btn btn-outline-secondary btn-lg rounded-pill border-0">
+                                    Cancelar y volver
+                            {% endif %}
                         </div>
                     </form>
 

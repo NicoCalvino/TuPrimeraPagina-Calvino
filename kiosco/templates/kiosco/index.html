@@ -164,11 +164,17 @@
                         <a class="nav-link {% if request.resolver_match.url_name == 'lista_tarjetas' %}active{% endif %}" href="{% url 'lista_tarjetas' %}">Tarjetas</a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'lista_solicitudes' %}active{% endif %}" href="{% url 'lista_solicitudes' %}">Solicitudes de Carga</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link {% if request.resolver_match.url_name == 'lista_transacciones' %}active{% endif %}" href="{% url 'lista_transacciones' %}">Transacciones</a>
                     </li>
-                {% else %}
+                {% elif user.is_authenticated %}
                     <li class="nav-item">
                         <a class="nav-link {% if request.resolver_match.url_name == 'crear_cliente' %}active{% endif %}" href="{% url 'crear_cliente' %}">Crear Cliente</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'lista_solicitudes' %}active{% endif %}" href="{% url 'lista_solicitudes' %}">Cargar Saldo</a>
                     </li>
                 {% endif %}
                 {% if user.is_authenticated %}
@@ -256,7 +262,7 @@
                         <h4 class="fw-bold">Tarjetas</h4>
                         <p class="text-muted small">Cargar saldo, ver movimientos y NFC.</p>
                         
-                        <a href="{% url 'lista_tarjetas' %}" class="btn btn-outline-success w-100 mt-2 mt-auto stretched-link">Ir a Saldo</a>
+                        <a href="{% url 'lista_tarjetas' %}" class="btn btn-outline-success w-100 mt-2 mt-auto stretched-link">Ver Tarjetas</a>
                     </div>
                 </div>
 
@@ -299,7 +305,7 @@
                             <h3 class="fw-bold">Aún no tienes clientes</h3>
                             <p class="text-muted">Parece que todavía no has registrado a nadie. ¡Comienza ahora mismo!</p>
                             <a href="{% url 'crear_cliente' %}" class="btn btn-warning fw-bold px-4">
-                                <i class="bi bi-plus-lg me-2"></i>Registrar mi primer cliente
+                                <i class="bi bi-plus-lg me-2"></i>Crear mi primer cliente
                             </a>
                         </div>
                     </div>
@@ -349,6 +355,23 @@
 
         </div>
     </div>
+    {% if messages %}
+        <div class="container mt-3">
+            {% for message in messages %}
+                <!-- El class será 'alert alert-danger' automáticamente gracias al paso A -->
+                <div class="alert alert-danger alert-dismissible fade show" role="alert" style="font-size: 1.2rem; font-weight: bold; text-align: center;">
+                    
+                    <!-- Icono opcional (si usas FontAwesome o Bootstrap Icons) -->
+                    <i class="bi bi-exclamation-triangle-fill"></i> 
+                    
+                    {{ message }}
+                    
+                    <!-- Botón de cerrar (X) -->
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
     {% endblock %}
     <!-- Footer -->
     <footer>

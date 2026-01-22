@@ -23,8 +23,14 @@
 
                     <!-- Mini Detalle del Producto (Resumen) -->
                     <div class="d-flex align-items-center bg-light p-3 rounded-4 border mb-4">
-                        <div class="flex-shrink-0 bg-white rounded-3 p-3 shadow-sm">
-                            <i class="bi bi-basket3-fill text-danger fs-2"></i>
+                        <div class="flex-shrink-0 bg-white rounded-3 p-2 shadow-sm d-flex justify-content-center align-items-center" style="width: 80px; height: 80px;">
+                            {% if producto.picture %}
+                                <!-- Si hay imagen, la mostramos -->
+                                <img src="{{ producto.picture.url }}" alt="{{ producto.nombre }}" class="img-fluid" style="max-height: 100%; object-fit: contain;">
+                            {% else %}
+                                <!-- Si NO hay imagen, mostramos la canasta -->
+                                <i class="bi bi-basket3-fill text-danger fs-2"></i>
+                            {% endif %}
                         </div>
                         <div class="flex-grow-1 ms-3">
                             <small class="text-uppercase fw-bold text-muted" style="letter-spacing: 1px;">{{ producto.marca }}</small>

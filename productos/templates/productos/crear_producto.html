@@ -37,7 +37,7 @@
                         {% endif %}
                     </div>
 
-                    <!-- Fila 2: Marca y Categoría (2 columnas) -->
+                    <!-- Fila 2: Marca y Categoría -->
                     <div class="row g-3 mb-4">
                         <div class="col-md-6">
                             <label for="{{ form.marca.id_for_label }}" class="form-label fw-bold text-dark">Marca</label>
@@ -55,61 +55,59 @@
                         </div>
                     </div>
 
-                    <!-- Fila 3: Precio, Stock y Código (3 columnas) -->
+                    <!-- Fila 3: Precio, Stock y Código -->
                     <div class="row g-3 mb-4">
-                        
-                        <!-- Precio con icono de dinero -->
                         <div class="col-md-4">
                             <label for="{{ form.precio.id_for_label }}" class="form-label fw-bold text-dark">Precio</label>
                             <div class="input-group">
                                 <span class="input-group-text bg-light border-end-0"><i class="bi bi-currency-dollar"></i></span>
                                 {{ form.precio }}
                             </div>
-                            {% if form.precio.errors %}
-                                <div class="text-danger small mt-1">{{ form.precio.errors }}</div>
-                            {% endif %}
                         </div>
-
-                        <!-- Stock con icono de caja -->
                         <div class="col-md-4">
                             <label for="{{ form.stock.id_for_label }}" class="form-label fw-bold text-dark">Stock Inicial</label>
                             <div class="input-group">
                                 <span class="input-group-text bg-light border-end-0"><i class="bi bi-box-seam"></i></span>
                                 {{ form.stock }}
                             </div>
-                            {% if form.stock.errors %}
-                                <div class="text-danger small mt-1">{{ form.stock.errors }}</div>
-                            {% endif %}
                         </div>
-
-                        <!-- Código con icono de escáner -->
                         <div class="col-md-4">
                             <label for="{{ form.codigo_de_barras.id_for_label }}" class="form-label fw-bold text-dark">Código de Barras</label>
                             <div class="input-group">
                                 <span class="input-group-text bg-light border-end-0"><i class="bi bi-upc-scan"></i></span>
                                 {{ form.codigo_de_barras }}
                             </div>
-                            {% if form.codigo_de_barras.errors %}
-                                <div class="text-danger small mt-1">{{ form.codigo_de_barras.errors }}</div>
-                            {% endif %}
                         </div>
                     </div>
 
-                        <!-- SECCIÓN DEL AVATAR (PRIMERO) -->
-                        <div class="text-center mb-5">
-                            <div class="position-relative d-inline-block">                                
-                                <!-- Botón flotante para cambiar imagen -->
-                                <label for="{{ form.picture.id_for_label }}" class="btn btn-warning btn-sm position-absolute bottom-0 end-0 rounded-circle shadow">
-                                    <i class="bi bi-camera-fill"></i>
-                                </label>
-                                <div class="mt-3">
-                                    <label class="fw-bold d-block small text-uppercase text-muted">Imagen del Producto</label>
-                                    <div class="custom-file-upload mt-2">
-                                        {{ form.picture }}
-                                    </div>
-                                </div>
-                            </div>
+                    <!-- SECCIÓN DEL AVATAR (MODIFICADA) -->
+                    <div class="text-center mb-5">
+                        <label class="fw-bold d-block small text-uppercase text-muted mb-3">Imagen del Producto</label>
+                        
+                        <div class="position-relative d-inline-block">
+                            
+                            <!-- 1. La imagen de previsualización (Placeholder o Foto cargada) -->
+                            <!-- Si estás editando y ya hay foto, se muestra esa url, sino un placeholder -->
+                            <img id="imagenPrevisualizacion" 
+                                 src="{% if form.instance.picture %}{{ form.instance.picture.url }}{% else %}/media/default/producto.jpg{% endif %}" 
+                                 alt="Vista previa" 
+                                 class="rounded-4 shadow-sm border"
+                                 style="width: 200px; height: 200px; object-fit: cover; background-color: #f8f9fa;">
+
+                            <!-- 2. Botón flotante que activa el input -->
+                            <label for="{{ form.picture.id_for_label }}" class="btn btn-warning btn-sm position-absolute bottom-0 end-0 rounded-circle shadow" style="transform: translate(25%, 25%); width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
+                                <i class="bi bi-camera-fill fs-5"></i>
+                            </label>
+
                         </div>
+
+                        <!-- 3. El input real (Oculto visualmente o debajo, el botón de arriba lo controla) -->
+                        <div class="mt-3 d-none"> <!-- d-none para ocultar el input feo y usar solo el botón -->
+                            {{ form.picture }}
+                        </div>
+                        <!-- Mensaje de ayuda opcional -->
+                        <div class="text-muted small mt-2">Haz clic en la cámara para subir una foto</div>
+                    </div>
 
                     <hr class="my-4">
 
@@ -125,4 +123,33 @@
         </div>
     </div>
 </div>
+
+<!-- SCRIPT JAVASCRIPT PARA LA PREVISUALIZACIÓN -->
+<script>
+    // Esperamos a que el DOM cargue
+    document.addEventListener("DOMContentLoaded", function() {
+        // Obtenemos el input de archivo generado por Django (generalmente id_picture)
+        const inputImagen = document.getElementById("{{ form.picture.auto_id }}");
+        const imagenPrevisualizacion = document.getElementById("imagenPrevisualizacion");
+
+        if (inputImagen) {
+            inputImagen.addEventListener("change", function(evento) {
+                const archivo = evento.target.files[0];
+
+                if (archivo) {
+                    const lector = new FileReader();
+
+                    lector.onload = function(e) {
+                        // Asignamos el resultado (la imagen en base64) al src de la etiqueta img
+                        imagenPrevisualizacion.src = e.target.result;
+                    }
+
+                    // Leemos el archivo como URL de datos
+                    lector.readAsDataURL(archivo);
+                }
+            });
+        }
+    });
+</script>
+
 {% endblock %}

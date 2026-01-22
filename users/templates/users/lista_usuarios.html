@@ -15,14 +15,44 @@
         <div style="width: 50px; height: 5px; background-color: #0d6efd; border-radius: 10px;"></div>
     </div>
 
-    <!-- Filtro de Búsqueda -->
+    <!-- Filtro de Búsqueda y Botones -->
     <div class="card border-0 shadow-sm rounded-4 mb-4">
         <div class="card-body p-3">
-            <form class="d-flex" role="search" method="GET">
-                <div class="input-group">
+            <!-- Agregamos flex-wrap para móviles y gap-3 para separación -->
+            <form class="d-flex flex-wrap align-items-center gap-3" role="search" method="GET">
+                
+                <!-- Buscador (ocupa el espacio restante con flex-grow-1) -->
+                <div class="input-group flex-grow-1">
                     <span class="input-group-text bg-light border-0"><i class="bi bi-search"></i></span>
                     <input type="search" name="buscador" class="form-control bg-light border-0" placeholder="Buscar por usuario, email o nombre..." value="{{ request.GET.buscador }}">
                 </div>
+
+                <!-- Botones de Filtro -->
+                <!-- Usamos 'with' para definir la variable filtro. Si no existe, es 'normales' por defecto -->
+                {% with filtro_actual=request.GET.filtro|default:"normales" %}
+                <div class="btn-group" role="group" aria-label="Filtro de usuarios">
+                    
+                    <!-- Botón: Normales -->
+                    <button type="submit" name="filtro" value="normales" 
+                            class="btn {% if filtro_actual == 'normales' %}btn-primary{% else %}btn-outline-primary{% endif %}">
+                        Normales
+                    </button>
+
+                    <!-- Botón: SuperUsuarios -->
+                    <button type="submit" name="filtro" value="superusuarios" 
+                            class="btn {% if filtro_actual == 'superusuarios' %}btn-primary{% else %}btn-outline-primary{% endif %}">
+                        Superusuarios
+                    </button>
+
+                    <!-- Botón: TODOS -->
+                    <button type="submit" name="filtro" value="todos" 
+                            class="btn {% if filtro_actual == 'todos' %}btn-primary{% else %}btn-outline-primary{% endif %}">
+                        Todos
+                    </button>
+                    
+                </div>
+                {% endwith %}
+
             </form>
         </div>
     </div>
@@ -37,7 +67,7 @@
                             <th class="ps-4 py-3 text-secondary text-uppercase small fw-bold">Usuario</th>
                             <th class="py-3 text-secondary text-uppercase small fw-bold">Nombre Completo</th>
                             <th class="py-3 text-secondary text-uppercase small fw-bold">Email</th>
-                            <th class="py-3 text-secondary text-uppercase small fw-bold">Rol</th> <!-- Nueva Columna -->
+                            <th class="py-3 text-secondary text-uppercase small fw-bold">Rol</th> 
                             <th class="py-3 text-secondary text-uppercase small fw-bold">Celular</th>
                             <th class="pe-4 py-3 text-end text-secondary text-uppercase small fw-bold">Acciones</th>
                         </tr>
@@ -68,7 +98,7 @@
                                     <span class="text-muted">{{ usuario.email|default:"Sin email" }}</span>
                                 </td>
 
-                                <!-- Columna: Rol (NUEVA) -->
+                                <!-- Columna: Rol -->
                                 <td>
                                     {% if usuario.is_superuser %}
                                         <span class="badge rounded-pill bg-primary-subtle text-primary border border-primary-subtle">
@@ -89,7 +119,7 @@
                                     </span>
                                 </td>
 
-                                <!-- Columna: Acciones (MODIFICADA) -->
+                                <!-- Columna: Acciones -->
                                 <td class="pe-4 text-end">
                                     <a href="{% url 'perfil_usuarios' usuario.pk %}" class="btn btn-outline-primary btn-sm rounded-pill px-3" title="Ver Perfil">
                                         <i class="bi bi-eye-fill me-1"></i> Ver Perfil
@@ -99,10 +129,10 @@
                             {% endfor %}
                         {% else %}
                             <tr>
-                                <td colspan="6" class="text-center py-5"> <!-- Colspan aumentado a 6 -->
+                                <td colspan="6" class="text-center py-5">
                                     <div class="text-muted">
                                         <i class="bi bi-people fs-1 opacity-25"></i>
-                                        <p class="mt-2">No se encontraron usuarios en la base de datos.</p>
+                                        <p class="mt-2">No se encontraron usuarios con ese criterio.</p>
                                     </div>
                                 </td>
                             </tr>
@@ -126,6 +156,10 @@
     .badge {
         font-weight: 500;
         padding: 0.5em 0.8em;
+    }
+    /* Estilo para que el input del buscador se vea integrado */
+    .input-group-text {
+        color: #6c757d;
     }
 </style>
 

@@ -1,0 +1,127 @@
+{% extends 'kiosco/index.html' %}
+
+{% block titulo %}
+<title>Confirmar {{ accion|capfirst }} - Kiosco Sole</title>
+{% endblock %}
+
+{% block Bienvenida %}
+<header class="hero-section bg-light py-4 border-bottom mb-4">
+    <div class="container text-center">
+        <!-- Color dinámico: success para aprobar, danger para rechazar -->
+        <h1 class="display-5 fw-bold {% if accion == 'aprobar' %}text-success{% else %}text-danger{% endif %}">
+            ¿{{ accion|capfirst }} esta solicitud?
+        </h1>
+        <p class="lead text-muted">
+            {% if accion == 'aprobar' %}
+                Esta acción validará la carga de saldo en las cuentas correspondientes.
+            {% else %}
+                Esta acción cancelará el pedido y no se podrá deshacer.
+            {% endif %}
+        </p>
+    </div>
+</header>
+{% endblock %}
+
+{% block content %}
+<div class="container mb-5">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-8 col-lg-7">
+
+            <!-- Tarjeta de Confirmación -->
+            <div class="card border-0 shadow-sm overflow-hidden">
+                <!-- Color de cabecera dinámico -->
+                <div class="card-header {% if accion == 'aprobar' %}bg-success{% else %}bg-danger{% endif %} py-3 text-center">
+                    <i class="bi {% if accion == 'aprobar' %}bi-check-circle{% else %}bi-exclamation-octagon{% endif %} text-white fs-2"></i>
+                </div>
+
+                <div class="card-body p-4">
+                    <div class="alert {% if accion == 'aprobar' %}alert-success{% else %}alert-warning{% endif %} border-0 text-center mb-4">
+                        Confirme que desea <strong>{{ accion }}</strong> la solicitud con los siguientes datos:
+                    </div>
+
+                    <div class="row g-3">
+                        <!-- Datos de la Solicitud -->
+                        <div class="col-4">
+                            <label class="text-muted small d-block">Fecha</label>
+                            <span class="fw-medium">{{ solicitud.fecha|date:"d/m/Y" }}</span>
+                        </div>
+                        <div class="col-4">
+                            <label class="text-muted small d-block">Hora</label>
+                            <span class="fw-medium">{{ solicitud.fecha|date:"H:i" }} hs</span>
+                        </div>
+                        <div class="col-4">
+                            <label class="text-muted small d-block">Monto Total</label>
+                            <span class="fw-medium">$ {{ solicitud.monto }}</span>
+                        </div>
+
+                        {% if solicitud.observaciones %}
+                        <div class="col-12">
+                            <label class="text-muted small d-block">Observaciones</label>
+                            <p class="small text-dark bg-light p-2 rounded">{{ solicitud.observaciones }}</p>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Detalles de Carga -->
+                    <div class="mt-4">
+                        <h6 class="mb-3 border-bottom pb-2 text-muted">
+                            <i class="bi bi-list-check me-2"></i>Items de la solicitud
+                        </h6>
+                        
+                        <div class="table-responsive">
+                            <table class="table table-hover table-sm">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th scope="col" class="text-start" style="width: 1%; white-space: nowrap;">#</th>
+                                        <th scope="col" class="text-center">Cliente</th>
+                                        <th scope="col" class="text-end">Subtotal</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for detalle in detalles_carga %}
+                                    <tr>
+                                        <td class="text-start fw-medium" style="white-space: nowrap;">{{ detalle.tarjeta.codigo }}</td>
+                                        <td class="text-center fw-medium">{{ detalle.tarjeta.cliente.nombre }}</td>
+                                        <td class="text-end fw-bold {% if accion == 'aprobar' %}text-success{% else %}text-secondary{% endif %}">
+                                            $ {{ detalle.monto|default:0|floatformat:2 }}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Formulario de Acción -->
+                    <div class="mt-5 pt-3 border-top text-center">
+                        <form method="post">
+                            {% csrf_token %}
+                            <!-- Input oculto opcional para procesar en el backend -->
+                            <input type="hidden" name="confirmar_accion" value="{{ accion }}">
+                            
+                            <div class="d-grid gap-2 d-md-block">
+                                <button type="submit" class="btn {% if accion == 'aprobar' %}btn-success{% else %}btn-danger{% endif %} btn-lg px-4 shadow-sm">
+                                    <i class="bi {% if accion == 'aprobar' %}bi-check-lg{% else %}bi-x-lg{% endif %} me-2"></i>
+                                    Confirmar {{ accion|capfirst }}
+                                </button>
+                                <a href="{% url 'detalle_solicitud_de_carga' solicitud.code %}" class="btn btn-outline-secondary btn-lg px-4">
+                                    Volver atrás
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card { border-radius: 1rem; }
+    .table-sm td { padding: 0.5rem 0.3rem; }
+    
+    @media (min-width: 992px) {
+        .col-lg-7 { max-width: 600px; }
+    }
+</style>
+{% endblock %}

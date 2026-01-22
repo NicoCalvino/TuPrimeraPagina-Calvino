@@ -9,7 +9,7 @@
 <div class="container my-5">
 
     <div class="row justify-content-center">
-        <div class="col-md-11 col-lg-10"> <!-- He ensanchado un poco la columna para que quepa la nueva info -->
+        <div class="col-md-11 col-lg-10"> 
 
             <!-- Encabezado de la sección -->
             <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
@@ -24,6 +24,11 @@
                 <div class="d-flex align-items-center gap-2">
                     <!-- Formulario de Búsqueda Compacto -->
                     <form class="d-flex" role="search" method="GET">
+                        <!-- Mantenemos el filtro actual si se busca algo -->
+                        {% if request.GET.filtro %}
+                        <input type="hidden" name="filtro" value="{{ request.GET.filtro }}">
+                        {% endif %}
+                        
                         <div class="input-group input-group-sm">
                             <span class="input-group-text bg-white border-end-0 rounded-start-pill ps-3">
                                 <i class="bi bi-search text-muted small"></i>
@@ -41,6 +46,32 @@
                     </a>
                 </div>
             </div>
+
+            <!-- BOTONES DE FILTRO (NUEVO CÓDIGO AQUI) -->
+            <div class="d-flex justify-content-start mb-3">
+                <div class="btn-group shadow-sm" role="group" aria-label="Filtros de tarjetas">
+                    
+                    <!-- Botón TODAS -->
+                    <a href="?filtro=todas{% if request.GET.codigo %}&codigo={{ request.GET.codigo }}{% endif %}" 
+                       class="btn btn-sm px-3 rounded-start-pill {% if not request.GET.filtro or request.GET.filtro == 'todas' %}btn-dark{% else %}btn-outline-dark{% endif %}">
+                        Todas
+                    </a>
+
+                    <!-- Botón CON USUARIO -->
+                    <a href="?filtro=con_usuario{% if request.GET.codigo %}&codigo={{ request.GET.codigo }}{% endif %}" 
+                       class="btn btn-sm px-3 {% if request.GET.filtro == 'con_usuario' %}btn-dark{% else %}btn-outline-dark{% endif %}">
+                        Con Usuario
+                    </a>
+
+                    <!-- Botón SIN USUARIO -->
+                    <a href="?filtro=sin_usuario{% if request.GET.codigo %}&codigo={{ request.GET.codigo }}{% endif %}" 
+                       class="btn btn-sm px-3 rounded-end-pill {% if request.GET.filtro == 'sin_usuario' %}btn-dark{% else %}btn-outline-dark{% endif %}">
+                        Sin Usuario
+                    </a>
+
+                </div>
+            </div>
+            <!-- FIN BOTONES DE FILTRO -->
 
             <!-- INICIO DE LA LISTA (TABLA) -->
             <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
@@ -60,14 +91,24 @@
                                 <!-- Columna: Número de Tarjeta -->
                                 <td class="ps-4 py-3">
                                     <div class="d-flex align-items-center">
-                                        <div class="rounded-circle bg-light d-flex justify-content-center align-items-center me-3" style="width: 35px; height: 35px;">
-                                            <i class="bi bi-credit-card text-primary"></i>
+                                        <div class="rounded-pill d-flex justify-content-center align-items-center me-3 px-3 border" 
+                                            style="height: 35px;"
+                                            class="{% if tarjeta.habilitada %}bg-success bg-opacity-10 border-success border-opacity-25{% else %}bg-danger bg-opacity-10 border-danger border-opacity-25{% endif %}">
+                                            
+                                            <i class="bi bi-credit-card me-2 {% if tarjeta.habilitada %}text-success{% else %}text-danger{% endif %}"></i>
+                                            
+                                            {% if tarjeta.habilitada %}
+                                                <i class="bi bi-check-circle-fill text-success"></i> 
+                                            {% else %}
+                                                <i class="bi bi-x-circle-fill text-danger"></i> 
+                                            {% endif %}
+
                                         </div>
                                         <span class="fw-bold text-dark">{{ tarjeta.codigo }}</span>
                                     </div>
                                 </td>
 
-                                <!-- NUEVA Columna: Alumna -->
+                                <!-- Columna: Alumna -->
                                 <td>
                                     {% if tarjeta.cliente %}
                                         <span class="text-dark"><i class="bi bi-person me-1"></i>{{ tarjeta.cliente }}</span>
@@ -87,8 +128,7 @@
 
                                 <!-- Columna: Botones de Acción -->
                                 <td class="pe-4 text-end">
-                                    <!-- Botón Cargar Saldo -->
-                                    <a href="#" class="btn btn-sm btn-light text-success rounded-circle" title="Cargar Saldo">
+                                    <a href="{% url 'cargar_saldo' %}?tarjeta_codigo={{ tarjeta.codigo }}" class="btn btn-sm btn-light text-success rounded-circle" title="Cargar Saldo">
                                         <i class="bi bi-cash-coin"></i>
                                     </a>
 
@@ -117,8 +157,8 @@
             </div>
             <!-- FIN DE LA LISTA -->
 
-        </div> <!-- Fin de la columna centrada -->
-    </div> <!-- Fin del row -->
+        </div> 
+    </div> 
 </div>
 
 {% endblock %}

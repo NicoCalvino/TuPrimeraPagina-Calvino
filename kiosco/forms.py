@@ -19,10 +19,20 @@ class TarjetaForm(forms.ModelForm):
     class Meta:
         model = Tarjeta
         fields = [
-            "codigo",
+            "codigo"
         ]
         widgets = {
             'codigo':forms.TextInput(attrs={'class':'form-control'}),
+        }
+
+class TarjetaUpdateForm(forms.ModelForm):
+    class Meta:
+        model = Tarjeta
+        fields = [
+            "habilitada"
+        ]
+        widgets = {
+            'habilitada':forms.Select(attrs={'class':'form-control'}),
         }
 
 class TarjetaSaldoForm(forms.ModelForm):

@@ -6,7 +6,7 @@ def generate_code():
     return uuid.uuid4().hex
 
 def picture_upload_to(instance, filename):
-    return f"productos/{instance.marca}-{instance.nombre}/{filename}"
+    return f"productos/{instance.marca}/{filename}"
 
 class Producto(models.Model):
     CATEGORIAS = (

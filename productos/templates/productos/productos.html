@@ -18,11 +18,16 @@
         <!-- Barra de Herramientas -->
         <div class="d-flex align-items-center gap-3">
             <form class="d-flex" role="search" method="GET">
+                <!-- IMPORTANTE: Input oculto para mantener el orden al buscar -->
+                {% if request.GET.orden %}
+                    <input type="hidden" name="orden" value="{{ request.GET.orden }}">
+                {% endif %}
+                
                 <div class="input-group">
                     <span class="input-group-text bg-white border-end-0 rounded-start-pill ps-3">
                         <i class="bi bi-search text-muted"></i>
                     </span>
-                    <input class="form-control border-start-0 rounded-end-pill" type="search" placeholder="Buscar..." name="nombre" value="{{ request.GET.nombre }}" aria-label="Search" style="max-width: 200px;">
+                    <input class="form-control border-start-0 rounded-end-pill" type="search" placeholder="Buscar..." name="nombre" value="{{ request.GET.nombre|default_if_none:'' }}" aria-label="Search" style="max-width: 200px;">
                 </div>
             </form>
 
@@ -46,10 +51,47 @@
                 <thead class="bg-light">
                     <tr>
                         <th class="ps-4" style="width: 80px;">Imagen</th>
-                        <th>Marca</th>
-                        <th>Nombre</th>
-                        <th>Categoría</th>
-                        <th>Precio</th>
+                        
+                        <!-- NOMBRE -->
+                        <th>
+                            <a href="?orden={% if request.GET.orden == 'nombre' %}-nombre{% else %}nombre{% endif %}&nombre={{ request.GET.nombre }}" class="text-decoration-none text-secondary fw-bold d-flex align-items-center">
+                                Nombre
+                                {% if request.GET.orden == 'nombre' %} <i class="bi bi-sort-alpha-down ms-1 text-primary"></i>
+                                {% elif request.GET.orden == '-nombre' %} <i class="bi bi-sort-alpha-down-alt ms-1 text-primary"></i>
+                                {% else %} <i class="bi bi-arrow-down-up small ms-1 text-muted opacity-25"></i> {% endif %}
+                            </a>
+                        </th>
+
+                        <!-- MARCA -->
+                        <th>
+                            <a href="?orden={% if request.GET.orden == 'marca' %}-marca{% else %}marca{% endif %}&nombre={{ request.GET.nombre }}" class="text-decoration-none text-secondary fw-bold d-flex align-items-center">
+                                Marca
+                                {% if request.GET.orden == 'marca' %} <i class="bi bi-sort-alpha-down ms-1 text-primary"></i>
+                                {% elif request.GET.orden == '-marca' %} <i class="bi bi-sort-alpha-down-alt ms-1 text-primary"></i>
+                                {% else %} <i class="bi bi-arrow-down-up small ms-1 text-muted opacity-25"></i> {% endif %}
+                            </a>
+                        </th>
+
+                        <!-- CATEGORIA -->
+                        <th>
+                            <a href="?orden={% if request.GET.orden == 'categoria' %}-categoria{% else %}categoria{% endif %}&nombre={{ request.GET.nombre }}" class="text-decoration-none text-secondary fw-bold d-flex align-items-center">
+                                Categoría
+                                {% if request.GET.orden == 'categoria' %} <i class="bi bi-sort-alpha-down ms-1 text-primary"></i>
+                                {% elif request.GET.orden == '-categoria' %} <i class="bi bi-sort-alpha-down-alt ms-1 text-primary"></i>
+                                {% else %} <i class="bi bi-arrow-down-up small ms-1 text-muted opacity-25"></i> {% endif %}
+                            </a>
+                        </th>
+
+                        <!-- PRECIO -->
+                        <th>
+                            <a href="?orden={% if request.GET.orden == 'precio' %}-precio{% else %}precio{% endif %}&nombre={{ request.GET.nombre }}" class="text-decoration-none text-secondary fw-bold d-flex align-items-center">
+                                Precio
+                                {% if request.GET.orden == 'precio' %} <i class="bi bi-sort-numeric-down ms-1 text-primary"></i>
+                                {% elif request.GET.orden == '-precio' %} <i class="bi bi-sort-numeric-down-alt ms-1 text-primary"></i>
+                                {% else %} <i class="bi bi-arrow-down-up small ms-1 text-muted opacity-25"></i> {% endif %}
+                            </a>
+                        </th>
+
                         <th class="text-center">Acción</th>
                     </tr>
                 </thead>
@@ -60,24 +102,15 @@
                             {% if producto.picture %}
                                 <img src="{{ producto.picture.url }}" alt="{{ producto.nombre }}" class="rounded-3" style="width: 50px; height: 50px; object-fit: cover;">
                             {% else %}
-                                <!-- Miniatura por defecto si no hay imagen -->
                                 <div class="bg-light rounded-3 d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
                                     <i class="bi bi-box-seam text-muted"></i>
                                 </div>
                             {% endif %}
                         </td>
-                        <td>
-                            <span class="text-uppercase fw-semibold text-muted small">{{ producto.marca }}</span>
-                        </td>
-                        <td>
-                            <span class="fw-bold text-dark">{{ producto.nombre }}</span>
-                        </td>
-                        <td>
-                            <span class="badge bg-warning text-dark rounded-pill">{{ producto.categoria }}</span>
-                        </td>
-                        <td>
-                            <span class="fw-bold text-dark">$ {{ producto.precio }}</span>
-                        </td>
+                        <td><span class="fw-bold text-dark">{{ producto.nombre }}</span></td>
+                        <td><span class="text-uppercase fw-semibold text-muted small">{{ producto.marca }}</span></td>
+                        <td><span class="badge bg-warning text-dark rounded-pill">{{ producto.categoria }}</span></td>
+                        <td><span class="fw-bold text-dark">$ {{ producto.precio }}</span></td>
                         <td class="text-center pe-4">
                             <a href="{% url 'detalle_producto' producto.code %}" class="btn btn-sm btn-outline-primary rounded-pill px-3">
                                 <i class="bi bi-eye"></i> Detalles
@@ -86,9 +119,7 @@
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="6" class="text-center py-5 text-muted">
-                            No se encontraron productos.
-                        </td>
+                        <td colspan="6" class="text-center py-5 text-muted">No se encontraron productos.</td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -97,31 +128,30 @@
     </div>
 </div>
 
-<!-- Estilos para mejorar la apariencia de la tabla -->
 <style>
     .table thead th {
         border-top: none;
         text-transform: uppercase;
         font-size: 0.75rem;
         letter-spacing: 0.05rem;
-        color: #6c757d;
         padding-top: 15px;
         padding-bottom: 15px;
     }
     
-    .table tbody tr {
-        transition: background-color 0.2s;
+    /* Efecto Hover en los enlaces de ordenamiento */
+    .table thead th a:hover {
+        color: #333 !important;
     }
-
-    .table-hover tbody tr:hover {
-        background-color: #fff9e6 !important; /* Un tono amarillo muy suave al pasar el mouse */
-    }
+    
+    .table tbody tr { transition: background-color 0.2s; }
+    .table-hover tbody tr:hover { background-color: #fff9e6 !important; }
+    
+    .opacity-25 { opacity: 0.25; }
 
     .btn-outline-primary {
         border-color: #FFC107;
         color: #856404;
     }
-
     .btn-outline-primary:hover {
         background-color: #FFC107;
         border-color: #FFC107;

@@ -23,13 +23,30 @@ class Cliente(models.Model):
     apellido = models.CharField(max_length=50, null=False)
     curso = models.CharField(choices=CURSOS, max_length=10, null=False)
 
+    @property
+    def saldo_total(self):
+        total = sum(tarjeta.saldo for tarjeta in self.tarjeta_set.all())
+        return total
+
+    def ultimos_movimientos(self):
+        movimientos = []
+        
+        for tarjeta in self.tarjeta_set.all():
+            movimientos .extend(tarjeta.transaccion_set.all())
+        
+        movimientos.sort(key=lambda x: x.fecha, reverse=True)
+        
+        return movimientos[:10]
+
     def __str__(self):
         return f"{self.nombre} {self.apellido} - {self.curso}"
 
 class Tarjeta(models.Model):
-    codigo = models.CharField(max_length=15, null=False)
+    codigo = models.CharField(max_length=15, unique=True, null=False)
     saldo = models.DecimalField(max_digits=10, decimal_places=2, default=0, validators=[MinValueValidator(-2000)])
+    habilitada = models.BooleanField(default=False)
     cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE, null=True)
+
     fecha_activacion = models.DateTimeField(auto_now_add=True)
     fecha_ultima_modificacion = models.DateTimeField(auto_now=True)
 

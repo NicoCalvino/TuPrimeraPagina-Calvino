@@ -9,7 +9,14 @@ from users.models import *
 @user_passes_test(lambda u: u.is_superuser)
 def lista_usuarios(request):
     busqueda = request.GET.get("buscador") 
+    filtro = request.GET.get('filtro', 'normales')
     usuarios_query = Perfil.objects.all()
+
+    if filtro == 'normales':
+        usuarios_query = usuarios_query.filter(is_superuser=False)
+    elif filtro == 'superusuarios':
+        usuarios_query = usuarios_query.filter(is_superuser=True)
+
     if busqueda:
         usuarios_query = Perfil.objects.filter(
             Q(first_name__icontains = busqueda) | Q(last_name__icontains=busqueda) | Q(username__icontains=busqueda) | Q(email__icontains=busqueda),

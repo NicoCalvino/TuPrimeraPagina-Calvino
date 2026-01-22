@@ -18,10 +18,25 @@ class ProductoListView(ListView):
     def get_queryset(self):
         queryset = super().get_queryset()
         query = self.request.GET.get("nombre")
+        orden = self.request.GET.get('orden')
+        
+        columnas_validas = [
+            'nombre', '-nombre', 
+            'marca', '-marca', 
+            'categoria', '-categoria', 
+            'precio', '-precio'
+        ]
+        
+        if orden in columnas_validas:
+            queryset = queryset.order_by(orden)
+        else:
+            queryset = queryset.order_by('nombre')
+
         if query:
             queryset = queryset.filter(
                 Q(nombre__icontains = query) | Q(marca__icontains=query) | Q(categoria__icontains=query)
             )
+
         return queryset
 
 class ProductoDetailView(LoginRequiredMixin, DetailView):
@@ -38,8 +53,9 @@ class ProductoCreateView(SuperUserRequiredMixin, CreateView):
 
     def get_success_url(self):
         return reverse_lazy(
-            "detalle_producto",
-            kwargs={"code":self.object.code}
+            "crear_producto",
+            #"detalle_producto",
+            # kwargs={"code":self.object.code}
             )
 
 class ProductoUpdateView(SuperUserRequiredMixin, UpdateView):

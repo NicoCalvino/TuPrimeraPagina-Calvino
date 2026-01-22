@@ -1,0 +1,200 @@
+{% extends 'kiosco/index.html' %}
+
+{% block titulo %}
+<title>Detalle de Solicitud - Kiosco Sole</title>
+{% endblock %}
+
+{% block Bienvenida %}
+<header class="hero-section bg-light py-4 border-bottom mb-4">
+    <div class="container text-center">
+        <h1 class="display-5 fw-bold text-dark">Detalle de Solicitud</h1>
+    </div>
+</header>
+{% endblock %}
+
+{% block content %}
+<div class="container mb-5">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-10 col-lg-10">
+            
+            <!-- Botones de Acción Superiores -->
+            <div class="mb-3 d-flex justify-content-between align-items-center">
+                <a href="{% url 'lista_solicitudes' %}" class="text-decoration-none text-muted">
+                    <i class="bi bi-arrow-left me-1"></i> Volver a la lista
+                </a>
+                {% if solicitud.estado == 'PENDIENTE' and not user.is_superuser %}
+                <a href="{% url 'eliminar_solicitud_de_carga' solicitud.pk %}" class="btn btn-outline-danger btn-sm shadow-sm">
+                    <i class="bi bi-trash me-1"></i> Cancelar Solicitud
+                </a>
+                {% endif %}
+            </div>
+
+            <!-- Tarjeta Principal -->
+            <div class="card border-0 shadow-sm overflow-hidden">
+                <!-- Cabecera de la Tarjeta -->
+                <div class="card-header {% if solicitud.estado == 'PENDIENTE' %}bg-warning{% elif solicitud.estado == 'APROBADA' %}bg-success{% else %}bg-danger{% endif %} py-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="badge bg-white {% if solicitud.estado == 'PENDIENTE' %}text-warning{% elif solicitud.estado == 'APROBADA' %}text-success{% else %}text-danger{% endif %} rounded-pill">
+                            {{ solicitud.estado }}
+                        </span>
+                    </div>
+                </div>
+
+                <div class="card-body p-4">
+                    <!-- Información del Monto -->
+                    <div class="text-center mb-4">
+                        <small class="text-muted d-block text-uppercase fw-bold">Monto Total a Cargar</small>
+                        <h2 class="display-4 fw-bold text-dark">$ {{ solicitud.monto }}</h2>
+                    </div>
+
+                    <hr class="text-muted opacity-25">
+
+                    <div class="row">
+                        <!-- COLUMNA IZQUIERDA: Info de Solicitud + Detalles de Carga -->
+                        <div class="col-md-6 border-end-md">
+                            <div class="row g-3">
+                                <div class="col-6">
+                                    <label class="text-muted small d-block">Fecha</label>
+                                    <span class="fw-medium">{{ solicitud.fecha|date:"d/m/Y" }}</span>
+                                </div>
+                                <div class="col-6">
+                                    <label class="text-muted small d-block">Hora</label>
+                                    <span class="fw-medium">{{ solicitud.fecha|date:"H:i" }} hs</span>
+                                </div>
+                                <div class="col-12">
+                                    <label class="text-muted small d-block">Cliente / Usuario</label>
+                                    <div class="d-flex align-items-center mt-1">
+                                        <div class="avatar-sm me-2 bg-light rounded-circle d-flex align-items-center justify-content-center" style="width: 30px; height: 30px;">
+                                            <i class="bi bi-person text-secondary small"></i>
+                                        </div>
+                                        <span class="fw-bold">{{ solicitud.usuario.get_full_name|default:solicitud.usuario.username }}</span>
+                                    </div>
+                                </div>
+
+                                {% if solicitud.observaciones %}
+                                <div class="col-12 mt-2">
+                                    <label class="text-muted small d-block">Observaciones</label>
+                                    <p class="small text-dark bg-light p-2 rounded">{{ solicitud.observaciones }}</p>
+                                </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- SECCIÓN MOVIDA: Detalles de Carga -->
+                            <div class="mt-5">
+                                <h5 class="mb-3 border-bottom pb-2">
+                                    <i class="bi bi-list-check me-2"></i>Detalles de Carga
+                                    <span class="badge bg-primary ms-2">{{ detalles_carga|length }} item(s)</span>
+                                </h5>
+                                
+                                {% if detalles_carga %}
+                                    <div class="table-responsive">
+                                        <table class="table table-hover table-sm">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    <!-- Aplicamos el ancho aquí -->
+                                                    <th scope="col" class="text-start" style="width: 1%; white-space: nowrap;">#</th>
+                                                    <th scope="col" class="text-center">Cliente</th>
+                                                    <th scope="col" class="text-end">Subtotal</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for detalle in detalles_carga %}
+                                                <tr>
+                                                    <td class="text-start fw-medium" style="white-space: nowrap;">{{ detalle.tarjeta.codigo }}</td>
+                                                    <td class="text-center fw-medium">{{ detalle.tarjeta.cliente.nombre }}</td>
+                                                    <td class="text-end fw-bold text-success">
+                                                        $ {{ detalle.monto|default:0|floatformat:2 }}
+                                                    </td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                {% else %}
+                                    <div class="text-center p-4 border rounded bg-light">
+                                        <p class="small text-muted mb-0">No hay detalles de carga registrados.</p>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- COLUMNA DERECHA: Imagen del comprobante -->
+                        <div class="col-md-6 mt-4 mt-md-0">
+                            {% if solicitud.comprobante %}
+                                <div class="border rounded overflow-hidden bg-white shadow-sm">
+                                    <div class="text-center p-2">
+                                        <img src="{{ solicitud.comprobante.url }}" 
+                                            alt="Comprobante" 
+                                            class="img-fluid rounded"
+                                            style="max-height: 600px; width: auto;"
+                                            onclick="window.open(this.src, '_blank')"
+                                            style="cursor: zoom-in;">
+                                    </div>
+                                </div>
+                            {% else %}
+                                <div class="text-center p-5 border rounded bg-light">
+                                    <i class="bi bi-file-earmark-x display-4 text-muted mb-3"></i>
+                                    <p class="text-muted mb-0">No hay comprobante adjunto</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- NUEVA SECCIÓN: Botones de Gestión (Solo para Administradores y si está Pendiente) -->
+                    {% if solicitud.estado == 'PENDIENTE' and user.is_superuser %}
+                    <div class="row mt-5 pt-3 border-top">
+                        <div class="col-12 text-center">
+                            <h6 class="text-muted text-uppercase fw-bold mb-3">Gestionar Solicitud</h6>
+                            <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                                <!-- Botón Aprobar -->
+                                <a href="{% url 'actualizar_solicitud_de_carga' solicitud.code 'aprobar' %}" class="btn btn-success btn-lg px-5 shadow-sm">
+                                    <i class="bi bi-check-circle-fill me-2"></i> Aprobar
+                                </a>
+                                <!-- Botón Rechazar -->
+                                <a href="{% url 'actualizar_solicitud_de_carga' solicitud.code 'rechazar' %}" class="btn btn-danger btn-lg px-5 shadow-sm">
+                                    <i class="bi bi-x-circle-fill me-2"></i> Rechazar
+                                </a>
+                            </div>
+                            <p class="text-muted small mt-2">Al aprobar, el saldo se acreditará automáticamente en las cuentas de los clientes.</p>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Acciones Finales -->
+                    <div class="alert alert-secondary text-center mt-5 mb-0">
+                        <div class="row align-items-center">
+                            <div class="col-md-6 text-md-start">
+                                <i class="bi bi-calendar-check me-1"></i>
+                                Procesada el: {{ solicitud.fecha_procesado|date:"d/m/Y" }}
+                            </div>
+                            <div class="col-md-6 text-md-end mt-2 mt-md-0">
+                                <i class="bi bi-clock-history me-1"></i>
+                                Última actualización: {{ solicitud.fecha_procesado|timesince }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card { border-radius: 1rem; }
+    .avatar-sm { flex-shrink: 0; }
+    .table-hover tbody tr:hover {
+        background-color: rgba(0, 123, 255, 0.05) !important;
+    }
+    
+    /* Línea divisoria solo en escritorio */
+    @media (min-width: 768px) {
+        .border-end-md {
+            border-right: 1px solid #dee2e6 !important;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .img-fluid { max-height: 350px !important; }
+    }
+</style>
+{% endblock %}
