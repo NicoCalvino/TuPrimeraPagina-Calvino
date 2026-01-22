@@ -87,12 +87,18 @@
 
                         <hr class="my-4">
 
-                        <!-- BOTONES -->
-                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                            <a href="{% url 'perfil_detail' %}" class="btn btn-light fw-bold px-4 border">Cancelar</a>
-                            <button type="submit" class="btn btn-warning fw-bold px-5 shadow-sm">
-                                Guardar Cambios
-                            </button>
+                        <div class="row align-items-center">
+                            <div class="col">
+                                <a href="{% url 'cambiar_password' %}" class="text-decoration-none text-primary small fw-bold">
+                                    <i class="bi bi-shield-lock"></i> ¿Deseas cambiar tu contraseña?
+                                </a>
+                            </div>
+                            <div class="col-auto d-grid gap-2 d-md-flex justify-content-md-end">
+                                <a href="{% url 'perfil_detail' %}" class="btn btn-light fw-bold px-4 border">Cancelar</a>
+                                <button type="submit" class="btn btn-warning fw-bold px-5 shadow-sm">
+                                    Guardar Cambios
+                                </button>
+                            </div>
                         </div>
                     </form>
 

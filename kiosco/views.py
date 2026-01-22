@@ -6,18 +6,24 @@ from django.contrib import messages
 from kiosco.models import *
 from kiosco.forms import *
 from transacciones.models import *
-from decimal import Decimal
 from django.contrib.auth.decorators import login_required, user_passes_test
 
+# Vistas Básicas
 def home(request):
     clientes =  Cliente.objects.none()
     if request.user.is_authenticated:
         clientes = Cliente.objects.filter(usuario=request.user)
+
+    if request.user.is_superuser:
+        return render(request, "kiosco/index_admin.html")
     
     return render(request, "kiosco/index.html", {'clientes': clientes})
 
+def about_me(request):
+    return render(request, "kiosco/acerca_de_mi.html")
 
-# Clientes
+# Vistas de Clientes
+## Lista de Clientes
 @user_passes_test(lambda u: u.is_superuser)
 def lista_clientes(request):
     busqueda = request.GET.get("nombre") 
@@ -33,10 +39,11 @@ def lista_clientes(request):
     elif orden == 'curso':
         clientes_query = clientes_query.order_by('curso')
     elif orden == 'tutor':
-        clientes_query = clientes_query.order_by('usuario') # Cambia 'tutor' por el campo real
+        clientes_query = clientes_query.order_by('usuario')
 
     return render(request, 'kiosco/clientes.html',{"clientes":clientes_query})
 
+## Creacion de Clientes
 @login_required
 def crear_cliente(request):
     if request.method == "POST":
@@ -51,6 +58,7 @@ def crear_cliente(request):
 
     return render(request, 'kiosco/crear_cliente.html', {'form':form})
 
+## Ver detalle de Cliente
 @login_required
 def ver_cliente(request, pk):
     cliente = get_object_or_404(Cliente, pk=pk)
@@ -59,6 +67,7 @@ def ver_cliente(request, pk):
         return redirect('home')
     return render(request, 'kiosco/ver_cliente.html', {"cliente":cliente})
 
+## Actualizar informacion de Cliente
 @login_required
 def actualizar_cliente(request, pk):
     cliente = get_object_or_404(Cliente, pk=pk)
@@ -78,6 +87,21 @@ def actualizar_cliente(request, pk):
         "cliente":cliente        
     })
 
+## Eliminar Cliente
+@login_required
+def eliminar_cliente(request, pk):
+    cliente = get_object_or_404(Cliente, pk=pk)
+    if cliente.usuario != request.user:
+        messages.error(request, 'No tienes permiso para editar ese cliente.')
+        return redirect('home')
+    if request.method == "POST":
+        cliente.delete()
+        return redirect('home')
+    return render(request, "kiosco/eliminar_cliente.html",{
+        "cliente":cliente
+    })
+
+## Historial completo de transacciones de Cliente
 @login_required
 def historial_cliente(request, pk):
     cliente = get_object_or_404(Cliente, pk=pk)
@@ -97,20 +121,8 @@ def historial_cliente(request, pk):
         'is_paginated': True
     })
 
-@login_required
-def eliminar_cliente(request, pk):
-    cliente = get_object_or_404(Cliente, pk=pk)
-    if cliente.usuario != request.user:
-        messages.error(request, 'No tienes permiso para editar ese cliente.')
-        return redirect('home')
-    if request.method == "POST":
-        cliente.delete()
-        return redirect('home')
-    return render(request, "kiosco/eliminar_cliente.html",{
-        "cliente":cliente
-    })
-
-# Tarjetas
+# Vistas de Tarjetas
+## Lista de Tarjetas
 @user_passes_test(lambda u: u.is_superuser)
 def lista_tarjetas(request):
     codigo = request.GET.get("codigo") 
@@ -130,6 +142,7 @@ def lista_tarjetas(request):
         )
     return render(request, 'kiosco/tarjetas.html',{"tarjetas":tarjetas_query})
 
+## Creacion de Tarjetas
 @user_passes_test(lambda u: u.is_superuser)
 def crear_tarjeta(request):
     if request.method == "POST":
@@ -142,11 +155,24 @@ def crear_tarjeta(request):
 
     return render(request, 'kiosco/crear_tarjeta.html', {'form':form})
 
+## Ver detalle de Tarjeta
 @user_passes_test(lambda u: u.is_superuser)
 def ver_tarjeta(request, pk):
     tarjeta = get_object_or_404(Tarjeta, pk=pk)
     return render(request, 'kiosco/ver_tarjeta.html', {'tarjeta':tarjeta})
 
+## Eliminar Tarjeta
+@user_passes_test(lambda u: u.is_superuser)
+def eliminar_tarjeta(request, pk):
+    tarjeta = get_object_or_404(Tarjeta, pk=pk)
+    if request.method == "POST":
+        tarjeta.delete()
+        return redirect('lista_tarjetas')
+    return render(request, "kiosco/eliminar_tarjeta.html",{
+        "tarjeta":tarjeta
+    })
+
+## Asociar Tarjeta a cliente
 @user_passes_test(lambda u: u.is_superuser)
 def asociar_tarjeta(request, pk):
     tarjeta = get_object_or_404(Tarjeta, pk=pk)
@@ -163,27 +189,7 @@ def asociar_tarjeta(request, pk):
         'query': busqueda_cliente
     })
 
-@user_passes_test(lambda u: u.is_superuser)
-def cambiar_estado_tarjeta(request, pk):
-    tarjeta = get_object_or_404(Tarjeta, pk=pk)
-    tarjeta.habilitada = not tarjeta.habilitada 
-    tarjeta.save()
-
-    return redirect('ver_tarjeta', tarjeta.pk)
-
-
-@login_required
-def cambiar_estado_tarjeta_alumno(request, pk):
-    tarjeta = get_object_or_404(Tarjeta, pk=pk)
-    if tarjeta.cliente.usuario != request.user:
-        messages.error(request, 'No puedes modificar esa tarjeta')
-        return redirect('home')
-    tarjeta.habilitada = not tarjeta.habilitada 
-    tarjeta.save()
-
-    return redirect('ver_cliente', pk=tarjeta.cliente.pk)
-
-
+## Confirmar Asociación de tarjeta
 @user_passes_test(lambda u: u.is_superuser)
 def asociar_tarjeta_confirmar(request, pk, cliente_pk):
     tarjeta = get_object_or_404(Tarjeta, pk=pk)
@@ -200,12 +206,25 @@ def asociar_tarjeta_confirmar(request, pk, cliente_pk):
         'cliente': cliente
     })
 
+## Habilitar o Deshabilitar Tarjeta desde para Superuser
 @user_passes_test(lambda u: u.is_superuser)
-def eliminar_tarjeta(request, pk):
+def cambiar_estado_tarjeta(request, pk):
     tarjeta = get_object_or_404(Tarjeta, pk=pk)
-    if request.method == "POST":
-        tarjeta.delete()
-        return redirect('lista_tarjetas')
-    return render(request, "kiosco/eliminar_tarjeta.html",{
-        "tarjeta":tarjeta
-    })
+    tarjeta.habilitada = not tarjeta.habilitada 
+    tarjeta.save()
+
+    return redirect('ver_tarjeta', tarjeta.pk)
+
+## Habilitar o Deshabilitar Tarjeta desde el usuario común
+@login_required
+def cambiar_estado_tarjeta_alumno(request, pk):
+    tarjeta = get_object_or_404(Tarjeta, pk=pk)
+    if tarjeta.cliente.usuario != request.user:
+        messages.error(request, 'No puedes modificar esa tarjeta')
+        return redirect('home')
+    tarjeta.habilitada = not tarjeta.habilitada 
+    tarjeta.save()
+
+    return redirect('ver_cliente', pk=tarjeta.cliente.pk)
+
+

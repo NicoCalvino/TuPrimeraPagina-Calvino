@@ -10,5 +10,6 @@ urlpatterns = [
     path("register/", register, name="register"),
     path("perfil/", perfil_detail, name="perfil_detail"),
     path("perfil/<int:pk>/", perfil_detail, name="perfil_usuarios"),
-    path("perfil/change", perfil_change, name="perfil_edit")
+    path("perfil/change", perfil_change, name="perfil_edit"),
+    path('perfil/password/', cambiar_password, name='cambiar_password'),
 ]

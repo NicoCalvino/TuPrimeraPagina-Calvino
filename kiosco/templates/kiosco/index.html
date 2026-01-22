@@ -191,7 +191,7 @@
                         <a class="nav-link {% if request.resolver_match.url_name == 'confirmar_logout' %}active{% endif %}" href="{% url 'confirmar_logout' %}">Cerrar Sesion</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {% if request.resolver_match.url_name == 'perfil_detail' %}active{% endif %}" href="{% url 'perfil_detail' %}">Perfil</a>
+                        <a class="nav-link {% if request.resolver_match.url_name == 'perfil_detail' %}active{% endif %}" href="{% url 'perfil_detail' %}">{{ user }}</a>
                     </li>
                     <li class="nav-item ms-lg-2">
                         {% if user.avatar %}
@@ -219,7 +219,7 @@
     <header class="hero-section">
         <div class="container">
             <h1 class="display-4 fw-bold text-dark">¡Hola! ¿Qué vamos a comer hoy?</h1>
-            <p class="lead text-dark">Bienvenido al portal de tu Kiosco</p>
+            <p class="lead text-dark">Bienvenido al portal de Kiosco Sole</p>
         </div>
     </header>
     {% endblock %}
@@ -228,58 +228,8 @@
     {% block content %}
     <div class="container">
         <div class="row g-4 justify-content-center">
-            
-            {% if user.is_superuser %}
-                <div class="col-md-6 col-lg-3">
-                    <div class="card card-custom p-4 text-center h-100 d-flex flex-column position-relative">
-                        <div class="icon-box text-usuarios">
-                            <i class="bi bi-people-fill"></i>
-                        </div>
-                        <h4 class="fw-bold">Usuarios</h4>
-                        <p class="text-muted small">Administrar accesos, roles y permisos del sistema.</p>
-                        <a href="{% url 'lista_usuarios' %}" class="btn btn-outline-usuarios w-100 mt-2 mt-auto stretched-link">Ver Usuarios</a>
-                    </div>
-                </div>
-
-                <!-- Opción Clientes (Solo Admin) -->
-                <div class="col-md-6 col-lg-3">
-                    <div class="card card-custom p-4 text-center h-100 d-flex flex-column position-relative">
-                        <div class="icon-box text-alumnas">
-                            <i class="bi bi-person-vcard-fill"></i>
-                        </div>
-                        <h4 class="fw-bold">Clientes</h4>
-                        <p class="text-muted small">Gestionar cuentas, perfiles y datos de contacto.</p>
-                        <a href="{% url 'lista_clientes' %}" class="btn btn-outline-primary w-100 mt-2 mt-auto stretched-link">Gestionar</a>
-                    </div>
-                </div>
-
-                <!-- Opción Tarjetas (Solo Admin) -->
-                <div class="col-md-4 col-lg-3">
-                    <div class="card card-custom p-4 text-center h-100 d-flex flex-column position-relative">
-                        <div class="icon-box text-tarjetas">
-                            <i class="bi bi-credit-card-2-front-fill"></i>
-                        </div>
-                        <h4 class="fw-bold">Tarjetas</h4>
-                        <p class="text-muted small">Cargar saldo, ver movimientos y NFC.</p>
-                        
-                        <a href="{% url 'lista_tarjetas' %}" class="btn btn-outline-success w-100 mt-2 mt-auto stretched-link">Ver Tarjetas</a>
-                    </div>
-                </div>
-
-                <!-- Opción Productos (Visible para cualquier usuario logueado) -->
-                <div class="col-md-4 col-lg-3">
-                    <div class="card card-custom p-4 text-center h-100 d-flex flex-column position-relative">
-                        <div class="icon-box text-productos">
-                            <i class="bi bi-basket3-fill"></i>
-                        </div>
-                        <h4 class="fw-bold">Productos</h4>
-                        <p class="text-muted small">Ver stock, precios y golosinas disponibles.</p>
-                        
-                        <a href="{% url 'lista_productos' %}" class="btn btn-outline-warning w-100 mt-2 mt-auto stretched-link">Ver Catálogo</a>
-                    </div>
-                </div>
                 
-            {%elif user.is_authenticated %}
+            {%if user.is_authenticated %}
                 {% for cliente in clientes %}
                     <div class="col-md-4 col-lg-3">
                         <div class="card card-custom p-4 text-center h-100 d-flex flex-column position-relative">
@@ -359,31 +309,33 @@
         <div class="container mt-3">
             {% for message in messages %}
                 <!-- El class será 'alert alert-danger' automáticamente gracias al paso A -->
-                <div class="alert alert-danger alert-dismissible fade show" role="alert" style="font-size: 1.2rem; font-weight: bold; text-align: center;">
-                    
-                    <!-- Icono opcional (si usas FontAwesome o Bootstrap Icons) -->
-                    <i class="bi bi-exclamation-triangle-fill"></i> 
+                <div class="alert alert-info alert-dismissible fade show" role="alert" style="font-size: 1.2rem; font-weight: bold; text-align: center;">
+                    <!-- Icono de información en lugar de triángulo de advertencia -->
+                    <i class="bi bi-info-circle-fill"></i> 
                     
                     {{ message }}
                     
-                    <!-- Botón de cerrar (X) -->
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             {% endfor %}
         </div>
     {% endif %}
     {% endblock %}
-    <!-- Footer -->
     <footer>
         <div class="container">
             <div class="row">
                 <!-- Columna: Nosotros -->
                 <div class="col-lg-4 col-md-6 mb-4 mb-lg-0">
                     <h5><i class="bi bi-shop-window me-2"></i>Kiosco Sole</h5>
-                    <p>
-                        Somos el corazón del barrio, brindando los mejores snacks, bebidas y la atención más cálida desde 2015. 
-                        Tu parada obligatoria para endulzar el día.
+                    <p class="mb-3">
+                        Acompañando el crecimiento de los alumnos desde 1990. 
+                        Brindamos alimentación cuidada y un espacio seguro dentro del colegio, 
+                        garantizando confianza y tranquilidad a las familias.
                     </p>
+                    
+                    <a href="{% url 'about_me' %}" class="btn btn-warning fw-bold w-100 shadow-sm mt-2 text-uppercase">
+                        <i class="bi bi-person-vcard-fill me-2"></i>Acerca de Mí
+                    </a>
                 </div>
 
                 <!-- Columna: Contacto -->
@@ -391,16 +343,13 @@
                     <h5>Contacto</h5>
                     <ul class="list-unstyled">
                         <li class="mb-2">
-                            <i class="bi bi-geo-alt-fill text-warning me-2"></i> Av. Principal 1234, Ciudad
+                            <i class="bi bi-geo-alt-fill text-warning me-2"></i> Buffet Central del Colegio
                         </li>
                         <li class="mb-2">
                             <i class="bi bi-telephone-fill text-warning me-2"></i> +54 9 11 1234-5678
                         </li>
                         <li class="mb-2">
-                            <i class="bi bi-envelope-fill text-warning me-2"></i> contacto@kioscosole.com
-                        </li>
-                        <li class="mb-2">
-                            <i class="bi bi-clock-fill text-warning me-2"></i> Lun - Sáb: 08:00 a 22:00
+                            <i class="bi bi-envelope-fill text-warning me-2"></i> comedor@kioscosole.com
                         </li>
                     </ul>
                 </div>
@@ -408,10 +357,10 @@
                 <!-- Columna: Redes Sociales -->
                 <div class="col-lg-4 col-md-12 text-center text-lg-start">
                     <h5>Seguinos</h5>
-                    <p>Enterate de nuestras ofertas y nuevos ingresos.</p>
+                    <p>Menú semanal y novedades para los chicos.</p>
                     <div class="social-icons">
-                        <a href="https://facebook.com" target="_blank"><i class="bi bi-facebook"></i></a>
-                        <a href="https://instagram.com" target="_blank"><i class="bi bi-instagram"></i></a>
+                        <a href="#" target="_blank"><i class="bi bi-facebook"></i></a>
+                        <a href="#" target="_blank"><i class="bi bi-instagram"></i></a>
                         <a href="#" target="_blank"><i class="bi bi-whatsapp"></i></a>
                     </div>
                 </div>
@@ -420,7 +369,7 @@
         <!-- Copyright -->
         <div class="footer-bottom text-center">
             <div class="container">
-                <p class="mb-0">&copy; 2025 <strong>Kiosco Sole</strong>. Todos los derechos reservados. Desarrollado por <span class="text-warning">Abriba</span></p>
+                <p class="mb-0"><strong>Kiosco Sole</strong>. Desarrollado por <span class="text-warning">Nicolás Calviño - Abriba</span></p>
             </div>
         </div>
     </footer>

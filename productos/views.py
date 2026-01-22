@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from django.views.generic import ListView, DeleteView, DetailView, UpdateView, CreateView
 from django.db.models import Q
 from django.urls import reverse_lazy
@@ -10,6 +9,7 @@ class SuperUserRequiredMixin(UserPassesTestMixin):
     def test_func(self):
         return self.request.user.is_superuser
 
+# Lista de Productos
 class ProductoListView(ListView):
     model = Producto
     template_name = "productos/productos.html"
@@ -39,6 +39,7 @@ class ProductoListView(ListView):
 
         return queryset
 
+# Detalle de Producto
 class ProductoDetailView(LoginRequiredMixin, DetailView):
     model = Producto
     template_name = "productos/ver_producto.html"
@@ -46,18 +47,21 @@ class ProductoDetailView(LoginRequiredMixin, DetailView):
     slug_field ="code"
     slug_url_kwarg = "code"
 
+# Creación de Producto
 class ProductoCreateView(SuperUserRequiredMixin, CreateView):
     model = Producto
     template_name = "productos/crear_producto.html"
     form_class = ProductoForm
 
     def get_success_url(self):
+        if '_addanother' in self.request.POST:
+            return reverse_lazy('crear_producto')    
         return reverse_lazy(
-            "crear_producto",
-            #"detalle_producto",
-            # kwargs={"code":self.object.code}
+            "detalle_producto",
+             kwargs={"code":self.object.code}
             )
 
+# Lista de Productos
 class ProductoUpdateView(SuperUserRequiredMixin, UpdateView):
     model = Producto
     template_name = "productos/crear_producto.html"
@@ -71,6 +75,7 @@ class ProductoUpdateView(SuperUserRequiredMixin, UpdateView):
             kwargs={"code":self.object.code}
             )
 
+# Eliminar Producto
 class ProductoDeleteView(SuperUserRequiredMixin, DeleteView):
     model = Producto
     template_name = "productos/confirm_delete.html"

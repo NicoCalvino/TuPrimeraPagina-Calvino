@@ -44,7 +44,7 @@ class Cliente(models.Model):
 class Tarjeta(models.Model):
     codigo = models.CharField(max_length=15, unique=True, null=False)
     saldo = models.DecimalField(max_digits=10, decimal_places=2, default=0, validators=[MinValueValidator(-2000)])
-    habilitada = models.BooleanField(default=False)
+    habilitada = models.BooleanField(default=True)
     cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE, null=True)
 
     fecha_activacion = models.DateTimeField(auto_now_add=True)

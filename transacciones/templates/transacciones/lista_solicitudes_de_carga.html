@@ -8,7 +8,6 @@
 <header class="hero-section bg-light py-4 border-bottom mb-4">
     <div class="container">
         <h1 class="display-5 fw-bold text-dark">Solicitudes de Carga</h1>
-        <p class="lead text-muted">Gestiona las cargas de saldo de los clientes de forma eficiente.</p>
     </div>
 </header>
 {% endblock %}
@@ -21,15 +20,17 @@
             
             <!-- BARRA DE ACCIONES Y FILTROS -->
             <div class="row g-3 mb-4 align-items-center">
-                <!-- Botón Nueva Solicitud -->
+                <!-- Botón Nueva Solicitud (Oculto para Admin) -->
+                 {% if not user.is_superuser %}
                 <div class="col-12 col-md-4">
                     <a href="{% url 'solicitud_de_carga' %}" class="btn btn-primary shadow-sm w-100 w-md-auto">
                         <i class="bi bi-plus-circle me-2"></i>Nueva Solicitud
                     </a>
                 </div>
+                {% endif %}
 
                 <!-- Botones de Filtro -->
-                <div class="col-12 col-md-8 text-md-end">
+                <div class="col-12 col-md-8 text-md-end {% if user.is_superuser %}offset-md-4{% endif %}">
                     <div class="btn-group shadow-sm w-100 w-md-auto" role="group">
                         <a href="?estado=aprobada" class="btn btn-sm btn-outline-success {% if request.GET.estado == 'aprobada' %}active{% endif %}">
                             APROBADAS
@@ -54,6 +55,12 @@
                         <thead class="table-light">
                             <tr>
                                 <th class="ps-4">Fecha</th>
+                                
+                                <!-- NUEVO: Columna Usuario solo para Superuser -->
+                                {% if user.is_superuser %}
+                                <th>Usuario</th>
+                                {% endif %}
+                                
                                 <th>Monto</th>
                                 <th>Estado</th>
                                 <th class="text-center pe-4">Acciones</th>
@@ -66,6 +73,17 @@
                                     <span class="d-block fw-medium text-nowrap">{{ solicitud.fecha|date:"d/m/Y" }}</span>
                                     <small class="text-muted">{{ solicitud.fecha|date:"H:i" }} hs</small>
                                 </td>
+                                
+                                <!-- NUEVO: Dato Usuario solo para Superuser -->
+                                {% if user.is_superuser %}
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi bi-person-circle text-secondary me-2"></i>
+                                        <span class="fw-medium text-dark">{{ solicitud.usuario }}</span>
+                                    </div>
+                                </td>
+                                {% endif %}
+                                
                                 <td>
                                     <span class="fw-bold text-dark">$ {{ solicitud.monto }}</span>
                                 </td>
@@ -90,12 +108,20 @@
                                         <a href="{% url 'detalle_solicitud_de_carga' solicitud.code %}" class="btn btn-sm btn-outline-secondary" title="Ver Detalle">
                                             <i class="bi bi-eye"></i>
                                         </a>
+
+                                        <!-- Botón Editar (Visible solo si está pendiente y NO es admin el que mira, aunque esto es opcional) -->
+                                        {% if solicitud.estado == 'PENDIENTE' %}
+                                        <a href="{% url 'editar_solicitud' solicitud.code %}" class="btn btn-sm btn-outline-primary" title="Editar">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        {% endif %}
                                     </div>
                                 </td>
                             </tr>
                             {% empty %}
                             <tr>
-                                <td colspan="4" class="text-center py-5">
+                                <!-- Ajuste dinámico del colspan para que no se rompa la tabla -->
+                                <td colspan="{% if user.is_superuser %}5{% else %}4{% endif %}" class="text-center py-5">
                                     <i class="bi bi-inbox text-muted d-block mb-2" style="font-size: 3rem;"></i>
                                     <p class="text-muted fw-medium">No se encontraron solicitudes.</p>
                                     <a href="?" class="btn btn-sm btn-outline-primary">Ver todas</a>

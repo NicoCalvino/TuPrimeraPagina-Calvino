@@ -3,6 +3,7 @@ from kiosco.views import *
 
 urlpatterns = [
     path("",home, name="home"),
+    path("about/", about_me, name="about_me"),
 
     path("lista_clientes",lista_clientes, name="lista_clientes"),
     path("crear_cliente", crear_cliente, name="crear_cliente"),

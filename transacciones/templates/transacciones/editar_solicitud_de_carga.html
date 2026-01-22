@@ -1,0 +1,189 @@
+{% extends 'kiosco/index.html' %} 
+
+{% block titulo %}
+<title>Kiosco Sole - Cargar Saldo</title>
+{% endblock %} 
+
+{% block Bienvenida %}
+<header class="hero-section">
+    <div class="container">
+        <!-- Títulos estáticos o variables según prefieras -->
+        <h1 class="display-4 fw-bold text-dark">Cargar Saldo</h1>
+        <p class="lead text-dark">Asigna saldo a las tarjetas de tus hijos y adjunta el comprobante.</p>
+    </div>
+</header>
+{% endblock %}
+
+<!-- Contenido Principal -->
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10 col-md-12"> <!-- Agrandé un poco la columna para que entre bien la tabla -->
+            <div class="card card-custom p-4 shadow-sm">
+                
+                <h3 class="mb-4 text-center fw-bold text-primary">
+                    <i class="bi bi-wallet2 me-2"></i>Editar Solicitud de Carga
+                </h3>
+
+                <!-- IMPORTANTE: enctype es necesario para subir archivos -->
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    <!-- Sección 1: Lista de Hijos y Montos -->
+                    <div class="mb-4">
+                        <h5 class="fw-bold mb-3"><i class="bi bi-people-fill me-2"></i>Destinatarios</h5>
+                        
+                        {% if tarjetas_con_monto %}
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Alumno</th>
+                                        <th>N° Tarjeta</th>
+                                        <th>Saldo Actual</th>
+                                        <th style="width: 200px;">Monto a Cargar</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for tarjeta in tarjetas_con_monto %}
+                                    <tr>
+                                        <td class="fw-bold">{{ tarjeta.cliente.nombre }}</td>
+                                        <td>
+                                            <span class="badge bg-secondary">
+                                                <i class="bi bi-credit-card me-1"></i>{{ tarjeta.codigo }}
+                                            </span>
+                                        </td>
+                                        <td class="text-muted">${{ tarjeta.saldo }}</td>
+                                        <td>
+                                            <!-- Input manual que coincide con la lógica de la vista (views.py) -->
+                                            <div class="input-group">
+                                                <span class="input-group-text">$</span>
+                                                <input type="number" 
+                                                       step="0.01" 
+                                                       min="0" 
+                                                       class="form-control" 
+                                                       name="monto_{{ tarjeta.id }}" 
+                                                       placeholder="0.00"
+                                                       id="monto_{{ tarjeta.id }}"
+                                                       value="{{ tarjeta.monto_inicial }}">
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        {% else %}
+                            <div class="alert alert-warning">
+                                <i class="bi bi-exclamation-triangle me-2"></i>
+                                No tienes hijos con tarjetas asignadas para cargar saldo.
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <hr class="my-4">
+
+                    <!-- Sección 2: Comprobante de Pago (Desde el Form de Django) -->
+                    <div class="mb-4">
+                        <label for="{{ form.comprobante.id_for_label }}" class="form-label fw-bold">
+                            <i class="bi bi-receipt me-1"></i>Subir Comprobante de Transferencia
+                        </label>
+                        
+                        <div class="input-group">
+                            <!-- Renderizamos el campo del formulario -->
+                            {{ form.comprobante }} 
+                        </div>
+                        
+                        <!-- Manejo de errores del campo comprobante -->
+                        {% if form.comprobante.errors %}
+                            <div class="alert alert-danger mt-2">
+                                {{ form.comprobante.errors }}
+                            </div>
+                        {% endif %}
+                        <div class="form-text text-muted">
+                            Formatos aceptados: Imágenes (JPG, PNG) o PDF. Asegúrese de que sea legible.
+                        </div>
+                    </div>
+
+                    <!-- Botones de Acción -->
+                    <div class="d-grid gap-2 mt-5">
+                        <button type="submit" class="btn btn-success btn-lg fw-bold">
+                            <i class="bi bi-check-circle-fill me-2"></i>Confirmar Edición
+                        </button>
+                        <a href="{% url 'lista_solicitudes' %}" class="btn btn-outline-secondary btn-lg">
+                            <i class="bi bi-x-circle me-2"></i>Cancelar
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Opcional: Agregar validación JavaScript para montos -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.querySelector('form');
+        
+        form.addEventListener('submit', function(e) {
+            let hasAmount = false;
+            const amountInputs = document.querySelectorAll('input[type="number"][name^="monto_"]');
+            
+            amountInputs.forEach(input => {
+                if (parseFloat(input.value) > 0) {
+                    hasAmount = true;
+                }
+            });
+            
+            if (!hasAmount) {
+                e.preventDefault();
+                alert('Debe ingresar un monto para al menos una tarjeta/alumno.');
+            }
+        });
+        
+        // Formatear montos al salir del input (opcional)
+        const formatCurrency = function(input) {
+            if (input.value) {
+                let value = parseFloat(input.value).toFixed(2);
+                input.value = value;
+            }
+        };
+        
+        const amountInputs = document.querySelectorAll('input[type="number"][name^="monto_"]');
+        amountInputs.forEach(input => {
+            input.addEventListener('blur', function() {
+                formatCurrency(this);
+            });
+        });
+    });
+</script>
+
+<style>
+    .card-custom:hover {
+        transform: none !important; /* Mantenemos tu estilo original */
+        box-shadow: 0 10px 20px rgba(0,0,0,0.05) !important;
+    }
+    
+    /* Pequeño ajuste para que el input file de Django se vea bien con Bootstrap 5 */
+    input[type=file] {
+        display: block;
+        width: 100%;
+        padding: .375rem .75rem;
+        font-size: 1rem;
+        font-weight: 400;
+        line-height: 1.5;
+        color: #212529;
+        background-color: #fff;
+        background-clip: padding-box;
+        border: 1px solid #ced4da;
+        border-radius: .25rem;
+        transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+    }
+    
+    /* Estilo para resaltar inputs con valor */
+    input[name^="monto_"]:focus {
+        border-color: #198754;
+        box-shadow: 0 0 0 0.25rem rgba(25, 135, 84, 0.25);
+    }
+</style>
+{% endblock %}

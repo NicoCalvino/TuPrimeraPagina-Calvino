@@ -1,0 +1,93 @@
+{% extends 'kiosco/index.html' %}
+
+{% block titulo %}<title>Kiosco Sole - Nueva Alumna</title> {% endblock %}
+
+{% block Bienvenida %} {% endblock %}
+<header class="hero-section">
+    <div class="container">
+        <h1 class="display-4 fw-bold text-dark">Conoce al Creador</h1>
+        <p class="lead text-dark">La historia detrás del desarrollo de Kiosco Sole</p>
+    </div>
+</header>
+{% block content %}
+<div class="container mb-5">
+    <div class="card card-bio p-4 p-lg-5">
+        <div class="row align-items-center g-5">
+            
+            <!-- Columna Foto -->
+            <div class="col-lg-5 text-center">
+                <div class="profile-img-container">
+                    <!-- Añadí la clase img-fluid por seguridad -->
+                    <img src="/media/yo.png" alt="Nicolás Calviño" class="profile-img img-fluid">
+                </div>
+                <div class="mt-4">
+                    <h3 class="fw-bold">Nicolás Calviño</h3>
+                    <span class="badge bg-warning text-dark fs-6 rounded-pill px-3 py-2">Fullstack Developer</span>
+                    <span class="badge bg-dark fs-6 rounded-pill px-3 py-2">Python</span>
+                </div>
+            </div>
+
+            <!-- Columna Texto -->
+            <div class="col-lg-7 bio-text">
+                <h2 class="fw-bold mb-4">¡Hola!</h2>
+                
+                <p>
+                    Soy <strong>Nicolás Calviño</strong>, tengo 37 años y soy recibido de <span class="highlight-text">Licenciado en Administración de Empresas</span>.
+                </p>
+                
+                <p>
+                    Trabajé durante 14 años en una multinacional, empezando desde un puesto junior y llegando a ser Manager, manejando un equipo de hasta 8 personas y trabajando para toda Latinoamérica.
+                </p>
+
+                <p>
+                    Durante ese tiempo fui aprendiendo por mi cuenta la programación en <strong>macros de Excel</strong>, lo que me permitió automatizar procesos simples pero con un gran impacto en la organización del equipo. Con el tiempo, esas macros se volvieron más complejas, llegando al punto de ser tomadas como <em>standard</em> en la empresa.
+                </p>
+
+                <p>
+                    Impulsado por esto, hice un curso de programación web <strong>Fullstack</strong> en el cual aprendí JavaScript, HTML, CSS y SQL. Me terminé de convencer de que realmente me gustaba la programación y el desarrollo de herramientas, aunque en ese momento no pude terminar de girar mi carrera para ese lado.
+                </p>
+
+                <div class="p-3 bg-light rounded-3 border-start border-4 border-warning">
+                    <p class="mb-0">
+                        En el 2025 dejé mi trabajo y me encontré frente a un panorama diferente. Decidí aprender <strong class="text-dark">Python</strong>, el lenguaje que sabía que era el más importante.
+                        Esto coincidió con una necesidad en el trabajo de mi mujer para buscar una alternativa al cobro con celular, lo que decidí tomar como <strong>inspiración para armar este proyecto</strong>.
+                    </p>
+                </div>
+                
+                <!-- Redes Sociales del Dev (Opcional) -->
+                <div class="mt-4">
+                    <a href="https://www.linkedin.com/in/nicol%C3%A1s-calvi%C3%B1o-03820596/" class="btn btn-outline-dark me-2" target="_blank"><i class="bi bi-linkedin me-2"></i>LinkedIn</a>
+                    <a href="https://github.com/NicoCalvino" class="btn btn-outline-dark" target="_blank"><i class="bi bi-github me-2"></i>GitHub</a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <style>
+    .profile-img-container {
+        width: 100%;
+        max-width: 300px; /* Tamaño máximo de la foto */
+        margin: 0 auto;   /* Centra el contenedor */
+        aspect-ratio: 1 / 1; /* Hace que sea un cuadrado perfecto */
+        overflow: hidden; /* Corta lo que sobre salga */
+        border-radius: 20px; /* Bordes redondeados (o 50% para círculo) */
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+
+    .profile-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover; /* Ajusta la imagen al cuadro sin deformarla */
+        object-position: center;
+    }
+
+    /* Ajuste para la tarjeta general */
+    .card-bio {
+        border: none;
+        border-radius: 25px;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.05);
+        background: #ffffff;
+    }
+</style>
+</div>
+{% endblock %}

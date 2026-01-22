@@ -1,6 +1,6 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import redirect, get_object_or_404
+from django.views import View
 from django.views.generic import ListView, DeleteView, DetailView, UpdateView, CreateView
-from django.db.models import Q
 from django.db import transaction
 from django.urls import reverse_lazy, reverse
 from django.contrib import messages
@@ -9,14 +9,14 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from transacciones.models import Transaccion, SolicitudCarga, DetalleCarga
 from transacciones.forms import *
 
-from kiosco.models import Tarjeta, Cliente
-
-import pdb
+from kiosco.models import Tarjeta
 
 class SuperUserRequiredMixin(UserPassesTestMixin):
     def test_func(self):
         return self.request.user.is_superuser
 
+# Vistas de Transaccion
+## Lista de Transacciones
 class TransaccionListView(SuperUserRequiredMixin, ListView):
     model=Transaccion
     template_name = "transacciones/lista_transacciones.html"
@@ -32,13 +32,15 @@ class TransaccionListView(SuperUserRequiredMixin, ListView):
 
         return queryset
 
+## Detalle de Transacción
 class TransaccionDetailView(SuperUserRequiredMixin, DetailView):
     model = Transaccion
     template_name = "transacciones/ver_transaccion.html"
     context_object_name = "transaccion"
     slug_field ="id"
     slug_url_kwarg = "id"
-    
+
+## Creación de Transacción de Compra    
 class TransaccionCompraCreateView(SuperUserRequiredMixin, CreateView):
     model = Transaccion
     template_name = "transacciones/cargar_transaccion.html"
@@ -70,7 +72,8 @@ class TransaccionCompraCreateView(SuperUserRequiredMixin, CreateView):
         self.object.save()
 
         return super().form_valid(form)
-    
+
+## Creación de Transacción de Carga    
 class TransaccionCargaCreateView(SuperUserRequiredMixin, CreateView):
     model = Transaccion
     template_name = "transacciones/cargar_transaccion.html"
@@ -114,6 +117,7 @@ class TransaccionCargaCreateView(SuperUserRequiredMixin, CreateView):
 
         return super().form_valid(form)
     
+## Edición de Transacción
 class TransaccionUpdateView(SuperUserRequiredMixin, UpdateView):
     model = Transaccion
     template_name = "transacciones/editar_transaccion.html"
@@ -137,7 +141,8 @@ class TransaccionUpdateView(SuperUserRequiredMixin, UpdateView):
         self.object.save()
 
         return super().form_valid(form)
-    
+
+## Eliminar Transacción
 class TransaccionDeleteView(SuperUserRequiredMixin, DeleteView):
     model = Transaccion
     template_name = "transacciones/confirmar_eliminar.html"
@@ -157,17 +162,41 @@ class TransaccionDeleteView(SuperUserRequiredMixin, DeleteView):
             tarjeta.save()
 
             return super().form_valid(form)
-        
+
+# Vistas de Solicitud de Carga de Saldo
+## Lista de Solicitudes        
+class SolicitudDeCargaListView(LoginRequiredMixin, ListView):
+    model=SolicitudCarga
+    template_name = "transacciones/lista_solicitudes_de_carga.html"
+    context_object_name= "solicitudes"
+
+    def get_queryset(self):
+        queryset = super().get_queryset().order_by('-fecha')
+
+        if not self.request.user.is_superuser:
+            queryset = queryset.filter(usuario=self.request.user)
+        filtro_tipo = self.request.GET.get('estado', 'todas')
+        if filtro_tipo == 'aprobada':
+            queryset = queryset.filter(estado="APROBADA")
+        elif filtro_tipo == 'rechazada':
+            queryset = queryset.filter(estado="RECHAZADA")
+        elif filtro_tipo == 'pendiente':
+            queryset = queryset.filter(estado="PENDIENTE")
+
+        return queryset
+
+## Creación de Solicitud
 class SolicitudDeCargaCreateView(LoginRequiredMixin, CreateView):
     model = SolicitudCarga
     form_class = SolicitudCargaForm
-    template_name = 'transacciones/cargar_saldo_usuario.html'
+    template_name = 'transacciones/solicitud_de_carga.html'
     success_url = reverse_lazy('lista_solicitudes')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['tarjetas'] = Tarjeta.objects.filter(
-            cliente__usuario = self.request.user, 
+            cliente__usuario = self.request.user,
+            habilitada = True
         ).select_related('cliente')
         return context
 
@@ -180,7 +209,8 @@ class SolicitudDeCargaCreateView(LoginRequiredMixin, CreateView):
                 self.object.save()
 
                 tarjetas = Tarjeta.objects.filter(
-                    cliente__usuario=self.request.user
+                    cliente__usuario=self.request.user,
+                    habilitada = True
                 ).select_related('cliente')
 
                 monto_total_cargado = 0
@@ -212,33 +242,26 @@ class SolicitudDeCargaCreateView(LoginRequiredMixin, CreateView):
         except Exception as e:
             messages.error(self.request, "Ocurrió un error inesperado al procesar la solicitud.")
             return self.form_invalid(form)
-        
-class SolicitudDeCargaListView(LoginRequiredMixin, ListView):
-    model=SolicitudCarga
-    template_name = "transacciones/solicitudes_de_carga.html"
-    context_object_name= "solicitudes"
 
-    def get_queryset(self):
-        queryset = super().get_queryset().order_by('-fecha')
-
-        if not self.request.user.is_superuser:
-            queryset = queryset.filter(usuario=self.request.user)
-        filtro_tipo = self.request.GET.get('estado', 'todas')
-        if filtro_tipo == 'aprobada':
-            queryset = queryset.filter(estado="APROBADA")
-        elif filtro_tipo == 'rechazada':
-            queryset = queryset.filter(estado="RECHAZADA")
-        elif filtro_tipo == 'pendiente':
-            queryset = queryset.filter(estado="PENDIENTE")
-
-        return queryset
-    
-class SolicitudDeCargaDetailView(LoginRequiredMixin, DetailView):
+## Detalle de Solicitud
+class SolicitudDeCargaDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
     model=SolicitudCarga
     template_name = "transacciones/detalle_solicitud_de_carga.html"
     context_object_name= "solicitud"
     slug_field ="code"
     slug_url_kwarg = "code"
+
+    def test_func(self):
+        solicitud = self.get_object()
+        usuario_actual = self.request.user
+        if usuario_actual.is_superuser:
+            return True
+        return solicitud.usuario == usuario_actual
+    
+    def handle_no_permission(self):
+        if not self.request.user.is_authenticated:
+            return super().handle_no_permission()
+        return redirect('lista_solicitudes')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -247,7 +270,99 @@ class SolicitudDeCargaDetailView(LoginRequiredMixin, DetailView):
         context['detalles_carga'] = detalles_carga
         
         return context
+
+## Edción de Solicitud
+class SolicitudDeCargaUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = SolicitudCarga
+    form_class = SolicitudCargaForm
+    template_name = 'transacciones/editar_solicitud_de_carga.html'
+    success_url = reverse_lazy('lista_solicitudes')
+    slug_field = "code"
+    slug_url_kwarg = "code"
+
+    def test_func(self):
+        solicitud = self.get_object()
+        usuario_actual = self.request.user
+        if usuario_actual.is_superuser:
+            return True
+        return solicitud.usuario == usuario_actual
     
+    def handle_no_permission(self):
+        if not self.request.user.is_authenticated:
+            return super().handle_no_permission()
+        return redirect('lista_solicitudes')
+
+    def get_queryset(self):
+        solicitudes = SolicitudCarga.objects.filter(
+            estado='PENDIENTE'
+        )
+
+        if not self.request.user.is_superuser:
+            solicitudes.filter(
+                usuario=self.request.user,
+            )
+
+        return solicitudes
+
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        todas_tarjetas = Tarjeta.objects.filter(
+            cliente__usuario=self.object.usuario,
+            habilitada = True 
+        ).select_related('cliente')
+
+        detalles_existentes = self.object.detalles.all()
+        mapa_montos = {d.tarjeta.id: d.monto for d in detalles_existentes}
+        
+        for tarjeta in todas_tarjetas:
+            tarjeta.monto_inicial = mapa_montos.get(tarjeta.id, '')
+        
+        context['tarjetas_con_monto'] = todas_tarjetas
+        
+        return context
+
+    def form_valid(self, form):
+        try:
+            with transaction.atomic():
+                self.object = form.save(commit=False)
+                self.object.detalles.all().delete()
+
+                tarjetas = Tarjeta.objects.filter(
+                    cliente__usuario=self.request.user,
+                    habilitada = True
+                ).select_related('cliente')
+
+                monto_total_cargado = 0
+
+                for tarjeta in tarjetas:
+
+                    input_name = f"monto_{tarjeta.id}"
+                    monto = self.request.POST.get(input_name)
+                    if monto and float(monto) > 0:
+                        DetalleCarga.objects.create(
+                            solicitud=self.object,
+                            tarjeta=tarjeta,
+                            monto=monto
+                        )
+                        monto_total_cargado += float(monto)
+                
+                if monto_total_cargado == 0:
+                    raise ValueError("Debe ingresar un monto para al menos un alumno.")
+                
+                self.object.monto = monto_total_cargado
+                self.object.save()
+            return super().form_valid(form)
+        
+        except ValueError as e:
+            messages.error(self.request, str(e))
+            return self.form_invalid(form)
+        except Exception as e:
+            messages.error(self.request, "Ocurrió un error inesperado al procesar la solicitud.")
+            return self.form_invalid(form)
+
+## Eliminación de Solicitud
 class SolicitudDeCargaDeleteView(LoginRequiredMixin, DeleteView):
     model = SolicitudCarga
     template_name = "transacciones/confirmar_eliminar_carga_de_saldo.html"
@@ -261,29 +376,43 @@ class SolicitudDeCargaDeleteView(LoginRequiredMixin, DeleteView):
         context['detalles_carga'] = detalles_carga
         
         return context
-    
-class SolicitudDeCargaUpdateView(SuperUserRequiredMixin, UpdateView):
-    model = SolicitudCarga
-    template_name = "transacciones/aprobar_rechazar_solicitud.html"
-    success_url = reverse_lazy('lista_transacciones')
-    slug_field = 'code'
-    slug_url_kwarg = 'code'
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['accion'] = self.kwargs.get('accion')
-        return context
-
-    def post(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        accion = self.kwargs.get('accion')
-
-        if accion == 'aprobar':
-            self.object.estado = 'APROBADA'
-            messages.success(request, f"La solicitud {self.object.code} ha sido aprobada con éxito.")
+## Aprobación o Rechazo de Solicitud      
+class GestionarSolicitudView(SuperUserRequiredMixin, View):
+    def post(self, request, code):
+        solicitud = get_object_or_404(SolicitudCarga, code=code)
+        if solicitud.estado != 'PENDIENTE':
+            messages.warning(request, "Esta solicitud ya fue procesada anteriormente.")
+            return redirect('detalle_solicitud_de_carga', code=solicitud.code)
         
-        elif accion == 'rechazar':
-            self.object.estado = 'RECHAZADA'
-            messages.warning(request, f"La solicitud {self.object.code} ha sido rechazada.")
+        accion = request.POST.get('accion')
 
-        self.object.save()
+        try:
+            with transaction.atomic():
+                if accion == 'aprobar':
+                    solicitud.estado = 'APROBADA'
+                    solicitud.save()
+
+                    detalles = solicitud.detalles.all()
+
+                    for detalle in detalles:
+                        Transaccion.objects.create(
+                            tarjeta=detalle.tarjeta,
+                            concepto="CARGA SALDO",
+                            monto=detalle.monto,
+ 
+                        )
+                        
+                        detalle.tarjeta.saldo += detalle.monto
+                        detalle.tarjeta.save()
+                
+                elif accion == 'rechazar':
+                    
+                    solicitud.estado = 'RECHAZADA'
+                    solicitud.save()
+                else:
+                    messages.error(request, "Acción no válida.")
+        except Exception as e:
+            messages.error(request, f"Ocurrió un error al procesar: {str(e)}")
+
+        return redirect('lista_solicitudes')
