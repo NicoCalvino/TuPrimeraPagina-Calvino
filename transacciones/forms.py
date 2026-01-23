@@ -127,9 +127,11 @@ class TransaccionCargaForm(forms.ModelForm):
             tarjeta_obj = Tarjeta.objects.get(codigo=numero_tarjeta)
         except Tarjeta.DoesNotExist:
             self.add_error('numero_tarjeta', "El número de tarjeta ingresado no existe.")
+            return cleaned_data
         
         if not tarjeta_obj.habilitada:
             self.add_error('numero_tarjeta', "Esta tarjeta se encuentra deshabilitada.")
+            return cleaned_data
 
         monto_decimal = Decimal(str(monto))
 

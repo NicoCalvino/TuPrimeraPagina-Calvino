@@ -28,28 +28,46 @@
             
             <!-- BARRA DE ACCIONES Y FILTROS -->
             <div class="row g-3 mb-4 align-items-center">
-                <!-- Botón Nueva Solicitud (Oculto para Admin) -->
-                 {% if not user.is_superuser %}
+                
+                <!-- COLUMNA IZQUIERDA: Botón (Usuario) o Buscador (Admin) -->
                 <div class="col-12 col-md-4">
-                    <a href="{% url 'solicitud_de_carga' %}" class="btn btn-primary shadow-sm w-100 w-md-auto">
-                        <i class="bi bi-plus-circle me-2"></i>Nueva Solicitud
-                    </a>
+                    {% if not user.is_superuser %}
+                        <!-- Botón Nueva Solicitud (Solo Usuarios normales) -->
+                        <a href="{% url 'solicitud_de_carga' %}" class="btn btn-primary shadow-sm w-100 w-md-auto">
+                            <i class="bi bi-plus-circle me-2"></i>Nueva Solicitud
+                        </a>
+                    {% else %}
+                        <!-- Searchbar (Solo Superuser) -->
+                        <form method="GET" action="">
+                            <div class="input-group shadow-sm">
+                                <input type="text" name="usuario" class="form-control" placeholder="Buscar usuario..." value="{{ request.GET.usuario }}">
+                                <button class="btn btn-outline-primary" type="submit">
+                                    <i class="bi bi-search"></i>
+                                </button>
+                                
+                                <!-- Mantiene el filtro de estado si existe al buscar -->
+                                {% if request.GET.estado %}
+                                <input type="hidden" name="estado" value="{{ request.GET.estado }}">
+                                {% endif %}
+                            </div>
+                        </form>
+                    {% endif %}
                 </div>
-                {% endif %}
 
-                <!-- Botones de Filtro -->
-                <div class="col-12 col-md-8 text-md-end {% if user.is_superuser %}offset-md-4{% endif %}">
+                <!-- COLUMNA DERECHA: Botones de Filtro -->
+                <!-- Nota: Se eliminó el 'offset-md-4' porque ahora siempre hay algo a la izquierda -->
+                <div class="col-12 col-md-8 text-md-end">
                     <div class="btn-group shadow-sm w-100 w-md-auto" role="group">
-                        <a href="?estado=aprobada" class="btn btn-sm btn-outline-success {% if request.GET.estado == 'aprobada' %}active{% endif %}">
+                        <a href="?estado=aprobada{% if request.GET.usuario %}&usuario={{ request.GET.usuario }}{% endif %}" class="btn btn-sm btn-outline-success {% if request.GET.estado == 'aprobada' %}active{% endif %}">
                             APROBADAS
                         </a>
-                        <a href="?estado=rechazada" class="btn btn-sm btn-outline-danger {% if request.GET.estado == 'rechazada' %}active{% endif %}">
+                        <a href="?estado=rechazada{% if request.GET.usuario %}&usuario={{ request.GET.usuario }}{% endif %}" class="btn btn-sm btn-outline-danger {% if request.GET.estado == 'rechazada' %}active{% endif %}">
                             RECHAZADAS
                         </a>
-                        <a href="?estado=pendiente" class="btn btn-sm btn-outline-warning {% if request.GET.estado == 'pendiente' %}active{% endif %}">
+                        <a href="?estado=pendiente{% if request.GET.usuario %}&usuario={{ request.GET.usuario }}{% endif %}" class="btn btn-sm btn-outline-warning {% if request.GET.estado == 'pendiente' %}active{% endif %}">
                             PENDIENTES
                         </a>
-                        <a href="?" class="btn btn-sm btn-outline-secondary {% if not request.GET.estado %}active{% endif %}">
+                        <a href="?{% if request.GET.usuario %}usuario={{ request.GET.usuario }}{% endif %}" class="btn btn-sm btn-outline-secondary {% if not request.GET.estado %}active{% endif %}">
                             TODAS
                         </a>
                     </div>
@@ -131,7 +149,13 @@
                                 <!-- Ajuste dinámico del colspan para que no se rompa la tabla -->
                                 <td colspan="{% if user.is_superuser %}5{% else %}4{% endif %}" class="text-center py-5">
                                     <i class="bi bi-inbox text-muted d-block mb-2" style="font-size: 3rem;"></i>
-                                    <p class="text-muted fw-medium">No se encontraron solicitudes.</p>
+                                    <p class="text-muted fw-medium">
+                                        {% if request.GET.q %}
+                                            No se encontraron resultados para "{{ request.GET.q }}".
+                                        {% else %}
+                                            No se encontraron solicitudes.
+                                        {% endif %}
+                                    </p>
                                     <a href="?" class="btn btn-sm btn-outline-primary">Ver todas</a>
                                 </td>
                             </tr>

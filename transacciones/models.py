@@ -7,7 +7,7 @@ def generate_code():
     return uuid.uuid4().hex
 
 def picture_upload_to(instance, filename):
-    return f"comprobantes/{instance.usuario}/{filename}"
+    return f"comprobantes/{instance.usuario.username}/{filename}"
 
 class Transaccion(models.Model):
     CONCEPTOS = (

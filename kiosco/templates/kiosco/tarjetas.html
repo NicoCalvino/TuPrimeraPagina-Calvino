@@ -58,15 +58,15 @@
                     </a>
 
                     <!-- Botón CON USUARIO -->
-                    <a href="?filtro=con_usuario{% if request.GET.codigo %}&codigo={{ request.GET.codigo }}{% endif %}" 
-                       class="btn btn-sm px-3 {% if request.GET.filtro == 'con_usuario' %}btn-dark{% else %}btn-outline-dark{% endif %}">
-                        Con Usuario
+                    <a href="?filtro=con_cliente{% if request.GET.codigo %}&codigo={{ request.GET.codigo }}{% endif %}" 
+                       class="btn btn-sm px-3 {% if request.GET.filtro == 'con_cliente' %}btn-dark{% else %}btn-outline-dark{% endif %}">
+                        Con Cliente
                     </a>
 
                     <!-- Botón SIN USUARIO -->
-                    <a href="?filtro=sin_usuario{% if request.GET.codigo %}&codigo={{ request.GET.codigo }}{% endif %}" 
-                       class="btn btn-sm px-3 rounded-end-pill {% if request.GET.filtro == 'sin_usuario' %}btn-dark{% else %}btn-outline-dark{% endif %}">
-                        Sin Usuario
+                    <a href="?filtro=sin_cliente{% if request.GET.codigo %}&codigo={{ request.GET.codigo }}{% endif %}" 
+                       class="btn btn-sm px-3 rounded-end-pill {% if request.GET.filtro == 'sin_cliente' %}btn-dark{% else %}btn-outline-dark{% endif %}">
+                        Sin Cliente
                     </a>
 
                 </div>

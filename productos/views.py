@@ -1,6 +1,7 @@
 from django.views.generic import ListView, DeleteView, DetailView, UpdateView, CreateView
 from django.db.models import Q
 from django.urls import reverse_lazy
+from django.contrib import messages
 from productos.models import Producto
 from productos.forms import *
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -55,6 +56,8 @@ class ProductoCreateView(SuperUserRequiredMixin, CreateView):
 
     def get_success_url(self):
         if '_addanother' in self.request.POST:
+            messages.success(self.request, '¡Producto creado exitosamente! Puedes cargar el siguiente.', 
+                extra_tags='mensaje_local' )
             return reverse_lazy('crear_producto')    
         return reverse_lazy(
             "detalle_producto",

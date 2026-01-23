@@ -1,7 +1,7 @@
 {% extends 'kiosco/index.html' %} 
 
 {% block titulo %}
-<title>Kiosco Sole - Cargar Saldo</title>
+<title>Kiosco Sole - {{ titulo_pagina }}</title>
 {% endblock %} 
 
 {% block Bienvenida %}
@@ -11,59 +11,77 @@
             <p class="lead text-dark">Ingresa el monto y el número de tarjeta.</p>
         </div>
     </header>
-    {% endblock %}
+{% endblock %}
 
-    <!-- Contenido Principal -->
-    {% block content %}
-    <div class="container my-5">
-        <div class="row justify-content-center">
-            <div class="col-lg-8 col-md-10">
-                <div class="card card-custom p-4 shadow-sm">
-                    <h3 class="mb-4 text-center fw-bold text-products">
-                        <i class="bi bi-wallet2 me-2"></i>{{ subtitulo }}
-                    </h3>
-                    <form method="post" action="#">
-                        {% csrf_token %}
+<!-- Contenido Principal -->
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
+            <div class="card card-custom p-4 shadow-sm">
+                <h3 class="mb-4 text-center fw-bold text-products">
+                    <i class="bi bi-wallet2 me-2"></i>{{ subtitulo }}
+                </h3>
+                
+                <form method="post" action="#">
+                    {% csrf_token %}
 
-                        <div class="mb-3">
-                            <label for="{{ form.monto.id_for_label }}" class="form-label fw-bold">Monto de la {{ tipo }}</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="bi bi-currency-dollar"></i></span>
-                                {{ form.monto }} {# Aquí Django renderiza el input con sus atributos del widget #}
+                    <div class="mb-3">
+                        <label for="{{ form.monto.id_for_label }}" class="form-label fw-bold">Monto de la {{ tipo }}</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-currency-dollar"></i></span>
+                            {{ form.monto }} 
+                        </div>
+                        {% if form.monto.errors %}
+                            <div class="alert alert-danger mt-1">{{ form.monto.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ form.numero_tarjeta.id_for_label }}" class="form-label fw-bold">Número de Tarjeta</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-credit-card"></i></span>
+                            {{ form.numero_tarjeta }} 
+                        </div>
+                            {% if form.numero_tarjeta.errors %}
+                            <div class="alert alert-danger mt-1">{{ form.numero_tarjeta.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="d-grid gap-2 mt-4">
+                        <button type="submit" class="btn btn-lg fw-bold {{ color_boton }}">
+                            <i class="bi bi-check-circle-fill me-2"></i>{{ texto_boton }}
+                        </button>
+                        <a href="{% url 'home' %}" class="btn btn-outline-secondary btn-lg">
+                            <i class="bi bi-x-circle me-2"></i>Cancelar
+                        </a>
+                    </div>
+                </form>
+
+                <!-- AQUI AGREGAMOS EL MENSAJE ABAJO DEL FORMULARIO -->
+                {% if messages %}
+                <div class="mt-4">
+                    {% for message in messages %}
+                        {% if 'mensaje_local' in message.tags %}
+                            <!-- Alerta con estilo Bootstrap (verde para success) -->
+                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show shadow-sm" role="alert">
+                                <i class="bi bi-check-circle-fill me-2"></i><strong>{{ message }}</strong>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                             </div>
-                            {% if form.monto.errors %}
-                                <div class="alert alert-danger mt-1">{{ form.monto.errors }}</div>
-                            {% endif %}
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="{{ form.numero_tarjeta.id_for_label }}" class="form-label fw-bold">Número de Tarjeta</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="bi bi-credit-card"></i></span>
-                                {{ form.numero_tarjeta }} {# Django renderiza el input #}
-                            </div>
-                             {% if form.numero_tarjeta.errors %}
-                                <div class="alert alert-danger mt-1">{{ form.numero_tarjeta.errors }}</div>
-                            {% endif %}
-                        </div>
-                        
-                        <div class="d-grid gap-2 mt-4">
-                            <button type="submit" class="btn btn-lg fw-bold {{ color_boton }}">
-                                <i class="bi bi-check-circle-fill me-2"></i>{{ texto_boton }}
-                            </button>
-                            <a href="{% url 'home' %}" class="btn btn-outline-secondary btn-lg">
-                                <i class="bi bi-x-circle me-2"></i>Cancelar
-                            </a>
-                        </div>
-                    </form>
+                        {% endif %}
+                    {% endfor %}
                 </div>
+                {% endif %}
+                <!-- FIN DEL BLOQUE DE MENSAJES -->
+
             </div>
         </div>
     </div>
-    <style>
-        .card-custom:hover {
-            transform: none !important;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.05) !important;
-        }
-    </style>
-    {% endblock %}
+</div>
+<style>
+    .card-custom:hover {
+        transform: none !important;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.05) !important;
+    }
+</style>
+{% endblock %}

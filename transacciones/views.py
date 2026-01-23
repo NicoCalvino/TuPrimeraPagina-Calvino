@@ -2,6 +2,7 @@ from django.shortcuts import redirect, get_object_or_404
 from django.views import View
 from django.views.generic import ListView, DeleteView, DetailView, UpdateView, CreateView
 from django.db import transaction
+from django.db.models import Q
 from django.urls import reverse_lazy, reverse
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -70,6 +71,9 @@ class TransaccionCompraCreateView(SuperUserRequiredMixin, CreateView):
             self.object.tarjeta = tarjeta
         
         self.object.save()
+
+        messages.success(self.request, 'Compra registrada exitosamente', 
+            extra_tags='mensaje_local' )
 
         return super().form_valid(form)
 
@@ -182,6 +186,13 @@ class SolicitudDeCargaListView(LoginRequiredMixin, ListView):
             queryset = queryset.filter(estado="RECHAZADA")
         elif filtro_tipo == 'pendiente':
             queryset = queryset.filter(estado="PENDIENTE")
+
+        search_query = self.request.GET.get('usuario')
+        
+        if search_query and self.request.user.is_superuser:
+            queryset = queryset.filter(
+                Q(usuario__username__icontains=search_query) | Q(usuario__first_name__icontains=search_query) | Q(usuario__last_name__icontains=search_query)  
+            )
 
         return queryset
 

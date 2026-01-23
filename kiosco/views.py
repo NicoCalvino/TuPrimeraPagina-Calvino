@@ -131,9 +131,9 @@ def lista_tarjetas(request):
     tarjetas_query = Tarjeta.objects.all()
 
     filtro = request.GET.get('filtro')
-    if filtro == 'con_usuario':
+    if filtro == 'con_cliente':
         tarjetas_query = tarjetas_query.exclude(cliente__isnull=True)
-    elif filtro == 'sin_usuario':
+    elif filtro == 'sin_cliente':
         tarjetas_query = tarjetas_query.filter(cliente__isnull=True)
     
     if codigo:
@@ -152,6 +152,8 @@ def crear_tarjeta(request):
         if form.is_valid():
             form.save()
             if 'confirmar_y_crear_otra' in request.POST:
+                messages.success(request, '¡La tarjeta se ha creado exitosamente!', 
+                    extra_tags='mensaje_local')
                 return redirect("crear_tarjeta")
             return redirect("lista_tarjetas")
     else:

@@ -20,6 +20,23 @@
         </div>
     </div>
 
+    <!-- BLOQUE DE MENSAJES (Nuevo código) -->
+    {% if messages %}
+    <div class="row justify-content-center mb-3">
+        <div class="col-lg-8">
+            {% for message in messages %}
+                {% if 'mensaje_local' in message.tags %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show shadow-sm" role="alert">
+                        <i class="bi bi-check-circle-fill me-2"></i><strong>{{ message }}</strong>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+    <!-- FIN BLOQUE DE MENSAJES -->
+
     <!-- Card del Formulario -->
     <div class="row justify-content-center">
         <div class="col-lg-8">
