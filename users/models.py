@@ -14,7 +14,7 @@ class Perfil(AbstractUser):
         verbose_name="Avatar"
     )
     direccion = models.CharField(max_length=100, null=True, blank=True)
-    celular = models.IntegerField(max_length=10, null=True, blank=True)
+    celular = models.CharField(max_length=10, null=True, blank=True)
 
     class Meta:
         verbose_name = "Perfil"

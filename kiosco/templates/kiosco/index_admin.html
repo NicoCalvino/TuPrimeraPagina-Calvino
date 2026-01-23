@@ -81,18 +81,6 @@
                 <a href="{% url 'lista_productos' %}" class="btn btn-outline-warning w-100 mt-2 mt-auto stretched-link">Ver Catálogo</a>
             </div>
         </div>
-
-        {% if messages %}
-        <div class="container mt-3">
-            {% for message in messages %}
-                <div class="alert alert-info alert-dismissible fade show" role="alert" style="font-size: 1.2rem; font-weight: bold; text-align: center;">
-                    <i class="bi bi-info-circle-fill"></i> 
-                    {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            {% endfor %}
-        </div>
-        {% endif %}
     </div>
 </div>
 {% endblock %}

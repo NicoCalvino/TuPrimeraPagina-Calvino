@@ -1,5 +1,5 @@
 from django.db import models
-from django.core.validators import MinValueValidator
+from django.core.validators import MinValueValidator, MinLengthValidator
 from django.conf import settings
 
 class Cliente(models.Model):
@@ -42,7 +42,7 @@ class Cliente(models.Model):
         return f"{self.nombre} {self.apellido} - {self.curso}"
 
 class Tarjeta(models.Model):
-    codigo = models.CharField(max_length=15, unique=True, null=False)
+    codigo = models.CharField(max_length=15, unique=True, null=False, validators=[MinLengthValidator(15)])
     saldo = models.DecimalField(max_digits=10, decimal_places=2, default=0, validators=[MinValueValidator(-2000)])
     habilitada = models.BooleanField(default=True)
     cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE, null=True)

@@ -64,7 +64,7 @@ class ProductoCreateView(SuperUserRequiredMixin, CreateView):
 # Lista de Productos
 class ProductoUpdateView(SuperUserRequiredMixin, UpdateView):
     model = Producto
-    template_name = "productos/crear_producto.html"
+    template_name = "productos/editar_producto.html"
     form_class = ProductoForm
     slug_field ="code"
     slug_url_kwarg = "code"

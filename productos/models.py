@@ -13,8 +13,10 @@ class Producto(models.Model):
         ("ALFAJORES", "Alfajores"),
         ("BEBIDAS", "Bebidas"),
         ("GALLETITAS", "Galletitas"),
+        ("COMIDA", "Comida"),
         ("CHOCOLATES", "Chocolates"),
         ("CARAMELOS", "Caramelos"),
+        ("HELADOS", "Helados"),
     )
     picture = models.ImageField(
         upload_to=picture_upload_to,
@@ -25,7 +27,7 @@ class Producto(models.Model):
     categoria = models.CharField(choices=CATEGORIAS, max_length=30, null=False)
     precio = models.DecimalField(max_digits=8, decimal_places=2)
     stock = models.IntegerField(default=0, validators=[MinValueValidator(0)])
-    codigo_de_barras = models.CharField(max_length=13, null=False)
+    codigo_de_barras = models.CharField(max_length=13, null=False, unique=True)
     code = models.CharField(max_length=32,
                             unique=True,
                             default = generate_code

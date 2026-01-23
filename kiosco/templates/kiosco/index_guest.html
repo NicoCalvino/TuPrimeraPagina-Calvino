@@ -1,0 +1,44 @@
+{% extends 'kiosco/index.html' %}
+
+<!-- Hero Header -->
+{% block Bienvenida %}
+<header class="hero-section">
+    <div class="container">
+        <h1 class="display-4 fw-bold text-dark">Kiosco Sole</h1>
+    </div>
+</header>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    
+    <!-- TRES BOTONES DE ACCIÓN RÁPIDA -->
+    <div class="row mb-5 g-3 justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card card-custom p-5 text-center shadow-lg border-0">
+                <div class="mb-4">
+                    <i class="bi bi-stars" style="font-size: 3rem; color: #FFC107;"></i>
+                </div>
+                <h2 class="fw-bold mb-3">¡Nos encanta verte por aquí!</h2>
+                <p class="lead text-muted mb-4">
+                    Para ver nuestros productos, consultar precios o gestionar tu saldo, 
+                    necesitamos que ingreses a tu cuenta.
+                </p>
+                <div class="p-3 mb-4 rounded-3" style="background-color: #fff9e6; border: 1px dashed #FFC107;">
+                    <p class="mb-0 text-dark">
+                        <strong>¿Aún no eres parte?</strong> Sumate hoy mismo para disfrutar de todos los beneficios del Kiosco.
+                    </p>
+                </div>
+                <div class="d-grid gap-3 d-sm-flex justify-content-sm-center">
+                    <a href="{% url 'login' %}" class="btn btn-warning btn-lg px-4 fw-bold">
+                        <i class="bi bi-box-arrow-in-right me-2"></i>Iniciar Sesión
+                    </a>
+                    <a href="{% url 'register' %}" class="btn btn-outline-dark btn-lg px-4">
+                        <i class="bi bi-person-plus me-2"></i>¡Quiero registrarme!
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

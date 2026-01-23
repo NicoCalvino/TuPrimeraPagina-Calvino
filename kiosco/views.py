@@ -11,8 +11,10 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 # Vistas Básicas
 def home(request):
     clientes =  Cliente.objects.none()
-    if request.user.is_authenticated:
-        clientes = Cliente.objects.filter(usuario=request.user)
+    if not request.user.is_authenticated:
+        return render(request, "kiosco/index_guest.html")
+    
+    clientes = Cliente.objects.filter(usuario=request.user)
 
     if request.user.is_superuser:
         return render(request, "kiosco/index_admin.html")
@@ -62,7 +64,7 @@ def crear_cliente(request):
 @login_required
 def ver_cliente(request, pk):
     cliente = get_object_or_404(Cliente, pk=pk)
-    if cliente.usuario != request.user:
+    if not request.user.is_superuser and cliente.usuario != request.user:
         messages.error(request, 'No tienes permiso para ver ese cliente.')
         return redirect('home')
     return render(request, 'kiosco/ver_cliente.html', {"cliente":cliente})
@@ -71,7 +73,7 @@ def ver_cliente(request, pk):
 @login_required
 def actualizar_cliente(request, pk):
     cliente = get_object_or_404(Cliente, pk=pk)
-    if cliente.usuario != request.user:
+    if not request.user.is_superuser and cliente.usuario != request.user:
         messages.error(request, 'No tienes permiso para editar ese cliente.')
         return redirect('home')
     if request.method == "POST":
@@ -91,7 +93,7 @@ def actualizar_cliente(request, pk):
 @login_required
 def eliminar_cliente(request, pk):
     cliente = get_object_or_404(Cliente, pk=pk)
-    if cliente.usuario != request.user:
+    if not request.user.is_superuser and cliente.usuario != request.user:
         messages.error(request, 'No tienes permiso para editar ese cliente.')
         return redirect('home')
     if request.method == "POST":
@@ -149,6 +151,8 @@ def crear_tarjeta(request):
         form = TarjetaForm(request.POST)
         if form.is_valid():
             form.save()
+            if 'confirmar_y_crear_otra' in request.POST:
+                return redirect("crear_tarjeta")
             return redirect("lista_tarjetas")
     else:
         form = TarjetaForm()

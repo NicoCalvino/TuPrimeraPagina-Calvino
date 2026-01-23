@@ -194,11 +194,13 @@
                         <a class="nav-link {% if request.resolver_match.url_name == 'perfil_detail' %}active{% endif %}" href="{% url 'perfil_detail' %}">{{ user }}</a>
                     </li>
                     <li class="nav-item ms-lg-2">
-                        {% if user.avatar %}
-                            <img src="{{ user.avatar.url }}" alt="Avatar" class="rounded-circle border border-white" style="width: 40px; height: 40px; object-fit: cover;">    
-                        {% else %}
-                            <img src="/media/default/default.png" alt="Avatar" class="rounded-circle border border-white" style="width: 40px; height: 40px; object-fit: cover;">  
-                        {% endif %}
+                        <a href="{% url 'perfil_detail' %}">
+                            {% if user.avatar %}
+                                <img src="{{ user.avatar.url }}" alt="Avatar" class="rounded-circle border border-white" style="width: 40px; height: 40px; object-fit: cover;">    
+                            {% else %}
+                                <img src="/media/default/default.png" alt="Avatar" class="rounded-circle border border-white" style="width: 40px; height: 40px; object-fit: cover;">  
+                            {% endif %}
+                        </a>
                     </li>
                 {% else %}
                     <li class="nav-item">
@@ -229,97 +231,53 @@
     <div class="container">
         <div class="row g-4 justify-content-center">
                 
-            {%if user.is_authenticated %}
-                {% for cliente in clientes %}
-                    <div class="col-md-4 col-lg-3">
-                        <div class="card card-custom p-4 text-center h-100 d-flex flex-column position-relative">
-                            <div class="icon-box text-alumnas">
-                                <i class="bi bi-person-badge-fill"></i>
-                            </div>
-                            <h4 class="fw-bold">{{ cliente.nombre }} {{ cliente.apellido }}</h4>
-                            <p class="text-muted small mb-3"><strong>Curso:</strong> {{ cliente.curso }}</p>
-                            
-                            <!-- Botón para ver detalles o editar si lo necesitas -->
-                            <div class="mt-auto">
-                                <a href="{% url 'ver_cliente' cliente.pk %}" class="btn btn-outline-primary w-100">Ver Detalles</a>
-                            </div>
-                        </div>
-                    </div>
-                {% empty %}
-                    <!-- Caso cuando el usuario no tiene clientes registrados -->
-                    <div class="col-md-8 col-lg-6 text-center">
-                        <div class="card card-custom p-5 border-0">
-                            <div class="mb-4">
-                                <i class="bi bi-people text-muted" style="font-size: 3rem;"></i>
-                            </div>
-                            <h3 class="fw-bold">Aún no tienes clientes</h3>
-                            <p class="text-muted">Parece que todavía no has registrado a nadie. ¡Comienza ahora mismo!</p>
-                            <a href="{% url 'crear_cliente' %}" class="btn btn-warning fw-bold px-4">
-                                <i class="bi bi-plus-lg me-2"></i>Crear mi primer cliente
-                            </a>
-                        </div>
-                    </div>
-                {% endfor %}
-
-                <!-- Botón flotante o tarjeta extra para agregar más clientes si ya existen algunos -->
-                {% if clientes %}
+            {% for cliente in clientes %}
                 <div class="col-md-4 col-lg-3">
-                    <a href="{% url 'crear_cliente' %}" class="text-decoration-none h-100">
-                        <div class="card card-custom p-4 text-center h-100 d-flex flex-column justify-content-center border-dashed" style="border: 2px dashed #dee2e6; background: transparent;">
-                            <div class="icon-box text-muted">
-                                <i class="bi bi-plus-circle-dotted"></i>
-                            </div>
-                            <h5 class="fw-bold text-muted">Agregar otro</h5>
+                    <div class="card card-custom p-4 text-center h-100 d-flex flex-column position-relative">
+                        <div class="icon-box text-alumnas">
+                            <i class="bi bi-person-badge-fill"></i>
                         </div>
-                    </a>
-                </div>
-                {% endif %}
-            {% else %}
-                <!-- Mensaje amistoso para usuarios NO logueados -->
-                <div class="col-md-8 col-lg-6">
-                    <div class="card card-custom p-5 text-center shadow-lg border-0">
-                        <div class="mb-4">
-                            <i class="bi bi-stars" style="font-size: 3rem; color: #FFC107;"></i>
-                        </div>
-                        <h2 class="fw-bold mb-3">¡Nos encanta verte por aquí!</h2>
-                        <p class="lead text-muted mb-4">
-                            Para ver nuestros productos, consultar precios o gestionar tu saldo, 
-                            necesitamos que ingreses a tu cuenta.
-                        </p>
-                        <div class="p-3 mb-4 rounded-3" style="background-color: #fff9e6; border: 1px dashed #FFC107;">
-                            <p class="mb-0 text-dark">
-                                <strong>¿Aún no eres parte?</strong> Sumate hoy mismo para disfrutar de todos los beneficios del Kiosco.
-                            </p>
-                        </div>
-                        <div class="d-grid gap-3 d-sm-flex justify-content-sm-center">
-                            <a href="{% url 'login' %}" class="btn btn-warning btn-lg px-4 fw-bold">
-                                <i class="bi bi-box-arrow-in-right me-2"></i>Iniciar Sesión
-                            </a>
-                            <a href="{% url 'register' %}" class="btn btn-outline-dark btn-lg px-4">
-                                <i class="bi bi-person-plus me-2"></i>¡Quiero registrarme!
-                            </a>
+                        <h4 class="fw-bold">{{ cliente.nombre }} {{ cliente.apellido }}</h4>
+                        <p class="text-muted small mb-3"><strong>Curso:</strong> {{ cliente.curso }}</p>
+                        
+                        <!-- Botón para ver detalles o editar si lo necesitas -->
+                        <div class="mt-auto">
+                            <a href="{% url 'ver_cliente' cliente.pk %}" class="btn btn-outline-primary w-100">Ver Detalles</a>
                         </div>
                     </div>
                 </div>
+            {% empty %}
+                <!-- Caso cuando el usuario no tiene clientes registrados -->
+                <div class="col-md-8 col-lg-6 text-center">
+                    <div class="card card-custom p-5 border-0">
+                        <div class="mb-4">
+                            <i class="bi bi-people text-muted" style="font-size: 3rem;"></i>
+                        </div>
+                        <h3 class="fw-bold">Aún no tienes clientes</h3>
+                        <p class="text-muted">Parece que todavía no has registrado a nadie. ¡Comienza ahora mismo!</p>
+                        <a href="{% url 'crear_cliente' %}" class="btn btn-warning fw-bold px-4">
+                            <i class="bi bi-plus-lg me-2"></i>Crear mi primer cliente
+                        </a>
+                    </div>
+                </div>
+            {% endfor %}
+
+            <!-- Botón flotante o tarjeta extra para agregar más clientes si ya existen algunos -->
+            {% if clientes %}
+            <div class="col-md-4 col-lg-3">
+                <a href="{% url 'crear_cliente' %}" class="text-decoration-none h-100">
+                    <div class="card card-custom p-4 text-center h-100 d-flex flex-column justify-content-center border-dashed" style="border: 2px dashed #dee2e6; background: transparent;">
+                        <div class="icon-box text-muted">
+                            <i class="bi bi-plus-circle-dotted"></i>
+                        </div>
+                        <h5 class="fw-bold text-muted">Agregar otro</h5>
+                    </div>
+                </a>
+            </div>
             {% endif %}
 
         </div>
     </div>
-    {% if messages %}
-        <div class="container mt-3">
-            {% for message in messages %}
-                <!-- El class será 'alert alert-danger' automáticamente gracias al paso A -->
-                <div class="alert alert-info alert-dismissible fade show" role="alert" style="font-size: 1.2rem; font-weight: bold; text-align: center;">
-                    <!-- Icono de información en lugar de triángulo de advertencia -->
-                    <i class="bi bi-info-circle-fill"></i> 
-                    
-                    {{ message }}
-                    
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            {% endfor %}
-        </div>
-    {% endif %}
     {% endblock %}
     <footer>
         <div class="container">
