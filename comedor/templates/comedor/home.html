@@ -1,0 +1,78 @@
+{% extends 'main/index.html' %}
+
+{% block Bienvenida %}
+<header class="hero-section" style="background: linear-gradient(135deg, #FFC107 0%, #ffdb73 100%);">
+    <div class="container text-dark">
+        <h1 class="display-4 fw-bold">Comedor</h1>
+    </div>
+</header>
+{% endblock %}
+
+{% block content %}
+<div class="container mb-5">
+    <div class="row g-4 justify-content-center">
+        
+        <div class="col-md-5 col-lg-3">
+            <div class="card card-custom p-4 text-center h-100 position-relative">
+                <div class="icon-box text-primary">
+                    <i class="bi bi-people-fill"></i> 
+                </div>
+                <h4 class="fw-bold">Reporte Diario</h4>
+                <p class="text-muted small">Cantidad de alumnos que almuerzan hoy.</p>
+                <a href="{% url 'reporte_diario' %}" class="btn btn-outline-primary w-100 mt-auto stretched-link">Ver Reporte</a>
+            </div>
+        </div>
+
+        <div class="col-md-5 col-lg-3">
+            <div class="card card-custom p-4 text-center h-100 position-relative">
+                <div class="icon-box" style="color: #0dcaf0;">
+                    <i class="bi bi-file-earmark-bar-graph"></i>
+                </div>
+                <h4 class="fw-bold">Reporte Mensual</h4>
+                <p class="text-muted small">Montos a facturar por cada usuario.</p>
+                <a href="{% url 'reporte_mensual' %}" class="btn btn-outline-info w-100 mt-auto stretched-link">Ver Facturación</a>
+            </div>
+        </div>
+
+        <div class="col-md-5 col-lg-3">
+            <div class="card card-custom p-4 text-center h-100 position-relative">
+                <div class="icon-box text-success">
+                    <i class="bi bi-calendar-check"></i>
+                </div>
+                <h4 class="fw-bold">Comedor Mensual</h4>
+                <p class="text-muted small">Planificación y cierre del mes.</p>
+                <a href="{% url 'comedor_mensual' %}" class="btn btn-outline-success w-100 mt-auto stretched-link">Ver Mes</a>
+            </div>
+        </div>
+
+        <div class="col-md-5 col-lg-3">
+            <div class="card card-custom p-4 text-center h-100 position-relative">
+                <div class="icon-box text-warning">
+                    <i class="bi bi-ticket-perforated"></i>
+                </div>
+                <h4 class="fw-bold" style="color: #856404;">Vales Diarios</h4>
+                <p class="text-muted small">Gestión de tickets entregados.</p>
+                <a href="{% url 'lista_vales_diarios' %}" class="btn btn-outline-warning w-100 mt-auto stretched-link" style="color: #856404; border-color: #ffc107;">Gestionar Vales</a>
+            </div>
+        </div>
+
+        <div class="col-md-5 col-lg-3">
+            <div class="card card-custom p-4 text-center h-100 position-relative">
+                <div class="icon-box text-danger">
+                    <i class="bi bi-tag"></i>
+                </div>
+                <h4 class="fw-bold">Precios</h4>
+                <p class="text-muted small">Lista de precios de platos y menús.</p>
+                <a href="{% url 'lista_precios' %}" class="btn btn-outline-danger w-100 mt-auto stretched-link">Ver Precios</a>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="text-center mt-5">
+        <a href="{% url 'home' %}" class="btn btn-link text-muted text-decoration-none">
+            <i class="bi bi-arrow-left me-2"></i>Volver al Inicio
+        </a>
+    </div>
+</div>
+{% endblock %}

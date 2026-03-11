@@ -211,3 +211,13 @@ __marimo__/
 !/media/yo.png
 
 notas.txt
+
+archivo_usuarios.xlsx
+armado_archivos_para_subir.xlsm
+cursos.xlsx
+precios.xlsx
+vales.xlsx
+MOCK_DATA.xlsx
+
+inicio.bat
+reset_db.py

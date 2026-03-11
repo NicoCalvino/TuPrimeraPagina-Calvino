@@ -1,4 +1,4 @@
-{% extends "kiosco/index.html" %}
+{% extends "main/index.html" %}
 
 {% block titulo %}<title>Mi Perfil - Kiosco Sole</title>{% endblock %}
 
@@ -33,7 +33,7 @@
                                  class="img-fluid rounded-circle border border-4 border-warning shadow mb-3" 
                                  style="width: 150px; height: 150px; object-fit: cover;">
                         {% endif %}
-                        <p class="text-muted small">Usuario: <strong>{{ user_profile.username }}</strong></p>
+                        <p class="text-muted small"><strong>{{ user_profile.get_full_name }}</strong></p>
                     </div>
 
                     <!-- Columna de Información -->

@@ -4,6 +4,7 @@ from django.contrib.auth import login, update_session_auth_hash
 from django.contrib import messages
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.decorators import login_required, user_passes_test
+import pandas as pd
 
 from django.core.exceptions import PermissionDenied
 from users.forms import *
@@ -30,7 +31,7 @@ def lista_usuarios(request):
 
     if busqueda:
         usuarios_query = Perfil.objects.filter(
-            Q(first_name__icontains = busqueda) | Q(last_name__icontains=busqueda) | Q(username__icontains=busqueda) | Q(email__icontains=busqueda),
+            Q(first_name__icontains = busqueda) | Q(last_name__icontains=busqueda) | Q(email__icontains=busqueda),
         )
 
     if filtro == 'normales':
@@ -40,6 +41,71 @@ def lista_usuarios(request):
 
 
     return render(request, 'users/lista_usuarios.html',{"usuarios":usuarios_query})
+
+# Archivo Subida Usuarios
+@user_passes_test(lambda u: u.is_superuser)
+def importar_usuarios_excel(request):
+    if request.method == 'POST' and request.FILES.get('archivo_excel'):
+        excel_file = request.FILES['archivo_excel']
+        
+        # Validar extensión
+        if not excel_file.name.endswith(('.xlsx', '.xls')):
+            messages.error(request, "Por favor, sube un archivo Excel válido.")
+            return redirect('lista_usuarios')
+
+        try:
+            # Leer el excel con pandas
+            df = pd.read_excel(excel_file)
+            df = df.fillna('') # Evitar errores de NaN con strings
+            
+            resultados = {
+                'exitos': 0,
+                'errores': [],
+                'total': len(df),
+                'proceso': 'Importación de Usuarios',
+                'url_retorno': 'lista_usuarios'
+            }
+
+            for index, row in df.iterrows():
+                email = str(row.get('email', '')).strip()
+                password = str(row.get('password', ''))
+                
+                try:
+                    if Perfil.objects.filter(email=email).exists():
+                        resultados['errores'].append({
+                            'fila': index + 2,
+                            'identificador': email,
+                            'mensaje': "El email ya está registrado."
+                        })
+                        continue
+
+                    Perfil.objects.create_user(                        
+                        email=email,
+                        password=password,
+                        first_name=row.get('first_name', ''),
+                        last_name=row.get('last_name', ''),
+                        direccion=row.get('direccion', ''),
+                        celular=row.get('celular', '')
+                        )
+                    resultados['exitos'] += 1
+
+                except Exception as e:
+                    resultados['errores'].append({
+                        'fila': index + 2,
+                        'identificador': email,
+                        'mensaje': str(e)
+                    })
+
+            request.session['ultimo_resultado_importacion'] = resultados
+            return redirect('resultado_importacion')
+
+        except Exception as e:
+            messages.error(request, f"Error crítico: {e}")
+            return redirect('lista_usuarios')
+
+    return redirect('lista_usuarios')
+
+
 
 # Ver Perfil
 @login_required

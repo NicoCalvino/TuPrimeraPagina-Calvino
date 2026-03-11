@@ -1,0 +1,11 @@
+<option value="">---------</option>
+
+{% regroup cursos by get_nivel_display as cursos_por_nivel %}
+
+{% for nivel in cursos_por_nivel %}
+    <optgroup label="{{ nivel.grouper }}">
+        {% for curso in nivel.list %}
+            <option value="{{ curso.pk }}">{{ curso.curso }}</option>
+        {% endfor %}
+    </optgroup>
+{% endfor %}

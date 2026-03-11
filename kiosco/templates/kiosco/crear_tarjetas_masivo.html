@@ -1,0 +1,95 @@
+{% extends 'main/index.html' %}
+
+{% block titulo %}<title>Kiosco Sole - Generar Rango de Tarjetas</title> {% endblock %}
+
+{% block Bienvenida %} {% endblock %}
+
+{% block content %}
+<div class="container my-5">
+
+    <!-- Encabezado -->
+    <div class="row justify-content-center mb-4">
+        <div class="col-lg-5 d-flex justify-content-between align-items-center">
+            <div>
+                <h2 class="fw-bold mb-0" style="color: #333;">💳 Rango de Tarjetas</h2>
+                <p class="text-muted mb-0">Genera múltiples tarjetas de forma masiva.</p>
+            </div>
+            <a href="{% url 'lista_tarjetas' %}" class="btn btn-outline-secondary rounded-pill px-4">
+                <i class="bi bi-arrow-left"></i> Volver
+            </a>
+        </div>
+    </div>
+
+    <!-- Card del Formulario -->
+    <div class="row justify-content-center">
+        <!-- Agrandé un poco la columna (col-lg-4 o 5) para que los dos campos respiren mejor -->
+        <div class="col-md-8 col-lg-5">
+            <div class="card border-0 shadow-sm rounded-4 p-4" style="background-color: #fff;">
+                
+                <form method="post" novalidate>
+                    {% csrf_token %}
+
+                    <!-- Errores generales del formulario (ej: si Desde es mayor que Hasta) -->
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger p-2 small rounded-3">
+                            {{ form.non_field_errors }}
+                        </div>
+                    {% endif %}
+
+                    <div class="row g-3">
+                        
+                        <!-- CAMPO: NUMERO DESDE -->
+                        <div class="col-md-6">
+                            <label for="{{ form.numero_desde.id_for_label }}" class="form-label fw-bold text-dark small">Número Desde</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-123"></i></span>
+                                {{ form.numero_desde }}
+                            </div>
+                            {% if form.numero_desde.errors %}
+                                <div class="text-danger small mt-1 ps-1">{{ form.numero_desde.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- CAMPO: NUMERO HASTA -->
+                        <div class="col-md-6">
+                            <label for="{{ form.numero_hasta.id_for_label }}" class="form-label fw-bold text-dark small">Número Hasta</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-123"></i></span>
+                                {{ form.numero_hasta }}
+                            </div>
+                            {% if form.numero_hasta.errors %}
+                                <div class="text-danger small mt-1 ps-1">{{ form.numero_hasta.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                    </div>
+
+                    <hr class="my-4">
+
+                    <!-- Botón de Guardar -->
+                    <div class="d-grid gap-2"> 
+                        <button type="submit" class="btn btn-primary btn-lg rounded-pill fw-bold shadow-sm">
+                            <i class="bi bi-layers-fill me-2"></i>Generar Tarjetas
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- BLOQUE DE MENSAJES -->
+            
+            <!-- FIN DEL BLOQUE DE MENSAJES -->
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Hace foco automáticamente en el campo "Desde"
+        var inputDesde = document.getElementById("{{ form.numero_desde.id_for_label }}");
+        if (inputDesde) {
+            inputDesde.focus();
+        }
+    });
+</script>
+
+{% endblock %}

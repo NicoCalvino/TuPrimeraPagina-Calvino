@@ -1,16 +1,11 @@
-{% extends 'kiosco/index.html' %} 
+{% extends 'main/index.html' %} 
 
 {% block titulo %}
 <title>Kiosco Sole - Detalle de Transacción</title>
 {% endblock %} 
 
 {% block Bienvenida %}
-    <header class="hero-section">
-        <div class="container">
-            <h1 class="display-4 fw-bold text-dark">Detalle de la Transacción</h1>
-            <p class="lead text-dark">Información completa del movimiento registrado.</p>
-        </div>
-    </header>
+
 {% endblock %}
 
 {% block content %}
@@ -55,12 +50,23 @@
                         </div>
 
                         <!-- 3. Número de Tarjeta -->
-                        <div class="col-12">
+                        <div class="col-6">
                             <label class="form-label fw-bold text-secondary">Número de Tarjeta</label>
                             <div class="p-3 bg-light border rounded d-flex align-items-center">
                                 <i class="bi bi-credit-card-2-front text-primary me-3 fs-4"></i>
                                 <div>
                                     <h4 class="mb-0 text-dark letter-spacing-1">{{ transaccion.tarjeta }}</h4>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 3. Número de Tarjeta -->
+                        <div class="col-6">
+                            <label class="form-label fw-bold text-secondary">Cliente</label>
+                            <div class="p-3 bg-light border rounded d-flex align-items-center">
+                                <i class="bi bi-credit-card-2-front text-primary me-3 fs-4"></i>
+                                <div>
+                                    <h4 class="mb-0 text-dark letter-spacing-1">{{ transaccion.tarjeta.cliente.nombre }} {{ transaccion.tarjeta.cliente.apellido }}</h4>
                                 </div>
                             </div>
                         </div>

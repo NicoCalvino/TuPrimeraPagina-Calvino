@@ -1,0 +1,142 @@
+{% extends 'main/index.html' %}
+
+{% block Bienvenida %}
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold text-dark"><i class="bi bi-book me-2"></i>Gestión de Cursos</h2>
+        <div class="d-flex gap-2">
+            <a href="{% url 'home_colegios' %}" class="btn btn-outline-secondary shadow-sm rounded-pill">
+                <i class="bi bi-arrow-left me-1"></i> Volver a Colegios
+            </a>
+
+            <button type="button" class="btn btn-success shadow-sm rounded-pill" data-bs-toggle="modal" data-bs-target="#importarExcelModal">
+                <i class="bi bi-file-earmark-excel me-1"></i> Importar Excel
+            </button>
+
+            <a href="{% url 'nuevo_curso' %}" class="btn btn-primary shadow-sm rounded-pill">
+                <i class="bi bi-plus-lg me-1"></i> Agregar Nuevo Curso
+            </a>
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body bg-light rounded">
+            <form method="GET" class="row g-3 align-items-end">
+                <input type="hidden" name="order" value="{{ request.GET.order }}">
+                
+                <div class="col-md-3">
+                    <label for="colegio" class="form-label small fw-bold">Filtrar por Colegio</label>
+                    <select name="colegio" id="colegio" class="form-select">
+                        <option value="">Todos los colegios</option>
+                        {% for col in colegios_list %}
+                            <option value="{{ col.id }}" {% if request.GET.colegio == col.id|stringformat:"s" %}selected{% endif %}>
+                                {{ col.nombre }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <label for="nivel" class="form-label small fw-bold">Nivel</label>
+                    <select name="nivel" id="nivel" class="form-select">
+                        <option value="">Todos los niveles</option>
+                        <option value="JARDIN" {% if request.GET.nivel == "JARDIN" %}selected{% endif %}>Jardín</option>
+                        <option value="PRIMARIA" {% if request.GET.nivel == "PRIMARIA" %}selected{% endif %}>Primaria</option>
+                        <option value="SECUNDARIA" {% if request.GET.nivel == "SECUNDARIA" %}selected{% endif %}>Secundaria</option>
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <label for="curso" class="form-label small fw-bold">Curso</label>
+                    <input type="text" name="curso" id="curso" class="form-control" placeholder="Ej: 1" value="{{ request.GET.curso }}">
+                </div>
+
+                <div class="col-md-4 d-flex gap-2">
+                    <button type="submit" class="btn btn-secondary w-100">
+                        <i class="bi bi-filter me-1"></i> Filtrar
+                    </button>
+                    <a href="{% url 'lista_cursos' %}" class="btn btn-outline-secondary w-100">
+                        Limpiar
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-dark">
+                    <tr>
+                        <th class="ps-4">Colegio</th>
+                        <th>Escuela / Nivel</th>
+                        <th>Curso / Año</th>
+                        <th class="text-end pe-4">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for curso in cursos %}
+                    <tr>
+                        <td class="ps-4">
+                            <span class="fw-semibold text-secondary">
+                                <i class="bi bi-building me-1"></i>{{ curso.colegio }}
+                            </span>
+                        </td>
+                        <td>
+                            {% if curso.nivel == "PRIMARIA" %}
+                                <span class="badge bg-info text-dark">Primaria</span>
+                            {% elif curso.nivel == "SECUNDARIA" %}
+                                <span class="badge bg-success-subtle text-dark">Secundaria</span>
+                            {% else %}
+                                <span class="badge bg-warning text-dark">Jardín</span>
+                            {% endif %}
+                        </td>
+                        <td class="fw-bold">{{ curso.curso }}°</td>
+                        <td class="text-end pe-4">
+                            <div class="btn-group btn-group-sm" role="group">
+                                <a href="{% url 'editar_curso' curso.id %}" class="btn btn-outline-primary"><i class="bi bi-pencil-square"></i></a>
+                                <a href="{% url 'eliminar_curso' curso.id %}" class="btn btn-outline-danger"><i class="bi bi-trash3-fill"></i></a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="text-center py-5 text-muted">No hay registros.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="importarExcelModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg rounded-4">
+            <div class="modal-header border-0">
+                <h5 class="modal-title fw-bold">Carga Masiva de Usuarios</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{% url 'importar_cursos' %}" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="alert alert-info py-2 small">
+                        <i class="bi bi-info-circle me-1"></i> El archivo debe tener las columnas: <b>colegio, curso, nivel</b>.
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold small">Seleccione el archivo (.xlsx)</label>
+                        <input type="file" name="archivo_excel" class="form-control" accept=".xlsx, .xls" required>
+                    </div>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-success rounded-pill px-4">Procesar Excel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

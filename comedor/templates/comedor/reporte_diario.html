@@ -1,0 +1,167 @@
+{% extends 'main/index.html' %}
+
+{% block Bienvenida %}
+
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold mb-0">
+            <i class="bi bi-calendar-event-fill me-2 text-success"></i>
+            {% if fecha_consulta == today %} Hoy {% else %} Próximo Turno {% endif %}
+        </h2>
+        <span class="badge bg-dark px-3 py-2 rounded-pill shadow-sm">
+            Total: {{ lista_asistencia|length }} Comensales
+        </span>
+    </div>
+
+    <div class="card shadow-sm border-0 mb-4 bg-light">
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-8">
+                    <div class="input-group">
+                        <span class="input-group-text bg-white border-end-0"><i class="bi bi-person text-muted"></i></span>
+                        <input type="text" id="filterNombre" class="form-control border-start-0" placeholder="Buscar por nombre del alumno...">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="input-group">
+                        <span class="input-group-text bg-white border-end-0"><i class="bi bi-mortarboard text-muted"></i></span>
+                        <input type="text" id="filterCurso" class="form-control border-start-0" placeholder="Filtrar por curso...">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+        <div class="card-body p-0">
+            <div class="table-responsive" style="max-height: 70vh; overflow-y: auto;">
+                <table class="table table-hover align-middle mb-0" id="tablaAsistencia">
+                    <thead>
+                        <tr>
+                            <th class="px-4 py-3">Alumno</th>
+                            <th class="text-center">Curso</th>
+                            <th class="px-4">Comentarios / Notas</th>
+                            <th class="text-center">Origen</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in lista_asistencia %}
+                        <tr class="asistencia-row">
+                            <td class="px-4">
+                                <div class="fw-bold text-dark cell-nombre">{{ item.cliente.nombre }} {{ item.cliente.apellido }}</div>
+                                <small class="text-muted cell-usuario">{{ item.cliente.usuario|default:"Sin usuario" }}</small>
+                            </td>
+                            
+                            <td class="text-center">
+                                <span class="badge bg-light text-dark border cell-curso">{{ item.cliente.curso }}</span>
+                            </td>
+
+                            <td class="px-4">
+                                <small class="text-muted italic">
+                                    {{ item.comentarios|default:"-" }}
+                                </small>
+                            </td>
+
+                            <td class="text-center">
+                                {% if item.origen == 'Plan Mensual' %}
+                                    <span class="badge rounded-pill bg-warning text-dark px-3">
+                                        <i class="bi bi-calendar-month me-1"></i> Mensual
+                                    </span>
+                                {% else %}
+                                    <span class="badge rounded-pill bg-info text-dark px-3">
+                                        <i class="bi bi-ticket-perforated me-1"></i> Diario
+                                    </span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-center py-5 text-muted">
+                                <div class="mb-3">
+                                    <i class="bi bi-clipboard-x fs-1"></i>
+                                </div>
+                                <h5>No hay comensales registrados para esta fecha.</h5>
+                                <p class="small">Verifica si es fin de semana o si no hay vales cargados.</p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-4 d-flex justify-content-between">
+        <a href="{% url 'comedor_home' %}" class="btn btn-link text-muted text-decoration-none">
+            <i class="bi bi-arrow-left me-2"></i>Volver al Menú
+        </a>
+        <button onclick="window.print()" class="btn btn-dark shadow-sm px-4">
+            <i class="bi bi-printer me-2"></i> Imprimir Lista
+        </button>
+    </div>
+</div>
+
+<script>
+    const inputNombre = document.getElementById('filterNombre');
+    const inputCurso = document.getElementById('filterCurso');
+
+    function filtrarTabla() {
+        const queryNombre = inputNombre.value.toLowerCase();
+        const queryCurso = inputCurso.value.toLowerCase();
+        const rows = document.querySelectorAll('.asistencia-row');
+
+        rows.forEach(row => {
+            const nombreText = row.querySelector('.cell-nombre').textContent.toLowerCase();
+            const usuarioText = row.querySelector('.cell-usuario').textContent.toLowerCase();
+            const cursoText = row.querySelector('.cell-curso').textContent.toLowerCase();
+
+            // Debe coincidir con AMBOS filtros (si están escritos)
+            const coincideNombre = nombreText.includes(queryNombre);
+            const coincideUsuario = usuarioText.includes(queryNombre);
+            const coincideCurso = cursoText.includes(queryCurso);
+
+            if ((coincideNombre || coincideUsuario) && coincideCurso) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    }
+
+    // Escuchar eventos en ambos inputs
+    inputNombre.addEventListener('keyup', filtrarTabla);
+    inputCurso.addEventListener('keyup', filtrarTabla);
+</script>
+
+<style>
+    .table thead th {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        background-color: #f8f9fa;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        color: #6c757d;
+        border-bottom: 2px solid #dee2e6;
+    }
+    .italic { font-style: italic; }
+    
+    @media print {
+        .hero-section, .input-group, .btn, .mt-4 {
+            display: none !important;
+        }
+        .table-responsive {
+            overflow: visible !important;
+            max-height: none !important;
+        }
+        .card {
+            box-shadow: none !important;
+            border: none !important;
+        }
+    }
+</style>
+{% endblock %}

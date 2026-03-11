@@ -1,0 +1,155 @@
+{% extends 'main/index.html' %}
+
+{% block Bienvenida %}
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold mb-0"><i class="bi bi-ticket-perforated-fill me-2 text-warning"></i>Tickets Registrados</h2>
+        <span class="badge bg-dark px-3 py-2 rounded-pill shadow-sm">
+            Total: {{ vales|length }} Vales
+        </span>
+    </div>
+
+    <div class="card shadow-sm border-0 mb-4 bg-light">
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-8">
+                    <div class="input-group">
+                        <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
+                        <input type="text" id="filterNombre" class="form-control border-start-0" placeholder="Buscar por cliente...">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="input-group">
+                        <span class="input-group-text bg-white border-end-0"><i class="bi bi-calendar3 text-muted"></i></span>
+                        <input type="date" id="filterFecha" class="form-control border-start-0">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0" id="tablaDiaria">
+                    <thead style="background-color: #f8f9fa;">
+                        <tr>
+                            <th class="px-4 py-3">Cliente / Perfil</th>
+                            <th class="text-center">Fecha</th>
+                            <th class="text-center">Estado</th>
+                            <th class="text-center">Comprobante</th>
+                            <th class="px-4">Comentarios</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for vale in vales %}
+                        <tr class="vale-row">
+                            <td class="px-4">
+                                <a href="{% url 'ver_cliente' vale.cliente.pk %}" class="text-decoration-none">
+                                    <div class="fw-bold text-dark cell-nombre">{{ vale.cliente.nombre }} {{ vale.cliente.apellido }}</div>
+                                </a>
+                                <small class="text-muted">{{ vale.usuario }}</small>
+                            </td>
+                            
+                            <td class="text-center cell-fecha">
+                                <span class="fw-bold">{{ vale.fecha|date:"d/m/Y" }}</span>
+                                <span class="d-none iso-fecha">{{ vale.fecha|date:"Y-m-d" }}</span>
+                            </td>
+
+                            <td class="text-center">
+                                {% if vale.cancelado %}
+                                    <span class="badge bg-danger">Cancelado</span>
+                                {% else %}
+                                    <span class="badge bg-success">Activo</span>
+                                {% endif %}
+                            </td>
+
+                            <td class="text-center">
+                                {% if vale.comprobante %}
+                                    <a href="{{ vale.comprobante.url }}" target="_blank" class="text-decoration-none text-primary">
+                                        <i class="bi bi-image fs-5"></i>
+                                    </a>
+                                {% else %}
+                                    <span class="text-muted">-</span>
+                                {% endif %}
+                            </td>
+
+                            <td class="px-4">
+                                {% if vale.comentarios %}
+                                    <small class="text-muted fst-italic">
+                                        <i class="bi bi-chat-left-dots me-1"></i> {{ vale.comentarios }}
+                                    </small>
+                                {% else %}
+                                    <span class="text-muted small">-</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center py-5 text-muted">
+                                <i class="bi bi-ticket-detailed me-2 fs-4"></i> No hay vales diarios registrados.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <a href="{% url 'comedor_home' %}" class="btn btn-link text-muted text-decoration-none">
+            <i class="bi bi-arrow-left me-2"></i>Volver al Menú
+        </a>
+    </div>
+</div>
+
+<script>
+    const filterNombre = document.getElementById('filterNombre');
+    const filterFecha = document.getElementById('filterFecha');
+    const rows = document.querySelectorAll('.vale-row');
+
+    function applyFilters() {
+        const nombreQuery = filterNombre.value.toLowerCase();
+        const fechaQuery = filterFecha.value;
+
+        rows.forEach(row => {
+            const nombre = row.querySelector('.cell-nombre').textContent.toLowerCase();
+            const fecha = row.querySelector('.iso-fecha').textContent;
+
+            const matchesNombre = nombre.includes(nombreQuery);
+            const matchesFecha = fechaQuery === "" || fecha === fechaQuery;
+
+            if (matchesNombre && matchesFecha) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    }
+
+    filterNombre.addEventListener('keyup', applyFilters);
+    filterFecha.addEventListener('change', applyFilters);
+</script>
+
+<style>
+    .table thead th {
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        color: #6c757d;
+        border-bottom: 2px solid #dee2e6;
+    }
+    .badge {
+        font-weight: 500;
+        padding: 0.5em 0.8em;
+    }
+    /* Estilo para que el nombre parezca clickeable sutilmente */
+    .cell-nombre:hover {
+        color: #0d6efd !important;
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,110 @@
+{% extends 'main/index.html' %}
+
+{% block titulo %}<title>Kiosco Sole - Nueva Alumna</title> {% endblock %}
+
+{% block Bienvenida %} {% endblock %}
+
+{% block content %}
+<div class="container my-5">
+
+    <!-- Encabezado -->
+    <div class="row justify-content-center mb-4">
+        <div class="col-lg-6 d-flex justify-content-between align-items-center">
+            <div>
+                <h2 class="fw-bold mb-0" style="color: #333;">👩‍🎓 Editar Cliente</h2>
+                <p class="text-muted mb-0">Completa la ficha del Cliente.</p>
+            </div>
+            <a href="{% url 'ver_cliente' form.instance.pk %}" class="btn btn-outline-secondary rounded-pill px-4">
+                <i class="bi bi-arrow-left"></i> Cancelar
+            </a>
+        </div>
+    </div>
+
+    <!-- Card del Formulario -->
+    <div class="row justify-content-center">
+        <div class="col-lg-5 col-md-8"> 
+            <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5" style="background-color: #fff;">
+                
+                <form method="post" novalidate>
+                    {% csrf_token %}
+
+                    <div class="row g-3">
+                        
+                        <!-- CAMPO 1: NOMBRE -->
+                        <div class="col-md-6">
+                            <label for="{{ form.nombre.id_for_label }}" class="form-label fw-bold text-dark small">Nombre</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-person"></i></span>
+                                {{ form.nombre }}
+                            </div>
+                            {% if form.nombre.errors %}
+                                <div class="text-danger small mt-1 ps-1">{{ form.nombre.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- CAMPO 2: APELLIDO -->
+                        <div class="col-md-6">
+                            <label for="{{ form.apellido.id_for_label }}" class="form-label fw-bold text-dark small">Apellido</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-person-fill"></i></span>
+                                {{ form.apellido }}
+                            </div>
+                            {% if form.apellido.errors %}
+                                <div class="text-danger small mt-1 ps-1">{{ form.apellido.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- CAMPO 3: CURSO -->
+
+                        <div class="col-12 mt-3">
+                            <label for="{{ form.colegio.id_for_label }}" class="form-label fw-bold text-dark small">Colegio</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-building"></i></span>
+                                {{ form.colegio }}
+                            </div>
+                        </div>
+
+                        <div class="col-12 mt-3">
+                            <label for="{{ form.curso.id_for_label }}" class="form-label fw-bold text-dark small">Curso / Año</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-mortarboard"></i></span>
+                                {{ form.curso }}
+                            </div>
+                            {% if form.curso.errors %}
+                                <div class="text-danger small mt-1 ps-1">{{ form.curso.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                    </div>
+
+                    <hr class="my-4">
+
+                    <!-- Botón de Guardar -->
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg rounded-pill fw-bold shadow-sm">
+                            <i class="bi bi-check-lg me-2"></i>Guardar Cliente
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    const colegioSelect = document.getElementById("{{ form.colegio.id_for_label }}");
+    const cursoSelect = document.getElementById("{{ form.curso.id_for_label }}");
+
+    colegioSelect.addEventListener("change", function() {
+        const url = "{% url 'ajax_cargar_cursos' %}";
+        const colegioId = this.value;
+
+        fetch(`${url}?colegio_id=${colegioId}`)
+            .then(response => response.text())
+            .then(html => {
+                cursoSelect.innerHTML = html;
+            })
+            .catch(error => console.error('Error:', error));
+    });
+</script>
+{% endblock %}

@@ -1,17 +1,11 @@
-{% extends 'kiosco/index.html' %} 
+{% extends 'main/index.html' %} 
 
 {% block titulo %}
 <title>Kiosco Sole - Cargar Saldo</title>
 {% endblock %} 
 
 {% block Bienvenida %}
-<header class="hero-section">
-    <div class="container">
-        <!-- Títulos estáticos o variables según prefieras -->
-        <h1 class="display-4 fw-bold text-dark">Cargar Saldo</h1>
-        <p class="lead text-dark">Asigna saldo a las tarjetas de tus hijos y adjunta el comprobante.</p>
-    </div>
-</header>
+
 {% endblock %}
 
 <!-- Contenido Principal -->
@@ -47,7 +41,7 @@
                                 <tbody>
                                     {% for tarjeta in tarjetas_con_monto %}
                                     <tr>
-                                        <td class="fw-bold">{{ tarjeta.cliente.nombre }}</td>
+                                        <td class="fw-bold">{{ tarjeta.cliente.nombre }} {{ tarjeta.cliente.apellido }}</td>
                                         <td>
                                             <span class="badge bg-secondary">
                                                 <i class="bi bi-credit-card me-1"></i>{{ tarjeta.codigo }}
@@ -65,7 +59,7 @@
                                                        name="monto_{{ tarjeta.id }}" 
                                                        placeholder="0.00"
                                                        id="monto_{{ tarjeta.id }}"
-                                                       value="{{ tarjeta.monto_inicial }}">
+                                                       value="{{ tarjeta.monto_inicial|stringformat:".2f" }}">
                                             </div>
                                         </td>
                                     </tr>

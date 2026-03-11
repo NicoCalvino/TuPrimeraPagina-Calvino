@@ -1,4 +1,4 @@
-{% extends 'kiosco/index.html' %}
+{% extends 'main/index.html' %}
 
 {% block titulo %}<title>Kiosco Sole - Listado de Tarjetas</title> {% endblock %}
 
@@ -21,7 +21,7 @@
                 </div>
 
                 <!-- Barra de Herramientas (Búsqueda y Botones) -->
-                <div class="d-flex align-items-center gap-2">
+                <div class="d-flex align-items-center gap-2 flex-wrap">
                     <!-- Formulario de Búsqueda Compacto -->
                     <form class="d-flex" role="search" method="GET">
                         <!-- Mantenemos el filtro actual si se busca algo -->
@@ -38,16 +38,13 @@
                     </form>
 
                     <!-- Botones Compactos -->
-                    <a href="{% url 'crear_tarjeta' %}" class="btn btn-primary btn-sm rounded-pill px-3 shadow-sm">
-                        <i class="bi bi-plus-lg"></i> Nueva Tarjeta
-                    </a>
-                    <a href="{% url 'home' %}" class="btn btn-outline-secondary btn-sm rounded-pill px-3">
-                        <i class="bi bi-arrow-left"></i>
+                    <a href="{% url 'home_kiosco' %}" class="btn btn-outline-secondary btn-sm rounded-pill px-3">
+                        <i class="bi bi-arrow-left"></i> Volver a Kiosco
                     </a>
                 </div>
             </div>
 
-            <!-- BOTONES DE FILTRO (NUEVO CÓDIGO AQUI) -->
+            <!-- BOTONES DE FILTRO -->
             <div class="d-flex justify-content-start mb-3">
                 <div class="btn-group shadow-sm" role="group" aria-label="Filtros de tarjetas">
                     
@@ -141,12 +138,7 @@
                                         <i class="bi bi-eye"></i>
                                     </a>
 
-                                    <form action="{% url 'eliminar_tarjeta' tarjeta.pk %}" method="POST" class="d-inline ms-1">
-                                        {% csrf_token %}
-                                        <button type="submit" class="btn btn-sm btn-light text-danger rounded-circle" title="Eliminar" onclick="return confirm('¿Eliminar tarjeta?')">
-                                            <i class="bi bi-trash"></i>
-                                        </button>
-                                    </form>
+
                                 </td>
                             </tr>
                             {% empty %}

@@ -1,4 +1,4 @@
-{% extends 'kiosco/index.html' %}
+{% extends 'main/index.html' %}
 
 {% block titulo %}<title>Kiosco Sole - Nueva Tarjeta</title> {% endblock %}
 
@@ -59,23 +59,7 @@
                     </div>
                 </form>
             </div>
-            <!-- AQUÍ ESTÁ EL BLOQUE DE MENSAJES AHORA (Abajo de los botones) -->
-            {% if messages %}
-            <div class="mt-3"> <!-- mt-3 agrega un margen arriba para separarlo de los botones -->
-                {% for message in messages %}
-                    {% if 'mensaje_local' in message.tags %}
-                        
-                        <!-- Nota: message.tags incluye 'success' y 'mensaje_local', 
-                            pero 'mensaje_local' no afecta el estilo de Bootstrap, así que no rompe nada -->
-                        <div class="alert alert-success alert-dismissible fade show shadow-sm rounded-3 mb-0" role="alert">
-                            <i class="bi bi-check-circle-fill me-2"></i> {{ message }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-
-                    {% endif %}
-                {% endfor %}
-            </div>
-            {% endif %}
+            
             <!-- FIN DEL BLOQUE MOVIDO -->
         </div>
     </div>

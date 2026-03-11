@@ -5,6 +5,7 @@ from django.db import transaction
 from django.db.models import Q
 from django.urls import reverse_lazy, reverse
 from django.contrib import messages
+from django.http import JsonResponse
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 
 from transacciones.models import Transaccion, SolicitudCarga, DetalleCarga
@@ -92,7 +93,7 @@ class TransaccionCargaCreateView(SuperUserRequiredMixin, CreateView):
     }
 
     def get_success_url(self):
-        return reverse('ver_tarjeta', args=[self.object.tarjeta.pk])
+        return reverse('lista_transacciones')
 
     def get_initial(self):
         initial = super().get_initial()
@@ -166,6 +167,23 @@ class TransaccionDeleteView(SuperUserRequiredMixin, DeleteView):
             tarjeta.save()
 
             return super().form_valid(form)
+        
+class BuscarClienteView(View):
+    def get(self, request, *args, **kwargs):
+        numero_tarjeta = request.GET.get('numero_tarjeta', None)
+        data = {
+            'encontrado': False,
+            'nombre': ""
+        }
+        
+        if numero_tarjeta:
+            # Filtramos por el código de 3 dígitos
+            tarjeta = Tarjeta.objects.filter(codigo=numero_tarjeta).first()
+            if tarjeta and tarjeta.cliente:
+                data['encontrado'] = True
+                data['nombre'] = f"{tarjeta.cliente.nombre} {tarjeta.cliente.apellido}"
+        
+        return JsonResponse(data)
 
 # Vistas de Solicitud de Carga de Saldo
 ## Lista de Solicitudes        
@@ -191,7 +209,7 @@ class SolicitudDeCargaListView(LoginRequiredMixin, ListView):
         
         if search_query and self.request.user.is_superuser:
             queryset = queryset.filter(
-                Q(usuario__username__icontains=search_query) | Q(usuario__first_name__icontains=search_query) | Q(usuario__last_name__icontains=search_query)  
+                Q(usuario__first_name__icontains=search_query) | Q(usuario__last_name__icontains=search_query)  
             )
 
         return queryset
@@ -309,9 +327,7 @@ class SolicitudDeCargaUpdateView(LoginRequiredMixin, UserPassesTestMixin, Update
         )
 
         if not self.request.user.is_superuser:
-            solicitudes.filter(
-                usuario=self.request.user,
-            )
+            solicitudes = solicitudes.filter(usuario=self.request.user)
 
         return solicitudes
 
@@ -325,10 +341,10 @@ class SolicitudDeCargaUpdateView(LoginRequiredMixin, UserPassesTestMixin, Update
         ).select_related('cliente')
 
         detalles_existentes = self.object.detalles.all()
-        mapa_montos = {d.tarjeta.id: d.monto for d in detalles_existentes}
+        mapa_montos = {d.tarjeta.id: float(d.monto) for d in detalles_existentes}
         
         for tarjeta in todas_tarjetas:
-            tarjeta.monto_inicial = mapa_montos.get(tarjeta.id, '')
+            tarjeta.monto_inicial = mapa_montos.get(tarjeta.id, 0)
         
         context['tarjetas_con_monto'] = todas_tarjetas
         

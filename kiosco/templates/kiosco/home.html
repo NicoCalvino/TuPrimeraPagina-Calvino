@@ -1,0 +1,67 @@
+{% extends 'main/index.html' %}
+
+{% block Bienvenida %}
+<header class="hero-section" style="background: linear-gradient(135deg, #FFC107 0%, #ffdb73 100%);">
+    <div class="container text-dark">
+        <h1 class="display-4 fw-bold">Kiosco</h1>
+    </div>
+</header>
+{% endblock %}
+
+{% block content %}
+<div class="container mb-5">
+    <div class="row g-4 justify-content-center">
+        
+        <div class="col-md-5 col-lg-3">
+            <div class="card card-custom p-4 text-center h-100 position-relative">
+                <div class="icon-box text-dark">
+                    <i class="bi bi-cash-stack"></i> 
+                </div>
+                <h4 class="fw-bold">Transacciones</h4>
+                <p class="text-muted small">Ver Lista de Movimientos.</p>
+                <a href="{% url 'lista_transacciones' %}" class="btn btn-outline-dark w-100 mt-auto stretched-link">Entrar</a>
+            </div>
+        </div>
+
+        <div class="col-md-5 col-lg-3">
+            <div class="card card-custom p-4 text-center h-100 position-relative">
+                <div class="icon-box text-primary">
+                    <i class="bi bi-clock-history"></i> 
+                </div>
+                <h4 class="fw-bold">Solicitudes de Carga</h4>
+                <p class="text-muted small">Validar pedidos de saldo pendientes.</p>
+                <a href="{% url 'lista_solicitudes' %}" class="btn btn-outline-primary w-100 mt-auto stretched-link">Ver Solicitudes</a>
+            </div>
+        </div>
+
+        <div class="col-md-5 col-lg-3">
+            <div class="card card-custom p-4 text-center h-100 position-relative">
+                <div class="icon-box text-success">
+                    <i class="bi bi-cash-coin"></i>
+                </div>
+                <h4 class="fw-bold">Cargar Saldo</h4>
+                <p class="text-muted small">Acreditar dinero a una cuenta de usuario.</p>
+                <a href="{% url 'cargar_saldo' %}" class="btn btn-outline-success w-100 mt-auto stretched-link">Cargar</a>
+            </div>
+        </div>
+
+        <div class="col-md-5 col-lg-3">
+            <div class="card card-custom p-4 text-center h-100 position-relative">
+                <div class="icon-box text-danger">
+                    <i class="bi bi-cart-plus"></i>
+                </div>
+                <h4 class="fw-bold">Nueva Compra</h4>
+                <p class="text-muted small">Registrar una venta en el mostrador.</p>
+                <a href="{% url 'nueva_compra' %}" class="btn btn-outline-danger w-100 mt-auto stretched-link">Registrar Venta</a>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="text-center mt-5">
+        <a href="{% url 'home' %}" class="btn btn-link text-muted text-decoration-none">
+            <i class="bi bi-arrow-left me-2"></i>Volver al Inicio
+        </a>
+    </div>
+</div>
+{% endblock %}

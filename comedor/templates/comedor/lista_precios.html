@@ -1,0 +1,202 @@
+{% extends 'main/index.html' %}
+{% load humanize %} 
+
+{% block Bienvenida %}
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold mb-0"><i class="bi bi-tags-fill me-2 text-danger"></i>Precios Vigentes</h2>
+        
+        <div class="d-flex gap-2">
+            <button type="button" class="btn btn-outline-success btn-lg shadow-sm" data-bs-toggle="modal" data-bs-target="#uploadExcelModal">
+                <i class="bi bi-file-earmark-excel me-2"></i>Importar Excel
+            </button>
+            <a href="{% url 'cargar_precio' %}" class="btn btn-success btn-lg shadow-sm">
+                <i class="bi bi-plus-circle me-2"></i>Agregar Nuevo Precio
+            </a>
+        </div>
+    </div>
+
+    <div class="modal fade" id="uploadExcelModal" tabindex="-1" aria-labelledby="uploadExcelModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content rounded-4 border-0 shadow">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-bold" id="uploadExcelModalLabel">Importar Precios desde Excel</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="{% url 'importar_precios' %}" method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="modal-body py-4">
+                        <div class="alert alert-info py-2 small">
+                            <i class="bi bi-info-circle me-1"></i> El archivo debe contener: <b>colegio, nivel, alm_por_sem, nro_de_cliente, precio</b>.
+                        </div>
+                        <div class="input-group">
+                            <input type="file" name="archivo_excel" class="form-control" id="inputGroupFile02" accept=".xlsx, .xls" required>
+                            <label class="input-group-text bg-light" for="inputGroupFile02"><i class="bi bi-cloud-upload"></i></label>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-0 pt-0">
+                        <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-success rounded-pill px-4">Cargar Información</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-0 mb-4 bg-white">
+        <div class="card-body">
+            <div class="row g-3 align-items-center">
+                <div class="col-md-auto text-muted fw-bold">
+                    <i class="bi bi-filter"></i> FILTRAR:
+                </div>
+                <div class="col-md-3">
+                    <select id="filterColegio" class="form-select border-primary">
+                        <option value="">Todos los Colegios</option>
+                        {% for col in colegios %}
+                            <option value="{{ col.nombre }}">{{ col.nombre }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <select id="filterNivel" class="form-select border-warning">
+                        <option value="">Todos los Niveles</option>
+                        <option value="Primaria/Secundaria">Primaria/Secundaria</option>
+                        <option value="JARDIN">Jardín</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <select id="filterAlm" class="form-select border-warning">
+                        <option value="">Frecuencia (Alm)</option>
+                        <option value="1">1 día</option>
+                        <option value="2">2 días</option>
+                        <option value="3">3 días</option>
+                        <option value="4">4 días</option>
+                        <option value="5">5 días</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <select id="filterCliente" class="form-select border-warning">
+                        <option value="">Clientes</option>
+                        <option value="1">#1</option>
+                        <option value="2">#2</option>
+                        <option value="3">#3</option>
+                    </select>
+                </div>
+                <div class="col-md-1">
+                    <button class="btn btn-outline-secondary w-100" onclick="resetFilters()">
+                        <i class="bi bi-arrow-counterclockwise"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card card-custom border-0 shadow-sm">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0" id="tablaPrecios">
+                    <thead style="background-color: #f8f9fa;">
+                        <tr>
+                            <th class="px-4 py-3">Colegio</th>
+                            <th class="py-3">Nivel</th>
+                            <th class="py-3 text-center">Alm X Sem</th>
+                            <th class="py-3 text-center">Nro de Cliente</th>
+                            <th class="py-3 text-center" style="width: 150px;">Precio</th>
+                            <th class="px-4 py-3 text-end">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for precio in precios %}
+                            <tr class="precio-row">
+                                <td class="px-4 fw-bold cell-colegio">{{ precio.colegio.nombre }}</td>
+                                <td class="text-uppercase cell-escuela">{{ precio.nivel }}</td>
+                                <td class="text-center cell-alm">{{ precio.alm_por_sem }} días</td>
+                                <td class="text-center cell-cliente">
+                                    <span class="badge bg-light text-dark border">#{{ precio.nro_de_cliente }}</span>
+                                </td>
+                                <td class="text-center fw-bold text-success">
+                                    <div class="d-flex justify-content-between px-md-3">
+                                        <span>$</span>
+                                        <span>{{ precio.precio|intcomma }}</span>
+                                    </div>
+                                </td>
+                                <td class="px-4 text-end">
+                                    <a href="{% url 'editar_precio' precio.pk %}" class="btn btn-sm btn-outline-primary rounded-pill px-3">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="6" class="text-center py-5 text-muted">
+                                    <i class="bi bi-info-circle me-2"></i> No hay precios cargados
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <a href="{% url 'comedor_home' %}" class="btn btn-link text-muted text-decoration-none">
+            <i class="bi bi-arrow-left me-2"></i>Volver al Menú Comedor
+        </a>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const selectColegio = document.getElementById('filterColegio');
+        const selectNivel = document.getElementById('filterNivel');
+        const selectAlm = document.getElementById('filterAlm');
+        const selectCliente = document.getElementById('filterCliente');
+        const rows = document.querySelectorAll('.precio-row');
+
+        function filterTable() {
+            const valColegio = selectColegio.value.toLowerCase();
+            const valNivel = selectNivel.value.toLowerCase();
+            const valAlm = selectAlm.value;
+            const valCliente = selectCliente.value;
+
+            rows.forEach(row => {
+                const textColegio = row.querySelector('.cell-colegio').textContent.toLowerCase();
+                const textNivel = row.querySelector('.cell-escuela').textContent.toLowerCase();
+                const textAlm = row.querySelector('.cell-alm').textContent.toLowerCase();
+                const textCliente = row.querySelector('.cell-cliente').textContent.toLowerCase();
+
+                const matchColegio = valColegio === "" || textColegio.includes(valColegio);
+                const matchNivel = valNivel === "" || textNivel.includes(valNivel);
+                const matchAlm = valAlm === "" || textAlm.startsWith(valAlm);
+                const matchCliente = valCliente === "" || textCliente.includes("#" + valCliente);
+
+                row.style.display = (matchColegio && matchNivel && matchAlm && matchCliente) ? '' : 'none';
+            });
+        }
+
+        [selectColegio, selectNivel, selectAlm, selectCliente].forEach(el => {
+            el.addEventListener('change', filterTable);
+        });
+
+        window.resetFilters = function() {
+            selectColegio.value = "";
+            selectNivel.value = "";
+            selectAlm.value = "";
+            selectCliente.value = "";
+            filterTable();
+        }
+    });
+</script>
+
+<style>
+    .card-custom:hover {
+        transform: translateY(0px);
+        box-shadow: 0 15px 30px rgba(0,0,0,0.1) !important;
+    }
+</style>
+{% endblock %}

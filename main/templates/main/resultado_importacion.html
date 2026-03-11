@@ -1,0 +1,76 @@
+{% extends 'main/index.html' %}
+
+{% block Bienvenida %} {% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+                <div class="card-header bg-white border-0 pt-4 text-center">
+                    <h2 class="fw-bold">Resultado de {{ resumen.proceso }}</h2>
+                    <p class="text-muted">Resumen del procesamiento del archivo</p>
+                </div>
+                
+                <div class="card-body px-4">
+                    <div class="row g-3 mb-4">
+                        <div class="col-4">
+                            <div class="p-3 bg-light rounded-4 text-center">
+                                <h3 class="fw-bold text-primary mb-0">{{ resumen.total }}</h3>
+                                <small class="text-muted text-uppercase fw-bold" style="font-size: 0.7rem;">Total</small>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="p-3 bg-success-subtle rounded-4 text-center">
+                                <h3 class="fw-bold text-success mb-0">{{ resumen.exitos }}</h3>
+                                <small class="text-muted text-uppercase fw-bold" style="font-size: 0.7rem;">Éxitos</small>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="p-3 bg-danger-subtle rounded-4 text-center">
+                                <h3 class="fw-bold text-danger mb-0">{{ resumen.errores|length }}</h3>
+                                <small class="text-muted text-uppercase fw-bold" style="font-size: 0.7rem;">Errores</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    {% if resumen.errores %}
+                    <h5 class="fw-bold mb-3 mt-4 text-danger">Detalle de Errores</h5>
+                    <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+                        <table class="table table-sm align-middle">
+                            <thead class="table-light sticky-top">
+                                <tr>
+                                    <th>Fila</th>
+                                    <th>Identificador</th>
+                                    <th>Motivo del Error</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for error in resumen.errores %}
+                                <tr>
+                                    <td><span class="badge bg-secondary">{{ error.fila }}</span></td>
+                                    <td class="small fw-bold">{{ error.identificador }}</td>
+                                    <td class="small text-danger">{{ error.mensaje }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <i class="bi bi-check-circle-fill text-success" style="font-size: 3rem;"></i>
+                        <p class="mt-2 fw-bold">¡Todo se procesó correctamente!</p>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="card-footer bg-light border-0 py-3 text-center">
+                    <a href="{% url resumen.url_retorno %}" class="btn btn-primary rounded-pill px-5">
+                        Volver a la lista
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

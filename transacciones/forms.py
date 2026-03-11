@@ -9,7 +9,8 @@ class TransaccionCompraForm(forms.ModelForm):
         required=True, # Obligatorio
         widget=forms.TextInput(attrs={
             'class': 'form-control',
-            'placeholder': 'Ej: XXXX-XXXX-XXXX-XXXX',
+            'placeholder': 'Ej: 123',
+            'autofocus': 'autofocus',
             'pattern': '[0-9-]*',
             'title': 'Solo números y guiones'
         })
@@ -30,7 +31,9 @@ class TransaccionCompraForm(forms.ModelForm):
         if not numero_tarjeta:
             self.add_error('numero_tarjeta', "El número de tarjeta es obligatorio para realizar una compra.")
             return cleaned_data
-
+        else:
+            numero_tarjeta = str(numero_tarjeta).zfill(3)
+    
         if not monto:
             return cleaned_data
         
@@ -98,8 +101,9 @@ class TransaccionCargaForm(forms.ModelForm):
         required=True, # Obligatorio
         widget=forms.TextInput(attrs={
             'class': 'form-control',
-            'placeholder': 'Ej: XXXX-XXXX-XXXX-XXXX',
+            'placeholder': 'Ej: 123',
             'pattern': '[0-9-]*',
+            'autofocus': 'autofocus',
             'title': 'Solo números y guiones'
         })
     )
@@ -119,7 +123,9 @@ class TransaccionCargaForm(forms.ModelForm):
         if not numero_tarjeta:
             self.add_error('numero_tarjeta', "El número de tarjeta es obligatorio para realizar una carga.")
             return cleaned_data
-        
+        else:
+            numero_tarjeta = str(numero_tarjeta).zfill(3)
+            
         if not monto:
             return cleaned_data
         

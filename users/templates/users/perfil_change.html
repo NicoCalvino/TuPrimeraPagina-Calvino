@@ -1,4 +1,4 @@
-{% extends "kiosco/index.html" %}
+{% extends "main/index.html" %}
 
 {% block titulo %}<title>Editar Perfil - Kiosco Sole</title>{% endblock %}
 
@@ -58,14 +58,6 @@
                             <div class="col-md-6">
                                 <label class="form-label fw-bold small text-muted text-uppercase">Apellido</label>
                                 {{ form.last_name }}
-                            </div>
-                            
-                            <div class="col-12">
-                                <label class="form-label fw-bold small text-muted text-uppercase">Correo Electrónico</label>
-                                <div class="input-group">
-                                    <span class="input-group-text bg-white"><i class="bi bi-envelope text-primary"></i></span>
-                                    {{ form.email }}
-                                </div>
                             </div>
 
                             <div class="col-md-6">

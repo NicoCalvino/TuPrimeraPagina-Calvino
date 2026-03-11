@@ -1,20 +1,15 @@
-{% extends 'kiosco/index.html' %}
+{% extends 'main/index.html' %}
 
 {% block titulo %}
 <title>Confirmar Eliminación - Kiosco Sole</title>
 {% endblock %}
 
 {% block Bienvenida %}
-<header class="hero-section bg-light py-4 border-bottom mb-4">
-    <div class="container text-center">
-        <h1 class="display-5 fw-bold text-danger">¿Cancelar esta solicitud?</h1>
-        <p class="lead text-muted">Esta acción no se puede deshacer.</p>
-    </div>
-</header>
+
 {% endblock %}
 
 {% block content %}
-<div class="container mb-5">
+<div class="container py-5">
     <div class="row justify-content-center">
         <div class="col-12 col-md-8 col-lg-7">
 
@@ -71,7 +66,7 @@
                                     {% for detalle in detalles_carga %}
                                     <tr>
                                         <td class="text-start fw-medium" style="white-space: nowrap;">{{ detalle.tarjeta.codigo }}</td>
-                                        <td class="text-center fw-medium">{{ detalle.tarjeta.cliente.nombre }}</td>
+                                        <td class="text-center fw-medium">{{ detalle.tarjeta.cliente.nombre }} {{ detalle.tarjeta.cliente.apellido }}</td>
                                         <td class="text-end fw-bold text-success">
                                             $ {{ detalle.monto|default:0|floatformat:2 }}
                                         </td>

@@ -1,4 +1,4 @@
-{% extends 'kiosco/index.html' %} 
+{% extends 'main/index.html' %} 
 
 {% block titulo %}
 <title>Kiosco Sole - Transacciones</title>
@@ -11,7 +11,7 @@
 {% block content %}
 <div class="container mt-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold text-dark">Historial de Transacciones</h2>
+        <h2 class="fw-bold text-dark">Transacciones</h2>
         <div class="d-flex align-items-center">
             <div class="btn-group me-3" role="group" aria-label="Filtro de Transacciones">
                 <a href="{% url 'lista_transacciones' %}?concepto=todo" class="btn {% if not request.GET.concepto or request.GET.concepto == 'todo' %}btn-warning{% else %}btn-outline-warning{% endif %} fw-bold">TODO</a>
@@ -34,7 +34,8 @@
                 <thead>
                     <tr>
                         <th scope="col">Fecha</th>
-                        <th scope="col">Tarjeta</th>
+                        <th scope="col">Codigo</th>
+                        <th scope="col">Cliente</th>
                         <th scope="col">Concepto</th>
                         <th scope="col">Monto</th>
                         <th scope="col">Acciones</th>
@@ -44,7 +45,8 @@
                     {% for transaccion in transacciones %}
                     <tr>
                         <td>{{ transaccion.fecha|date:"d/m/Y H:i" }}</td>
-                        <td>{{ transaccion.tarjeta.codigo }}</td>
+                        <td>{{ transaccion.tarjeta }}</td>
+                        <td>{{ transaccion.tarjeta.cliente.nombre }} {{ transaccion.tarjeta.cliente.apellido }}</td>
                         <td>{{ transaccion.concepto }}</td>
                         <td>${{ transaccion.monto|floatformat:2 }}</td>
                         <td>

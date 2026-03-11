@@ -1,19 +1,15 @@
-{% extends 'kiosco/index.html' %}
+{% extends 'main/index.html' %}
 
 {% block titulo %}
 <title>Detalle de Solicitud - Kiosco Sole</title>
 {% endblock %}
 
 {% block Bienvenida %}
-<header class="hero-section bg-light py-4 border-bottom mb-4">
-    <div class="container text-center">
-        <h1 class="display-5 fw-bold text-dark">Detalle de Solicitud</h1>
-    </div>
-</header>
+
 {% endblock %}
 
 {% block content %}
-<div class="container mb-5">
+<div class="container py-5">
     <div class="row justify-content-center">
         <div class="col-12 col-md-10 col-lg-10">
             
@@ -82,7 +78,7 @@
                                         <div class="avatar-sm me-2 bg-light rounded-circle d-flex align-items-center justify-content-center" style="width: 30px; height: 30px;">
                                             <i class="bi bi-person text-secondary small"></i>
                                         </div>
-                                        <span class="fw-bold">{{ solicitud.usuario.get_full_name|default:solicitud.usuario.username }}</span>
+                                        <span class="fw-bold">{{ solicitud.usuario.get_full_name|default:solicitud.usuario.first_name }}</span>
                                     </div>
                                 </div>
 
@@ -115,7 +111,7 @@
                                                 {% for detalle in detalles_carga %}
                                                 <tr>
                                                     <td class="text-start fw-medium" style="white-space: nowrap;">{{ detalle.tarjeta.codigo }}</td>
-                                                    <td class="text-center fw-medium">{{ detalle.tarjeta.cliente.nombre }}</td>
+                                                    <td class="text-center fw-medium">{{ detalle.tarjeta.cliente.nombre }} {{ detalle.tarjeta.cliente.apellido }}</td>
                                                     <td class="text-end fw-bold text-success">
                                                         $ {{ detalle.monto|default:0|floatformat:2 }}
                                                     </td>

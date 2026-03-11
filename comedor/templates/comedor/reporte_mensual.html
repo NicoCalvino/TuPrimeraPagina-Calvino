@@ -1,0 +1,170 @@
+{% extends 'main/index.html' %}
+{% load humanize %}
+{% block Bienvenida %}
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold mb-0">
+            <i class="bi bi-cash-stack me-2 text-primary"></i> Resumen de Cobros
+        </h2>
+        <span class="badge bg-dark px-3 py-2 rounded-pill shadow-sm">
+            Total Usuarios: {{ reporte|length }}
+        </span>
+    </div>
+
+    <!-- Filtros -->
+    <div class="card shadow-sm border-0 mb-4 bg-light">
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-8">
+                    <div class="input-group">
+                        <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
+                        <input type="text" id="filterPadre" class="form-control border-start-0" placeholder="Buscar por nombre del padre o usuario...">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="input-group">
+                        <span class="input-group-text bg-white border-end-0"><i class="bi bi-funnel text-muted"></i></span>
+                        <input type="text" id="filterHijo" class="form-control border-start-0" placeholder="Buscar por nombre del alumno...">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabla de Reporte -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-body p-0">
+            <div class="table-responsive" style="max-height: 75vh; overflow-y: auto;">
+                <table class="table table-hover align-middle mb-0" id="tablaFacturacion">
+                    <thead class="bg-light">
+                        <tr>
+                            <th class="px-4 py-3">Usuario / Padre</th>
+                            <th class="px-4">Detalle de Hijos e Inscripción</th>
+                            <th class="text-center">Días/Sem</th>
+                            <th class="text-end px-4">Subtotal</th>
+                            <th class="text-end px-4 bg-primary text-white">Total a Cobrar</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in reporte %}
+                        <tr class="facturacion-row">
+                            <td class="px-4 border-end">
+                                <div class="fw-bold text-dark cell-padre">{{ item.padre.get_full_name|default:item.padre.first_name }}</div>
+                                <small class="text-muted">{{ item.padre.user.email }}</small>
+                            </td>
+                            
+                            <td class="p-0" colspan="3">
+                                <table class="table table-sm table-borderless mb-0">
+                                    {% for hijo in item.hijos %}
+                                    <tr>
+                                        <td class="px-4 py-2">
+                                            <div class="cell-hijo">{{ hijo.nombre }}</div>
+                                            <small class="text-muted italic">{{ hijo.curso }} - {{ hijo.escuela }}</small>
+                                            {% if hijo.nro_orden > 1 %}
+                                                <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill ms-1" style="font-size: 0.65rem;">
+                                                    Hijo {{ hijo.nro_orden }}
+                                                </span>
+                                            {% endif %}
+                                        </td>
+                                        <td class="text-center py-2" style="width: 100px;">
+                                            <span class="badge bg-light text-dark border">{{ hijo.dias }} días</span>
+                                        </td>
+                                        <td class="text-end px-4 py-2 font-monospace" style="width: 150px;">
+                                            ${{ hijo.subtotal|floatformat:"0"|intcomma|default:"0" }}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </table>
+                            </td>
+
+                            <td class="text-end px-4 bg-primary-subtle border-start">
+                                <div class="fs-5 fw-bold text-primary">
+                                    ${{ item.total_padre|floatformat:"0"|intcomma|default:"0" }}
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center py-5 text-muted">
+                                <div class="mb-3">
+                                    <i class="bi bi-file-earmark-x fs-1"></i>
+                                </div>
+                                <h5>No se encontraron registros de facturación mensual activos.</h5>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-4 d-flex justify-content-between">
+        <a href="javascript:history.back()" class="btn btn-link text-muted text-decoration-none">
+            <i class="bi bi-arrow-left me-2"></i>Volver
+        </a>
+        <button onclick="window.print()" class="btn btn-dark shadow-sm px-4">
+            <i class="bi bi-printer me-2"></i> Imprimir Reporte
+        </button>
+    </div>
+</div>
+
+<script>
+    const inputPadre = document.getElementById('filterPadre');
+    const inputHijo = document.getElementById('filterHijo');
+
+    function filtrarTabla() {
+        const queryPadre = inputPadre.value.toLowerCase();
+        const queryHijo = inputHijo.value.toLowerCase();
+        const rows = document.querySelectorAll('.facturacion-row');
+
+        rows.forEach(row => {
+            const padreText = row.querySelector('.cell-padre').textContent.toLowerCase();
+            const hijosText = row.querySelector('.p-0').textContent.toLowerCase();
+
+            const coincidePadre = padreText.includes(queryPadre);
+            const coincideHijo = hijosText.includes(queryHijo);
+
+            if (coincidePadre && coincideHijo) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    }
+
+    inputPadre.addEventListener('keyup', filtrarTabla);
+    inputHijo.addEventListener('keyup', filtrarTabla);
+</script>
+
+<style>
+    .table thead th {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        border-bottom: 2px solid #dee2e6;
+    }
+    .italic { font-style: italic; }
+    .bg-primary-subtle { background-color: #e7f1ff !important; }
+    
+    @media print {
+        .hero-section, .input-group, .btn, .mt-4, #filterPadre, #filterHijo, .card-body:has(.row) {
+            display: none !important;
+        }
+        .table-responsive {
+            overflow: visible !important;
+            max-height: none !important;
+        }
+        .card {
+            box-shadow: none !important;
+            border: 1px solid #eee !important;
+        }
+    }
+</style>
+{% endblock %}

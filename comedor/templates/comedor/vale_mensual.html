@@ -1,0 +1,173 @@
+{% extends 'main/index.html' %}
+{% load humanize %}
+{% block titulo %}<title>Plan Mensual - {{ cliente.nombre }} {{ cliente.apellido }}</title> {% endblock %}
+
+{% block Bienvenida %} {% endblock %}
+
+{% block content %} 
+
+<div class="container my-5">
+
+    <div class="mb-4 text-center text-md-start">
+        <a href="{% url 'ver_cliente' cliente.pk %}" class="text-decoration-none text-muted fw-bold">
+            <i class="bi bi-arrow-left"></i> Volver al perfil del cliente
+        </a>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-7"> <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+                
+                <div class="card-header bg-primary text-white p-4 text-center border-bottom-0">
+                    <h3 class="fw-bold mb-1">
+                        <i class="bi bi-calendar-plus-fill me-2"></i>
+                        {% if form.instance.pk %}
+                            Editar Plan Mensual
+                        {% else %}
+                            Cargar Plan Mensual
+                        {% endif %}
+                    </h3>
+                    <p class="mb-0 text-white-50">Inscripción para <strong>{{ cliente.nombre }} {{ cliente.apellido }}</strong></p>
+                </div>
+
+                <div class="card-body p-4 p-lg-5 bg-white">
+                    <form method="POST">
+                        {% csrf_token %}
+
+                        <div class="mb-5">
+                            <h6 class="text-muted fw-bold mb-3 text-uppercase tracking-wide">
+                                <i class="bi bi-tags-fill text-primary me-2"></i>Tarifario Vigente
+                            </h6>
+                            
+                            <div class="row g-3">
+                                <div class="col-12">
+                                    <div class="table-responsive border rounded-3">
+                                        <table class="table table-sm table-hover mb-0 text-center" style="font-size: 0.85rem;">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    <th>Hija/Días</th>
+                                                    <th>1</th>
+                                                    <th>2</th>
+                                                    <th>3</th>
+                                                    <th>4</th>
+                                                    <th>5</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td class="fw-bold bg-light">1°</td>
+                                                    {% for precio in precios_escuela_uno %}
+                                                        <td>${{ precio.precio|floatformat:"0"|intcomma|default:"0"}}</td>
+                                                    {% endfor %}
+                                                </tr>
+                                                <tr>
+                                                    <td class="fw-bold bg-light">2°</td>
+                                                    {% for precio in precios_escuela_dos %}
+                                                        <td>${{ precio.precio|floatformat:"0"|intcomma|default:"0"}}</td>
+                                                    {% endfor %}
+                                                </tr>
+                                                <tr>
+                                                    <td class="fw-bold bg-light">3°</td>
+                                                    {% for precio in precios_escuela_tres %}
+                                                        <td>${{ precio.precio|floatformat:"0"|intcomma|default:"0"}}</td>
+                                                    {% endfor %}
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                                <div class="col-12">
+                                    <div class="table-responsive border rounded-3">
+                                        <table class="table table-sm table-hover mb-0 text-center" style="font-size: 0.85rem;">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    <th class="text-primary">JARDÍN</th>
+                                                    <th>1</th>
+                                                    <th>2</th>
+                                                    <th>3</th>
+                                                    <th>4</th>
+                                                    <th>5</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td class="fw-bold bg-light">Precio</td>
+                                                    {% for precio in precios_jardin %}
+                                                        <td>${{ precio.precio|floatformat:"0"|intcomma|default:"0"}}</td>
+                                                    {% endfor %}
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <h6 class="text-muted fw-bold mb-3 text-uppercase tracking-wide">
+                            <i class="bi bi-calendar-week text-primary me-2"></i>Seleccione los días
+                        </h6>
+                        
+                        <div class="bg-light p-4 rounded-4 border mb-4">
+                            <div class="row g-3">
+                                <div class="col-6 col-sm-4">
+                                    <div class="form-check form-switch fs-5">
+                                        {{ form.lunes }}
+                                        <label class="form-check-label ms-1 fs-6 fw-bold text-dark" for="{{ form.lunes.id_for_label }}">Lunes</label>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-sm-4">
+                                    <div class="form-check form-switch fs-5">
+                                        {{ form.martes }}
+                                        <label class="form-check-label ms-1 fs-6 fw-bold text-dark" for="{{ form.martes.id_for_label }}">Martes</label>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-sm-4">
+                                    <div class="form-check form-switch fs-5">
+                                        {{ form.miercoles }}
+                                        <label class="form-check-label ms-1 fs-6 fw-bold text-dark" for="{{ form.miercoles.id_for_label }}">Miércoles</label>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-sm-4">
+                                    <div class="form-check form-switch fs-5">
+                                        {{ form.jueves }}
+                                        <label class="form-check-label ms-1 fs-6 fw-bold text-dark" for="{{ form.jueves.id_for_label }}">Jueves</label>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-sm-4">
+                                    <div class="form-check form-switch fs-5">
+                                        {{ form.viernes }}
+                                        <label class="form-check-label ms-1 fs-6 fw-bold text-dark" for="{{ form.viernes.id_for_label }}">Viernes</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-5">
+                            <label for="{{ form.comentarios.id_for_label }}" class="form-label text-muted fw-bold text-uppercase tracking-wide">
+                                <i class="bi bi-chat-text-fill text-primary me-2"></i>Comentarios o Aclaraciones
+                            </label>
+                            {{ form.comentarios }}
+                            <div class="form-text">Ej: Dieta especial, sin TACC, horarios de salida, etc.</div>
+                            
+                            {% if form.comentarios.errors %}
+                                <div class="text-danger small mt-1 fw-bold">{{ form.comentarios.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                            <a href="{% url 'ver_cliente' cliente.pk %}" class="btn btn-light rounded-pill px-4 fw-bold text-muted border shadow-sm">
+                                Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-primary rounded-pill px-5 fw-bold shadow-sm">
+                                <i class="bi bi-save me-2"></i> 
+                                {% if form.instance.pk %} Guardar Cambios {% else %} Guardar Plan Mensual {% endif %}
+                            </button>
+                        </div>
+
+                    </form>
+                </div>
+            </div> </div>
+    </div>
+</div>
+
+{% endblock %}

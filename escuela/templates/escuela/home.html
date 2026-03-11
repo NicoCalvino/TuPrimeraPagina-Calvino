@@ -1,0 +1,55 @@
+{% extends 'main/index.html' %}
+
+{% block Bienvenida %}
+<header class="hero-section" style="background: linear-gradient(135deg, #FFC107 0%, #ffdb73 100%);">
+    <div class="container text-dark">
+        <h1 class="display-4 fw-bold">Colegios</h1> </div>
+</header>
+{% endblock %}
+
+{% block content %}
+<div class="container mb-5">
+    <div class="row g-4 justify-content-center">
+        
+        <div class="col-md-5 col-lg-4">
+            <div class="card card-custom p-4 text-center h-100 position-relative">
+                <div class="icon-box text-info">
+                    <i class="bi bi-building"></i> 
+                </div>
+                <h4 class="fw-bold">Colegios</h4>
+                <p class="text-muted small">Administrar las diferentes instituciones y sedes.</p>
+                <a href="{% url 'colegios' %}" class="btn btn-outline-info w-100 mt-auto stretched-link">Gestionar Colegios</a>
+            </div>
+        </div>
+
+        <div class="col-md-5 col-lg-4">
+            <div class="card card-custom p-4 text-center h-100 position-relative">
+                <div class="icon-box text-primary">
+                    <i class="bi bi-book"></i> 
+                </div>
+                <h4 class="fw-bold">Cursos</h4>
+                <p class="text-muted small">Administrar niveles, grados y comisiones de la institución.</p>
+                <a href="{% url 'lista_cursos' %}" class="btn btn-outline-primary w-100 mt-auto stretched-link">Gestionar Cursos</a>
+            </div>
+        </div>
+
+        <div class="col-md-5 col-lg-4">
+            <div class="card card-custom p-4 text-center h-100 position-relative">
+                <div class="icon-box text-success">
+                    <i class="bi bi-people"></i> 
+                </div>
+                <h4 class="fw-bold">Clientes</h4>
+                <p class="text-muted small">Registro de alumnos, tutores y datos de contacto.</p>
+                <a href="{% url 'lista_clientes' %}" class="btn btn-outline-success w-100 mt-auto stretched-link">Ver Clientes</a>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="text-center mt-5">
+        <a href="{% url 'home' %}" class="btn btn-link text-muted text-decoration-none">
+            <i class="bi bi-arrow-left me-2"></i>Volver al Inicio
+        </a>
+    </div>
+</div>
+{% endblock %}

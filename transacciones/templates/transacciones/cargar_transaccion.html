@@ -1,16 +1,11 @@
-{% extends 'kiosco/index.html' %} 
+{% extends 'main/index.html' %} 
 
 {% block titulo %}
 <title>Kiosco Sole - {{ titulo_pagina }}</title>
 {% endblock %} 
 
 {% block Bienvenida %}
-    <header class="hero-section">
-        <div class="container">
-            <h1 class="display-4 fw-bold text-dark">{{ titulo_pagina }}</h1>
-            <p class="lead text-dark">Ingresa el monto y el número de tarjeta.</p>
-        </div>
-    </header>
+
 {% endblock %}
 
 <!-- Contenido Principal -->
@@ -27,17 +22,6 @@
                     {% csrf_token %}
 
                     <div class="mb-3">
-                        <label for="{{ form.monto.id_for_label }}" class="form-label fw-bold">Monto de la {{ tipo }}</label>
-                        <div class="input-group">
-                            <span class="input-group-text"><i class="bi bi-currency-dollar"></i></span>
-                            {{ form.monto }} 
-                        </div>
-                        {% if form.monto.errors %}
-                            <div class="alert alert-danger mt-1">{{ form.monto.errors }}</div>
-                        {% endif %}
-                    </div>
-
-                    <div class="mb-3">
                         <label for="{{ form.numero_tarjeta.id_for_label }}" class="form-label fw-bold">Número de Tarjeta</label>
                         <div class="input-group">
                             <span class="input-group-text"><i class="bi bi-credit-card"></i></span>
@@ -47,31 +31,37 @@
                             <div class="alert alert-danger mt-1">{{ form.numero_tarjeta.errors }}</div>
                         {% endif %}
                     </div>
+
+                    <div id="info-cliente" class="mt-3 text-center" >
+                        <div class="alert alert-info py-2">
+                            <i class="bi bi-person-check-fill me-2"></i>
+                            Cliente: <span id="nombre-cliente" class="fw-bold"></span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ form.monto.id_for_label }}" class="form-label fw-bold">Monto de la {{ tipo }}</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-currency-dollar"></i></span>
+                            {{ form.monto }} 
+                        </div>
+                        {% if form.monto.errors %}
+                            <div class="alert alert-danger mt-1">{{ form.monto.errors }}</div>
+                        {% endif %}
+                    </div>
                     
                     <div class="d-grid gap-2 mt-4">
                         <button type="submit" class="btn btn-lg fw-bold {{ color_boton }}">
                             <i class="bi bi-check-circle-fill me-2"></i>{{ texto_boton }}
                         </button>
-                        <a href="{% url 'home' %}" class="btn btn-outline-secondary btn-lg">
+                        <a href="{% url 'home_kiosco' %}" class="btn btn-outline-secondary btn-lg">
                             <i class="bi bi-x-circle me-2"></i>Cancelar
                         </a>
                     </div>
                 </form>
 
                 <!-- AQUI AGREGAMOS EL MENSAJE ABAJO DEL FORMULARIO -->
-                {% if messages %}
-                <div class="mt-4">
-                    {% for message in messages %}
-                        {% if 'mensaje_local' in message.tags %}
-                            <!-- Alerta con estilo Bootstrap (verde para success) -->
-                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show shadow-sm" role="alert">
-                                <i class="bi bi-check-circle-fill me-2"></i><strong>{{ message }}</strong>
-                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                            </div>
-                        {% endif %}
-                    {% endfor %}
-                </div>
-                {% endif %}
+
                 <!-- FIN DEL BLOQUE DE MENSAJES -->
 
             </div>
@@ -84,4 +74,39 @@
         box-shadow: 0 10px 20px rgba(0,0,0,0.05) !important;
     }
 </style>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Django genera automáticamente el ID como 'id_' + nombre del campo en el form
+        const inputTarjeta = document.getElementById('id_numero_tarjeta');
+        const contenedorInfo = document.getElementById('info-cliente');
+        const spanNombre = document.getElementById('nombre-cliente');
+
+        if (inputTarjeta) {
+            inputTarjeta.addEventListener('input', function() {
+                let valor = this.value;
+
+                // Si el usuario escribe "1", lo convertimos internamente a "001" para la búsqueda
+                // o esperamos a que tenga el largo suficiente.
+                if (valor.length > 0) {
+                    // PadStart asegura que si el ID es 1, busque "001"
+                    const codigoBusqueda = valor.padStart(3, '0');
+                    
+                    fetch(`{% url 'buscar_cliente' %}?numero_tarjeta=${codigoBusqueda}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.encontrado) {
+                                spanNombre.textContent = data.nombre;
+                                contenedorInfo.style.display = 'block';
+                            } else{
+                                spanNombre.textContent = "";
+                            }
+                        })
+                        .catch(error => console.error('Error:', error));
+                } else{
+                    spanNombre.textContent = "";
+                }
+            });
+        }
+    });
+</script>
 {% endblock %}

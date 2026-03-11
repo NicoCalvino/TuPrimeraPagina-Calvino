@@ -5,7 +5,7 @@ from users.models import *
 @admin.register(Perfil)
 class PerfilAdmin(admin.ModelAdmin):
     #Columna visibles en la lista del modelo
-    list_display = ("first_name", "last_name", "username", "direccion", "celular")
+    list_display = ("first_name", "last_name", "direccion", "celular")
     #Columnas con enlaces clickeables para entrar en el detalle
     list_display_links = ("first_name","last_name")
     #Campos por los que se puede buscar

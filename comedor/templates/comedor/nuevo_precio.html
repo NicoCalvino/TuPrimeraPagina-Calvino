@@ -1,0 +1,121 @@
+{% extends 'main/index.html' %}
+
+{% block Bienvenida %}
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            
+            <div class="card card-custom shadow-sm border-0">
+                <div class="card-body p-4 p-md-5">
+                    <div class="text-center mb-4">
+                        <div class="icon-box text-success" style="font-size: 2.5rem;">
+                            <i class="bi bi-tag-fill"></i>
+                        </div>
+                        <h2 class="fw-bold">Detalles del Precio</h2>
+                        <p class="text-muted">Asigna el costo según el nivel y frecuencia</p>
+                    </div>
+
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+                        
+                        {# Errores generales (Validación de duplicados o lógica del clean) #}
+                        {% if form.non_field_errors %}
+                        <div class="alert alert-danger shadow-sm" role="alert">
+                            {% for error in form.non_field_errors %}
+                                <i class="bi bi-exclamation-triangle-fill me-2"></i>{{ error }}
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+
+                        <div class="mb-3">
+                            <label for="{{ form.colegio.id_for_label }}" class="form-label fw-bold">Institución / Colegio</label>
+                            {{ form.colegio }}
+                            {% if form.colegio.errors %}<div class="text-danger small">{{ form.colegio.errors }}</div>{% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.nivel.id_for_label }}" class="form-label fw-bold">Nivel Educativo</label>
+                            {{ form.nivel }}
+                            {% if form.nivel.errors %}<div class="text-danger small">{{ form.nivel.errors }}</div>{% endif %}
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.alm_por_sem.id_for_label }}" class="form-label fw-bold">Alm. por Semana</label>
+                                {{ form.alm_por_sem }}
+                                {% if form.alm_por_sem.errors %}<div class="text-danger small">{{ form.alm_por_sem.errors }}</div>{% endif %}
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.nro_de_cliente.id_for_label }}" class="form-label fw-bold">Nro. de Cliente</label>
+                                {{ form.nro_de_cliente }}
+                                {% if form.nro_de_cliente.errors %}<div class="text-danger small">{{ form.nro_de_cliente.errors }}</div>{% endif %}
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="{{ form.precio.id_for_label }}" class="form-label fw-bold">Precio Unitario</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light">$</span>
+                                {{ form.precio }}
+                            </div>
+                            {% if form.precio.errors %}<div class="text-danger small">{{ form.precio.errors }}</div>{% endif %}
+                        </div>
+
+                        <div class="row g-2 mt-4">
+                            {% if form.instance.pk %}
+                                <div class="col-12">
+                                    <button type="submit" class="btn btn-primary btn-lg w-100 fw-bold shadow-sm">
+                                        <i class="bi bi-save me-2"></i>Guardar Cambios
+                                    </button>
+                                </div>
+                                <div class="col-12 text-center mt-2">
+                                    <a href="{% url 'lista_precios' %}" class="btn btn-outline-secondary w-100">
+                                        Cancelar
+                                    </a>
+                                </div>
+                            {% else %}
+                                <div class="col-12 mb-2">
+                                    <button type="submit" name="_save" class="btn btn-success btn-lg w-100 fw-bold shadow-sm">
+                                        <i class="bi bi-check-circle me-2"></i>Guardar Precio
+                                    </button>
+                                </div>
+                                <div class="col-md-6">
+                                    <button type="submit" name="_addanother" class="btn btn-outline-success w-100 fw-bold">
+                                        <i class="bi bi-plus-circle me-2"></i>Guardar y Otro
+                                    </button>
+                                </div>
+                                <div class="col-md-6">
+                                    <a href="{% url 'lista_precios' %}" class="btn btn-outline-secondary w-100">
+                                        Cancelar
+                                    </a>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="text-center mt-4">
+                <a href="{% url 'lista_precios' %}" class="btn btn-link text-muted text-decoration-none">
+                    <i class="bi bi-arrow-left me-2"></i>Volver a la lista
+                </a>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<style>
+    .card-custom {
+        transition: all 0.3s ease;
+    }
+    .card-custom:hover {
+        transform: translateY(0px);
+        box-shadow: 0 15px 30px rgba(0,0,0,0.1) !important;
+    }
+</style>
+{% endblock %}
