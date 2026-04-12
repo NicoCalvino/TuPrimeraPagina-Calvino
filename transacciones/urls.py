@@ -9,6 +9,7 @@ urlpatterns = [
     path('editar_transaccion/<slug:id>', TransaccionUpdateView.as_view(), name='editar_transaccion'),
     path('<int:pk>/eliminar', TransaccionDeleteView.as_view(), name='eliminar_transaccion'),
     path('buscar-cliente/', BuscarClienteView.as_view(), name='buscar_cliente'),
+    path('buscar-cliente-nombre/', BuscarClientePorNombreView.as_view(), name='buscar_cliente_por_nombre'),
 
     path('solicitud_de_carga/', SolicitudDeCargaCreateView.as_view(), name='solicitud_de_carga'),
     path('lista_solicitudes/', SolicitudDeCargaListView.as_view(), name='lista_solicitudes'),

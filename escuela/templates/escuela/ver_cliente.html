@@ -1,5 +1,5 @@
 {% extends 'main/index.html' %}
-
+{% load humanize %} 
 {% block titulo %}<title>{{ cliente.nombre }} {{ cliente.apellido }} - Detalle</title> {% endblock %}
 
 {% block Bienvenida %} {% endblock %}
@@ -8,7 +8,6 @@
 
 <div class="container my-5">
 
-    <!-- Botón Volver -->
     <div class="mb-4">
         {% if user.is_superuser %}
             <a href="{% url 'lista_clientes' %}" class="text-decoration-none text-muted fw-bold">
@@ -16,7 +15,7 @@
         {% else %}
             <a href="/" class="text-decoration-none text-muted fw-bold">
                 <i class="bi bi-arrow-left"></i> Volver
-        {% endif %}  
+        {% endif %}   
             
         </a>
     </div>
@@ -24,7 +23,6 @@
     <div class="row justify-content-center">
         <div class="col-lg-12">
             
-            <!-- 1. TARJETA PRINCIPAL: PERFIL CLIENTE -->
             <div class="card border-0 shadow-lg rounded-4 overflow-hidden mb-4">
                 <div class="row g-0">
                     
@@ -32,10 +30,10 @@
                         
                         <div class="mb-4">
                             <small class="text-primary fw-bold text-uppercase tracking-wide">
-                                <i class="bi bi-person-vcard-fill me-1"></i> Perfil de Estudiante
+                                <i class="bi bi-person-vcard-fill me-1"></i> Cuenta del Alumno
                             </small>
                             <h1 class="fw-bold text-dark mt-2 mb-1">{{ cliente.nombre }} {{ cliente.apellido }}</h1>
-                            <p class="text-muted mb-3">Legajo/ID: #{{ cliente.id }} | 
+                            <p class="text-muted mb-3">Número de Cliente: #{{ cliente.id }} | 
                                 <span class="badge bg-info text-dark">
                                     {{ cliente.curso.curso }} - {{ cliente.curso.colegio.nombre }}
                                 </span>
@@ -52,7 +50,7 @@
                                     </div>
                                     <div>
                                         <h6 class="mb-0 text-muted">Saldo Total</h6>
-                                        <span class="fw-bold fs-5 text-dark">$ {{ cliente.saldo_total|default:"0.00" }}</span>
+                                        <span class="fw-bold fs-5 text-dark">$ {{ cliente.saldo_total|floatformat:"0"|intcomma|default:"0" }}</span>
                                     </div>
                                 </div>
                             </div>
@@ -76,6 +74,11 @@
                             <a href="{% url 'actualizar_cliente' cliente.pk %}" class="btn btn-primary rounded-pill px-4">
                                 <i class="bi bi-pencil-square me-2"></i> Editar Cliente
                             </a>
+
+                            <a href="{% url 'lista_solicitudes' %}" class="btn btn-success rounded-pill px-4">
+                                <i class="bi bi-plus-circle me-2"></i> Cargar Saldo
+                            </a>
+
                             <a href="{% url 'eliminar_cliente' cliente.pk %}" class="btn btn-outline-danger rounded-pill px-4 ms-auto">
                                 <i class="bi bi-trash"></i>
                             </a>
@@ -109,174 +112,12 @@
                     </div>
 
                 </div>
-            </div> <!-- Fin Tarjeta Principal -->
-
-            <!-- 3. SECCIÓN COMEDOR: INSCRIPCIONES -->
-            <div class="row mt-2">
-                <div class="col-12 mb-4">
-                    <div class="card border-0 shadow-sm rounded-4">
-                        <div class="card-header bg-white border-bottom-0 pt-4 px-4">
-                            <h5 class="fw-bold mb-0">
-                                <i class="bi bi-cup-hot-fill me-2 text-warning"></i> Servicio de Comedor
-                            </h5>
-                        </div>
-                        <div class="card-body p-4">
-                            <div class="row g-4">
-                                
-                                <!-- COLUMNA IZQUIERDA: Inscripción Mensual -->
-                                <!-- Agregamos d-flex y flex-column a la columna -->
-                                <div class="col-lg-6 border-end-lg position-relative d-flex flex-column">
-                                    <div class="d-flex justify-content-between align-items-center mb-3">
-                                        <h6 class="fw-bold text-muted mb-0"><i class="bi bi-calendar-month text-primary me-2"></i>Plan Mensual</h6>
-                                    </div>
-
-                                    {% if cliente.vale_mensual %}
-                                        <!-- Tiene inscripción mensual activa -->
-                                        <!-- Usamos flex-grow-1 para que ocupe el espacio restante sin desbordar -->
-                                        <div class="alert alert-light border border-primary text-center py-4 rounded-3 flex-grow-1 d-flex flex-column justify-content-center">
-                                            <span class="d-block mb-3 text-muted small fw-bold text-uppercase">Días de la semana asignados</span>
-                                            
-                                            <!-- Listado de los 5 días fijos -->
-                                            <div class="d-flex justify-content-center gap-2 flex-wrap mb-3">
-                                                
-                                                <!-- Lunes -->
-                                                <span class="badge rounded-pill px-3 py-2 fs-6 
-                                                    {% if cliente.vale_mensual.lunes %}bg-primary text-white shadow-sm{% else %}bg-light text-muted border opacity-50{% endif %}">
-                                                    Lunes
-                                                </span>
-                                                
-                                                <!-- Martes -->
-                                                <span class="badge rounded-pill px-3 py-2 fs-6 
-                                                    {% if cliente.vale_mensual.martes %}bg-primary text-white shadow-sm{% else %}bg-light text-muted border opacity-50{% endif %}">
-                                                    Martes
-                                                </span>
-
-                                                <!-- Miércoles -->
-                                                <span class="badge rounded-pill px-3 py-2 fs-6 
-                                                    {% if cliente.vale_mensual.miercoles %}bg-primary text-white shadow-sm{% else %}bg-light text-muted border opacity-50{% endif %}">
-                                                    Miércoles
-                                                </span>
-
-                                                <!-- Jueves -->
-                                                <span class="badge rounded-pill px-3 py-2 fs-6 
-                                                    {% if cliente.vale_mensual.jueves %}bg-primary text-white shadow-sm{% else %}bg-light text-muted border opacity-50{% endif %}">
-                                                    Jueves
-                                                </span>
-
-                                                <!-- Viernes -->
-                                                <span class="badge rounded-pill px-3 py-2 fs-6 
-                                                    {% if cliente.vale_mensual.viernes %}bg-primary text-white shadow-sm{% else %}bg-light text-muted border opacity-50{% endif %}">
-                                                    Viernes
-                                                </span>
-
-                                            </div>
-
-                                            <!-- Opcional: Mostrar comentarios si los hay -->
-                                            {% if cliente.vale_mensual.comentarios %}
-                                                <div class="mb-4 text-muted small fst-italic px-3">
-                                                    <i class="bi bi-info-circle-fill text-secondary me-1"></i> {{ cliente.vale_mensual.comentarios }}
-                                                </div>
-                                            {% else %}
-                                                <div class="mb-4"></div> <!-- Espaciador si no hay comentarios -->
-                                            {% endif %}
-
-                                            <div>
-                                                <!-- Asegúrate de que el nombre de la URL coincida con tu urls.py -->
-                                                <a href="{% url 'editar_vale_mensual' cliente.vale_mensual.pk %}" class="btn btn-outline-primary rounded-pill px-4">
-                                                    <i class="bi bi-pencil-square me-2"></i> Editar plan
-                                                </a>
-                                            </div>
-                                        </div>
-                                    {% else %}
-                                        <!-- No tiene inscripción mensual -->
-                                        <!-- CAMBIO: quitamos h-100, bajamos py-5 a py-4, y agregamos flex-grow-1 -->
-                                        <div class="text-center py-4 text-muted bg-light rounded-3 flex-grow-1 d-flex flex-column justify-content-center" style="border: 2px dashed #dee2e6;">
-                                            <i class="bi bi-calendar-x fs-1 mb-2 d-block opacity-50"></i>
-                                            <p class="mb-3">El cliente no tiene un plan mensual activo.</p>
-                                            <div>
-                                                <a href="{% url 'carga_vale_mensual' cliente.pk %}" class="btn btn-primary rounded-pill px-4">
-                                                    <i class="bi bi-plus-lg me-2"></i> Cargar Plan Mensual
-                                                </a>
-                                            </div>
-                                        </div>
-                                    {% endif %}
-                                    
-                                    <hr class="d-lg-none mt-4">
-                                </div>
-
-                                <!-- COLUMNA DERECHA: Inscripciones Diarias -->
-                                <!-- Agregamos d-flex y flex-column a la columna -->
-                                <div class="col-lg-6 d-flex flex-column">
-                                    <div class="d-flex justify-content-between align-items-center mb-3">
-                                        <h6 class="fw-bold text-muted mb-0"><i class="bi bi-calendar-day text-success me-2"></i>Inscripciones Diarias</h6>
-                                        <a href="{% url 'carga_vale_diario' cliente.pk %}" class="btn btn-sm btn-success rounded-pill px-3 shadow-sm">
-                                            <i class="bi bi-plus-lg me-1"></i> Cargar día
-                                        </a>
-                                    </div>
-                                    
-                                    <div class="card border rounded-3 bg-light shadow-none flex-grow-1">
-                                        <div class="card-body p-3 d-flex flex-column justify-content-center">
-                                            
-                                            {% if cliente.vales_diarios_pendientes %}
-                                                <div class="vstack gap-2">
-                                                    {% for vale in cliente.vales_diarios_pendientes %}
-                                                    <div class="d-flex align-items-center justify-content-between p-2 bg-white border rounded-3 shadow-sm">
-                                                        <div class="flex-grow-1">
-                                                            <div class="d-flex align-items-center">
-                                                                <i class="bi bi-check-circle-fill text-success me-2"></i>
-                                                                <span class="fw-bold text-dark">{{ vale.fecha|date:"l d/m/Y" }}</span>
-                                                            </div>
-                                                            {% if vale.comentarios %}
-                                                                <div class="ms-4 small text-muted fst-italic">
-                                                                    <i class="bi bi-chat-left-dots me-1"></i>{{ vale.comentarios }}
-                                                                </div>
-                                                            {% endif %}
-                                                        </div>
-                                                        
-                                                        <div class="ms-2">
-                                                            <form action="{% url 'cancelar_vale_diario' vale.pk %}" method="POST" class="m-0">
-                                                                {% csrf_token %}
-                                                                <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill py-0 px-2" style="font-size: 0.75rem;" title="Cancelar comida" onclick="return confirm('¿Estás seguro de cancelar este día?');">
-                                                                    <i class="bi bi-trash-fill me-1"></i> Cancelar
-                                                                </button>
-                                                            </form>
-                                                        </div>
-                                                    </div>
-                                                    {% endfor %}
-                                                </div>
-                                            {% else %}
-                                                <div class="text-center py-3 text-muted">
-                                                    <i class="bi bi-calendar-check fs-2 mb-2 d-block opacity-25"></i>
-                                                    <p class="small mb-0">No hay inscripciones diarias futuras pendientes.</p>
-                                                </div>
-                                            {% endif %}
-
-                                            <hr class="text-muted opacity-25 my-3">
-                                            <div class="mt-auto">
-                                                <a href="{% url 'historial_vales_diarios' cliente.pk %}" class="btn btn-sm btn-outline-secondary rounded-pill w-100 fw-bold">
-                                                    <i class="bi bi-clock-history me-1"></i> Ver historial completo de días
-                                                </a>
-                                            </div>
-
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div> <!-- Fin Sección Comedor -->
-
-
-            <!-- 2. SECCIÓN INFERIOR: TARJETAS Y GASTOS -->
-            <div class="row">
+            </div> <div class="row">
                 
-                <!-- COLUMNA: TARJETAS ASOCIADAS -->
                 <div class="col-md-4 mb-4">
                     <div class="card border-0 shadow-sm h-100 rounded-4">
                         <div class="card-header bg-white border-bottom-0 pt-4 px-4">
-                            <h5 class="fw-bold mb-0"><i class="bi bi-credit-card-2-front me-2 text-primary"></i> Tarjetas Asociadas</h5>
+                            <h5 class="fw-bold mb-0"><i class="bi bi-credit-card-2-front me-2 text-primary"></i> Número de Cliente</h5>
                         </div>
                         <div class="card-body px-4">
                             {% if cliente.tarjeta_set.all %}
@@ -284,7 +125,6 @@
                                     {% for tarjeta in cliente.tarjeta_set.all %}
                                     <div class="d-flex align-items-center p-3 border rounded-3 bg-light justify-content-between">
                                         
-                                        <!-- Info Tarjeta -->
                                         <div class="d-flex align-items-center">
                                             <i class="bi bi-qr-code fs-3 me-3 text-secondary"></i>
                                             <div>
@@ -292,9 +132,8 @@
                                             </div>
                                         </div>
 
-                                        <!-- Saldo Individual de la tarjeta -->
                                         <div class="text-end">
-                                            <span class="d-block fw-bold text-dark">$ {{ tarjeta.saldo }}</span>
+                                            <span class="d-block fw-bold text-dark">$ {{ tarjeta.saldo|floatformat:"0"|intcomma }}</span>
                                             {% if tarjeta.habilitada%}
                                                 <span class="badge bg-success rounded-pill" style="font-size: 0.65rem;">Habilitada</span>
                                             {% else %}
@@ -305,12 +144,10 @@
                                                 {% csrf_token %}
                                                 
                                                 {% if tarjeta.habilitada %}
-                                                    <!-- Botón para DESHABILITAR (si está activa) -->
                                                     <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill py-0 px-2" style="font-size: 0.75rem;" title="Bloquear tarjeta">
                                                         <i class="bi bi-slash-circle me-1"></i> Deshabilitar
                                                     </button>
                                                 {% else %}
-                                                    <!-- Botón para HABILITAR (si está inactiva) -->
                                                     <button type="submit" class="btn btn-sm btn-outline-success rounded-pill py-0 px-2" style="font-size: 0.75rem;" title="Activar tarjeta">
                                                         <i class="bi bi-check-circle me-1"></i> Habilitar
                                                     </button>
@@ -330,7 +167,6 @@
                     </div>
                 </div>
 
-                <!-- COLUMNA: ÚLTIMOS GASTOS -->
                 <div class="col-md-8 mb-4">
                     <div class="card border-0 shadow-sm h-100 rounded-4">
                         <div class="card-header bg-white border-bottom-0 pt-4 px-4 d-flex justify-content-between align-items-center">
@@ -348,47 +184,32 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <!-- Usamos el método que creamos en el modelo -->
                                         {% with historial=cliente.ultimos_movimientos %}
                                             
                                             {% if historial %}
                                                 {% for mov in historial %}
                                                 <tr>
-                                                    <!-- FECHA -->
                                                     <td class="ps-4 text-muted small">
                                                         {{ mov.fecha|date:"d/m/Y H:i" }}
                                                     </td>
-
-                                                    <!-- DETALLE / PRODUCTO -->
                                                     <td>
-                                                        <!-- Mostramos el Detalle si existe, sino el Concepto -->
                                                         <span class="fw-bold text-dark">
                                                             {{ mov.detalle|default:mov.concepto }}
                                                         </span>
-                                                        <br>
-                                                        <!-- Mostramos ID de tarjeta y si es Carga o Compra -->
-                                                        <small class="text-muted" style="font-size: 0.75rem;">
-                                                            <i class="bi bi-credit-card-2-front"></i> Tarjeta #{{ mov.tarjeta.codigo }} 
-                                                        </small>
                                                     </td>
-
-                                                    <!-- MONTO (Lógica de Colores) -->
                                                     <td class="text-end pe-4">
                                                         {% if mov.concepto == 'CARGA SALDO' %}
-                                                            <!-- Si es CARGA: Verde y signo + -->
                                                             <span class="fw-bold text-success">
-                                                                + ${{ mov.monto }}
+                                                                + $ {{ mov.monto|floatformat:"0"|intcomma }}
                                                             </span>
                                                         {% else %}
-                                                            <!-- Si es COMPRA: Rojo y signo - -->
                                                             <span class="fw-bold text-danger">
-                                                                - ${{ mov.monto }}
+                                                                - $ {{ mov.monto|floatformat:"0"|intcomma }}
                                                             </span>
                                                         {% endif %}
                                                     </td>
                                                 </tr>
                                                 {% endfor %}
-                                            
                                             {% else %}
                                                 <tr>
                                                     <td colspan="3" class="text-center py-5 text-muted">
@@ -406,10 +227,7 @@
                     </div>
                 </div>
 
-            </div> <!-- Fin Fila Inferior -->
-
-
-        </div>
+            </div> </div>
     </div>
 </div>
 

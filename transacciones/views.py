@@ -12,6 +12,7 @@ from transacciones.models import Transaccion, SolicitudCarga, DetalleCarga
 from transacciones.forms import *
 
 from kiosco.models import Tarjeta
+from escuela.models import Cliente
 
 class SuperUserRequiredMixin(UserPassesTestMixin):
     def test_func(self):
@@ -216,7 +217,32 @@ class BuscarClienteView(StaffUserRequireMixin, SuperUserRequiredMixin, View):
     def handle_no_permission(self):
         messages.error(self.request, "Acceso restringido solo para administradores.")
         return redirect('home') # Cambia 'index' por el nombre de tu URL de destino
-    
+
+class BuscarClientePorNombreView(StaffUserRequireMixin, SuperUserRequiredMixin, View):
+    def get(self, request, *args, **kwargs):
+        query = request.GET.get('q', '')
+        resultados = []
+        
+        if len(query) >= 3:
+            # Buscamos coincidencias en nombre o apellido del Cliente
+            clientes = Cliente.objects.filter(
+                Q(nombre__icontains=query) | Q(apellido__icontains=query)
+            ).distinct()[:10]
+            
+            for cliente in clientes:
+                # Buscamos la tarjeta asociada a ese cliente
+                tarjeta = Tarjeta.objects.filter(cliente=cliente).first()
+                if tarjeta:
+                    display_name = f"{cliente.nombre} {cliente.apellido} (Tarjeta: {tarjeta.codigo})"
+                    resultados.append({
+                        'nombre_completo': display_name,
+                        'tarjeta_codigo': tarjeta.codigo
+                    })
+        
+        return JsonResponse(resultados, safe=False)
+
+    def handle_no_permission(self):
+        return JsonResponse({'error': 'No autorizado'}, status=403)
 
 # Vistas de Solicitud de Carga de Saldo
 ## Lista de Solicitudes        

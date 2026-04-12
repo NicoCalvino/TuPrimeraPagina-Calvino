@@ -1,6 +1,6 @@
 {% extends 'main/index.html' %}
 
-{% block titulo %}<title>Comedor Mila - Nueva Alumna</title> {% endblock %}
+{% block titulo %}<title>Comedor Colegio Mallinckrodt - Nueva Alumna</title> {% endblock %}
 
 {% block Bienvenida %} {% endblock %}
 
@@ -25,6 +25,8 @@
                 
                 <form method="post" novalidate>
                     {% csrf_token %}
+
+
 
                     <div class="row g-3">
                         
@@ -68,6 +70,19 @@
                                 <div class="text-danger small mt-1 ps-1">{{ form.curso.errors }}</div>
                             {% endif %}
                         </div>
+
+                        {% if form.limite %}
+                            <div class="col-12 mt-3">
+                                <label for="{{ form.limite.id_for_label }}" class="form-label fw-bold text-dark small">Límite</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-cash"></i></span>
+                                    {{ form.limite }}
+                                </div>
+                                {% if form.limite.errors %}
+                                    <div class="text-danger small mt-1 ps-1">{{ form.limite.errors }}</div>
+                                {% endif %}
+                            </div>
+                        {% endif %}
 
                     </div>
 

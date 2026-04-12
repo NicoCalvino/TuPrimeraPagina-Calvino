@@ -1,7 +1,7 @@
 {% extends 'main/index.html' %} 
-
+{% load humanize %} 
 {% block titulo %}
-<title>Comedor Mila - Cargar Saldo</title>
+<title>Comedor Colegio Mallinckrodt - Cargar Saldo</title>
 {% endblock %} 
 
 {% block Bienvenida %}
@@ -33,7 +33,7 @@
                                 <thead class="table-light">
                                     <tr>
                                         <th>Alumno</th>
-                                        <th>N° Tarjeta</th>
+                                        <th>Código</th>
                                         <th>Saldo Actual</th>
                                         <th style="width: 200px;">Monto a Cargar</th>
                                     </tr>
@@ -47,7 +47,7 @@
                                                 <i class="bi bi-credit-card me-1"></i>{{ tarjeta.codigo }}
                                             </span>
                                         </td>
-                                        <td class="text-muted">${{ tarjeta.saldo }}</td>
+                                        <td class="text-muted">${{ tarjeta.saldo|floatformat:"0"|intcomma }}</td>
                                         <td>
                                             <!-- Input manual que coincide con la lógica de la vista (views.py) -->
                                             <div class="input-group">

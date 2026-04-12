@@ -278,6 +278,12 @@ class CrearClienteView(LoginRequiredMixin, CreateView):
     template_name = 'escuela/crear_cliente.html'
     success_url = reverse_lazy('home')
 
+    def get_form_kwargs(self):
+        """Pasa el usuario actual al formulario"""
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+
     def form_valid(self, form):
         # Este método se ejecuta si el formulario es válido
         # Equivale al if form.is_valid() y cliente.save(commit=False)
@@ -295,6 +301,12 @@ class ActualizarClienteView(LoginRequiredMixin, ClienteOwnerRequiredMixin, Updat
     form_class = ClienteForm
     template_name = 'escuela/editar_cliente.html'
     context_object_name = 'cliente'
+
+    def get_form_kwargs(self):
+        """Pasa el usuario actual al formulario"""
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
 
     def get_success_url(self):
         return reverse('ver_cliente', kwargs={'pk': self.object.pk})

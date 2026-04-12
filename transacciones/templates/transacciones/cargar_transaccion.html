@@ -1,14 +1,13 @@
 {% extends 'main/index.html' %} 
 
 {% block titulo %}
-<title>Comedor Mila - {{ titulo_pagina }}</title>
+<title>Comedor Colegio Mallinckrodt - {{ titulo_pagina }}</title>
 {% endblock %} 
 
 {% block Bienvenida %}
 
 {% endblock %}
 
-<!-- Contenido Principal -->
 {% block content %}
 <div class="container my-5">
     <div class="row justify-content-center">
@@ -17,8 +16,21 @@
                 <h3 class="mb-4 text-center fw-bold text-products">
                     <i class="bi bi-wallet2 me-2"></i>{{ subtitulo }}
                 </h3>
-                
-                <form method="post" action="#">
+
+                <div class="mb-4 p-3 bg-light rounded-3 border">
+                    <label class="form-label fw-bold text-muted small text-uppercase">
+                        <i class="bi bi-search me-1"></i> Buscar tarjeta por nombre de alumno
+                    </label>
+                    <div class="input-group">
+                        <input type="text" id="buscador-cliente" class="form-control" list="lista-clientes-nombres" autocomplete="off">
+                        <datalist id="lista-clientes-nombres"></datalist>
+                    </div>
+                    <datalist id="lista-clientes-nombres"></datalist>
+                    <div id="ayuda-busqueda" class="form-text mt-1" style="display:none;">
+                        Seleccione un nombre para autocompletar el número de tarjeta.
+                    </div>
+                </div>
+                <form method="post" action="#" id="form-transaccion">
                     {% csrf_token %}
 
                     <div class="mb-3">
@@ -27,7 +39,7 @@
                             <span class="input-group-text"><i class="bi bi-credit-card"></i></span>
                             {{ form.numero_tarjeta }} 
                         </div>
-                            {% if form.numero_tarjeta.errors %}
+                        {% if form.numero_tarjeta.errors %}
                             <div class="alert alert-danger mt-1">{{ form.numero_tarjeta.errors }}</div>
                         {% endif %}
                     </div>
@@ -59,11 +71,6 @@
                         </a>
                     </div>
                 </form>
-
-                <!-- AQUI AGREGAMOS EL MENSAJE ABAJO DEL FORMULARIO -->
-
-                <!-- FIN DEL BLOQUE DE MENSAJES -->
-
             </div>
         </div>
     </div>
@@ -76,37 +83,79 @@
 </style>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Django genera automáticamente el ID como 'id_' + nombre del campo en el form
         const inputTarjeta = document.getElementById('id_numero_tarjeta');
         const contenedorInfo = document.getElementById('info-cliente');
         const spanNombre = document.getElementById('nombre-cliente');
+        
+        const buscadorNombre = document.getElementById('buscador-cliente');
+        const dataListClientes = document.getElementById('lista-clientes-nombres');
 
+        // 1. Lógica para buscar por tarjeta (la que ya tenías funcionando)
         if (inputTarjeta) {
             inputTarjeta.addEventListener('input', function() {
                 let valor = this.value;
-
-                // Si el usuario escribe "1", lo convertimos internamente a "001" para la búsqueda
-                // o esperamos a que tenga el largo suficiente.
                 if (valor.length > 0) {
-                    // PadStart asegura que si el ID es 1, busque "001"
                     const codigoBusqueda = valor.padStart(3, '0');
-                    
                     fetch(`{% url 'buscar_cliente' %}?numero_tarjeta=${codigoBusqueda}`)
                         .then(response => response.json())
                         .then(data => {
                             if (data.encontrado) {
                                 spanNombre.textContent = data.nombre;
                                 contenedorInfo.style.display = 'block';
-                            } else{
+                            } else {
                                 spanNombre.textContent = "";
                             }
-                        })
-                        .catch(error => console.error('Error:', error));
-                } else{
+                        });
+                } else {
                     spanNombre.textContent = "";
                 }
             });
         }
+
+        // 2. Lógica para buscar nombres y LLENAR el datalist
+        buscadorNombre.addEventListener('input', function(e) {
+            const query = this.value;
+            
+            // Si el usuario escribe (mínimo 3 letras)
+            if (query.length >= 3) {
+                fetch(`{% url 'buscar_cliente_por_nombre' %}?q=${query}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        dataListClientes.innerHTML = ''; // Limpiamos opciones
+                        data.forEach(cliente => {
+                            const option = document.createElement('option');
+                            // El value es lo que aparece y se busca en el datalist
+                            option.value = cliente.nombre_completo;
+                            // Guardamos el código en un atributo data-
+                            option.setAttribute('data-tarjeta', cliente.tarjeta_codigo);
+                            dataListClientes.appendChild(option);
+                        });
+                    });
+            }
+
+            // 3. Lógica para DETECTAR la selección
+            // Recorremos las opciones actuales del datalist para ver si el valor coincide
+            const opciones = dataListClientes.options;
+            for (let i = 0; i < opciones.length; i++) {
+                if (opciones[i].value === query) {
+                    const tarjetaEncontrada = opciones[i].getAttribute('data-tarjeta');
+                    
+                    console.log("¡Seleccionado! Nombre:", query, "Tarjeta:", tarjetaEncontrada);
+                    
+                    // Seteamos el valor en el input real
+                    inputTarjeta.value = tarjetaEncontrada;
+                    
+                    // IMPORTANTE: Forzamos el evento 'input' para que se dispare 
+                    // la búsqueda automática de saldo y nombre (lógica 1)
+                    inputTarjeta.dispatchEvent(new Event('input'));
+                    
+                    // Limpiamos el buscador de nombres
+                    this.value = '';
+                    this.blur(); // Quitamos el foco para cerrar el desplegable
+                    break;
+                }
+            }
+        });
     });
 </script>
 {% endblock %}

@@ -1,7 +1,7 @@
 {% extends 'main/index.html' %}
-
+{% load humanize %} 
 {% block titulo %}
-<title>Detalle de Solicitud - Comedor Mila</title>
+<title>Detalle de Solicitud - Comedor Colegio Mallinckrodt</title>
 {% endblock %}
 
 {% block Bienvenida %}
@@ -55,7 +55,7 @@
                     <!-- Información del Monto -->
                     <div class="text-center mb-4">
                         <small class="text-muted d-block text-uppercase fw-bold">Monto Total a Cargar</small>
-                        <h2 class="display-4 fw-bold text-dark">$ {{ solicitud.monto }}</h2>
+                        <h2 class="display-4 fw-bold text-dark">$ {{ solicitud.monto|floatformat:"0"|intcomma }}</h2>
                     </div>
 
                     <hr class="text-muted opacity-25">
@@ -113,7 +113,7 @@
                                                     <td class="text-start fw-medium" style="white-space: nowrap;">{{ detalle.tarjeta.codigo }}</td>
                                                     <td class="text-center fw-medium">{{ detalle.tarjeta.cliente.nombre }} {{ detalle.tarjeta.cliente.apellido }}</td>
                                                     <td class="text-end fw-bold text-success">
-                                                        $ {{ detalle.monto|default:0|floatformat:2 }}
+                                                        $ {{ detalle.monto|floatformat:"0"|intcomma }}
                                                     </td>
                                                 </tr>
                                                 {% endfor %}

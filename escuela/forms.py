@@ -80,8 +80,12 @@ class ClienteForm(forms.ModelForm):
         }
     
     def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
         
+        if self.user and not self.user.is_superuser:
+            self.fields.pop('limite')
+
         # Esta es la clave: personalizamos la etiqueta del campo curso
         self.fields['curso'].label_from_instance = lambda obj: f"{obj.curso}"
 
@@ -92,7 +96,7 @@ class ClienteForm(forms.ModelForm):
             ).order_by('nivel', 'curso')
         else:
             self.fields['curso'].queryset = Curso.objects.none()
-
+        
         # 2. Lógica para cuando el formulario falla y se vuelve a cargar (POST)
         if 'colegio' in self.data:
             try:
